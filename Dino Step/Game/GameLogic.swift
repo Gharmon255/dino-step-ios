@@ -42,10 +42,20 @@ enum GameLogic {
         return max(0, milestone - currentSteps)
     }
 
-    static func displayName(currentSteps: Int, creatureDefinition: CreatureDefinition) -> String {
-        if calculateStage(currentSteps: currentSteps, creatureDefinition: creatureDefinition) == .egg {
-            return "Mystery Common Egg"
+    static func displayName(for activeCreature: ActiveCreature) -> String {
+        if calculateStage(
+            currentSteps: activeCreature.currentSteps,
+            creatureDefinition: activeCreature.definition
+        ) == .egg {
+            return activeCreature.eggRarity.mysteryEggTitle
         }
-        return creatureDefinition.name
+        return activeCreature.definition.name
+    }
+
+    static func isHatched(_ activeCreature: ActiveCreature) -> Bool {
+        calculateStage(
+            currentSteps: activeCreature.currentSteps,
+            creatureDefinition: activeCreature.definition
+        ) != .egg
     }
 }

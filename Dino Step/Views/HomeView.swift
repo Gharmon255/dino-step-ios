@@ -9,6 +9,8 @@ struct HomeView: View {
     @ObservedObject var gameState: GameState
 
     private var stage: GrowthStage { gameState.currentStage }
+    private var rarityColor: Color { RarityColors.color(for: gameState.currentEggRarity) }
+    private var isHatched: Bool { GameLogic.isHatched(gameState.activeCreature) }
 
     var body: some View {
         ScrollView {
@@ -23,14 +25,22 @@ struct HomeView: View {
                         )
                     )
 
-                GameCard {
+                GameCard(accentColor: rarityColor) {
                     VStack(spacing: 16) {
                         creaturePlaceholder
 
                         Text(gameState.displayName)
                             .font(.title2.bold())
+                            .multilineTextAlignment(.center)
 
-                        stageBadge
+                        HStack(spacing: 8) {
+                            RarityBadge(rarity: gameState.currentEggRarity)
+                            stageBadge
+                        }
+
+                        if isHatched {
+                            RarityBadge(rarity: gameState.activeCreature.definition.rarity)
+                        }
 
                         VStack(alignment: .leading, spacing: 8) {
                             statRow(label: "Steps", value: "\(gameState.activeCreature.currentSteps.formatted())")
@@ -50,7 +60,7 @@ struct HomeView: View {
                         }
 
                         ProgressView(value: gameState.progressPercent, total: 100)
-                            .tint(progressColor)
+                            .tint(rarityColor)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -67,7 +77,7 @@ struct HomeView: View {
                         Button("Claim Reward") {
                             gameState.claimReward()
                         }
-                        .buttonStyle(StepButtonStyle(color: .orange))
+                        .buttonStyle(StepButtonStyle(color: RarityColors.color(for: .legendary)))
                     }
                 }
             }
@@ -80,8 +90,16 @@ struct HomeView: View {
     private var creaturePlaceholder: some View {
         switch stage {
         case .egg:
-            Text("🥚")
-                .font(.system(size: 80))
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(rarityColor.opacity(0.22))
+                    .frame(width: 120, height: 140)
+                RoundedRectangle(cornerRadius: 20)
+                    .strokeBorder(rarityColor, lineWidth: 3)
+                    .frame(width: 120, height: 140)
+                Text("🥚")
+                    .font(.system(size: 64))
+            }
         case .baby:
             Text("🦖")
                 .font(.system(size: 48))
@@ -99,26 +117,8 @@ struct HomeView: View {
             .font(.caption.bold())
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Capsule().fill(stageColor.opacity(0.2)))
-            .foregroundStyle(stageColor)
-    }
-
-    private var stageColor: Color {
-        switch stage {
-        case .egg: .purple
-        case .baby: .green
-        case .juvenile: .blue
-        case .adult: .orange
-        }
-    }
-
-    private var progressColor: Color {
-        switch stage {
-        case .egg: .purple
-        case .baby: .green
-        case .juvenile: .blue
-        case .adult: .orange
-        }
+            .background(Capsule().fill(Color.secondary.opacity(0.15)))
+            .foregroundStyle(.secondary)
     }
 
     private func statRow(label: String, value: String) -> some View {

@@ -18,15 +18,22 @@ struct CollectionView: View {
                 )
             } else {
                 List(gameState.completedCreatures.reversed()) { creature in
-                    HStack(spacing: 16) {
+                    HStack(spacing: 14) {
                         Text("🦕")
-                            .font(.title)
+                            .font(.title2)
 
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(creature.definition.name)
                                 .font(.headline)
 
-                            Text("\(creature.definition.rarity.rawValue) · \(creature.definition.habitat.rawValue)")
+                            HStack(spacing: 6) {
+                                RarityBadge(rarity: creature.definition.rarity)
+                                Text(creature.definition.habitat.rawValue)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Text("\(creature.totalStepsCompleted.formatted()) steps")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -38,6 +45,18 @@ struct CollectionView: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 4)
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(
+                                        RarityColors.color(for: creature.definition.rarity).opacity(0.35),
+                                        lineWidth: 1
+                                    )
+                            )
+                            .padding(.vertical, 2)
+                    )
                 }
                 .listStyle(.insetGrouped)
             }

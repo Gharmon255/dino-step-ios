@@ -6,33 +6,82 @@
 import Foundation
 
 enum CreatureCatalog {
+    static let allCreatures: [CreatureDefinition] = commonCreatures
+        + uncommonCreatures
+        + rareCreatures
+        + epicCreatures
+        + legendaryCreatures
+
+    static func creatures(for rarity: Rarity) -> [CreatureDefinition] {
+        switch rarity {
+        case .common: commonCreatures
+        case .uncommon: uncommonCreatures
+        case .rare: rareCreatures
+        case .epic: epicCreatures
+        case .legendary: legendaryCreatures
+        }
+    }
+
     static let commonCreatures: [CreatureDefinition] = [
-        CreatureDefinition(
-            id: UUID(uuidString: "A1000001-0000-4000-8000-000000000001")!,
-            name: "Tiny Raptor",
-            rarity: .common,
-            habitat: .jungle,
-            totalStepsRequired: 8000,
-            hatchStep: 1600,
-            juvenileStep: 4000
-        ),
-        CreatureDefinition(
-            id: UUID(uuidString: "A1000002-0000-4000-8000-000000000002")!,
-            name: "Triceratops",
-            rarity: .common,
-            habitat: .plains,
-            totalStepsRequired: 10000,
-            hatchStep: 2000,
-            juvenileStep: 5000
-        ),
-        CreatureDefinition(
-            id: UUID(uuidString: "A1000003-0000-4000-8000-000000000003")!,
-            name: "Ankylosaurus",
-            rarity: .common,
-            habitat: .rocky,
-            totalStepsRequired: 12000,
-            hatchStep: 2400,
-            juvenileStep: 6000
-        ),
+        creature(1, "Tiny Raptor", .common, .jungle, 8000, 1600, 4000),
+        creature(2, "Triceratops", .common, .plains, 10000, 2000, 5000),
+        creature(3, "Ankylosaurus", .common, .rocky, 12000, 2400, 6000),
+        creature(4, "Parasaurolophus", .common, .forest, 11000, 2200, 5500),
+        creature(5, "Pachycephalosaurus", .common, .rocky, 12500, 2500, 6250),
+        creature(6, "Gallimimus", .common, .plains, 9000, 1800, 4500),
     ]
+
+    static let uncommonCreatures: [CreatureDefinition] = [
+        creature(7, "Stegosaurus", .uncommon, .forest, 18000, 3600, 9000),
+        creature(8, "Pterodactyl", .uncommon, .mountain, 22000, 4400, 11000),
+        creature(9, "Dilophosaurus", .uncommon, .jungle, 20000, 4000, 10000),
+        creature(10, "Iguanodon", .uncommon, .forest, 19000, 3800, 9500),
+        creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000),
+        creature(12, "Baryonyx", .uncommon, .swamp, 25000, 5000, 12500),
+    ]
+
+    static let rareCreatures: [CreatureDefinition] = [
+        creature(13, "T-Rex", .rare, .volcano, 50000, 10000, 25000),
+        creature(14, "Spinosaurus", .rare, .swamp, 60000, 12000, 30000),
+        creature(15, "Velociraptor Alpha", .rare, .jungle, 45000, 9000, 22500),
+        creature(16, "Allosaurus", .rare, .rocky, 48000, 9600, 24000),
+        creature(17, "Therizinosaurus", .rare, .forest, 55000, 11000, 27500),
+        creature(18, "Mosasaurus", .rare, .ocean, 65000, 13000, 32500),
+    ]
+
+    static let epicCreatures: [CreatureDefinition] = [
+        creature(19, "Giganotosaurus", .epic, .plains, 85000, 17000, 42500),
+        creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000),
+        creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500),
+        creature(22, "Ancient Spinosaurus", .epic, .swamp, 100000, 20000, 50000),
+    ]
+
+    static let legendaryCreatures: [CreatureDefinition] = [
+        creature(23, "Volcanic T-Rex", .legendary, .volcano, 125000, 25000, 62500),
+        creature(24, "Frost Raptor", .legendary, .ice, 110000, 22000, 55000),
+        creature(25, "Shadow Triceratops", .legendary, .dark, 130000, 26000, 65000),
+        creature(26, "Titanosaur", .legendary, .plains, 150000, 30000, 75000),
+        creature(27, "Cosmic Pterodactyl", .legendary, .sky, 175000, 35000, 87500),
+        creature(28, "Ancient Apex Rex", .legendary, .volcano, 200000, 40000, 100000),
+    ]
+
+    private static func creature(
+        _ index: Int,
+        _ name: String,
+        _ rarity: Rarity,
+        _ habitat: Habitat,
+        _ totalSteps: Int,
+        _ hatchStep: Int,
+        _ juvenileStep: Int
+    ) -> CreatureDefinition {
+        CreatureDefinition(
+            id: UUID(uuidString: String(format: "A100%04X-0000-4000-8000-%012X", index, index))!,
+            name: name,
+            rarity: rarity,
+            habitat: habitat,
+            totalStepsRequired: totalSteps,
+            hatchStep: hatchStep,
+            juvenileStep: juvenileStep
+        )
+    }
 }

@@ -10,9 +10,15 @@ import Foundation
 final class GameState: ObservableObject {
     @Published private(set) var activeCreature: ActiveCreature
     @Published private(set) var completedCreatures: [CompletedCreature] = []
+    @Published private(set) var lastRewardedEggRarity: Rarity?
+    @Published private(set) var lastRewardRollPercent: Double?
 
     init() {
-        activeCreature = Self.makeNewMysteryEgg()
+        activeCreature = Self.makeMysteryEgg(rarity: .common)
+    }
+
+    var currentEggRarity: Rarity {
+        activeCreature.eggRarity
     }
 
     var currentStage: GrowthStage {
@@ -23,10 +29,7 @@ final class GameState: ObservableObject {
     }
 
     var displayName: String {
-        GameLogic.displayName(
-            currentSteps: activeCreature.currentSteps,
-            creatureDefinition: activeCreature.definition
-        )
+        GameLogic.displayName(for: activeCreature)
     }
 
     var progressPercent: Double {
@@ -50,6 +53,10 @@ final class GameState: ObservableObject {
         )
     }
 
+    var revealedCreatureRarity: Rarity? {
+        GameLogic.isHatched(activeCreature) ? activeCreature.definition.rarity : nil
+    }
+
     func addSteps(_ amount: Int) {
         guard amount > 0 else { return }
         activeCreature.currentSteps += amount
@@ -61,14 +68,43 @@ final class GameState: ObservableObject {
         let completed = CompletedCreature(
             id: UUID(),
             definition: activeCreature.definition,
+            totalStepsCompleted: activeCreature.definition.totalStepsRequired,
             completedAt: Date()
         )
         completedCreatures.append(completed)
-        activeCreature = Self.makeNewMysteryEgg()
+
+        let outcome = EggRewardLogic.rollEggReward()
+        lastRewardedEggRarity = outcome.rarity
+        lastRewardRollPercent = outcome.rollPercent
+        activeCreature = Self.makeMysteryEgg(rarity: outcome.rarity)
     }
 
-    static func makeNewMysteryEgg() -> ActiveCreature {
-        let definition = CreatureCatalog.commonCreatures.randomElement()!
-        return ActiveCreature(definition: definition, currentSteps: 0)
+    func giveRandomEgg() {
+        let outcome = EggRewardLogic.rollEggReward()
+        lastRewardedEggRarity = outcome.rarity
+        lastRewardRollPercent = outcome.rollPercent
+        activeCreature = Self.makeMysteryEgg(rarity: outcome.rarity)
+    }
+
+    func giveEgg(rarity: Rarity) {
+        lastRewardedEggRarity = rarity
+        lastRewardRollPercent = nil
+        activeCreature = Self.makeMysteryEgg(rarity: rarity)
+    }
+
+    func resetGame() {
+        completedCreatures = []
+        lastRewardedEggRarity = nil
+        lastRewardRollPercent = nil
+        activeCreature = Self.makeMysteryEgg(rarity: .common)
+    }
+
+    func clearCollection() {
+        completedCreatures = []
+    }
+
+    static func makeMysteryEgg(rarity: Rarity) -> ActiveCreature {
+        let definition = CreatureCatalog.creatures(for: rarity).randomElement()!
+        return ActiveCreature(eggRarity: rarity, definition: definition, currentSteps: 0)
     }
 }
