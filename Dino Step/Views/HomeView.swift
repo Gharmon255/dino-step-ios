@@ -25,17 +25,37 @@ struct HomeView: View {
                         )
                     )
 
-                GameCard(accentColor: rarityColor) {
+                ZStack {
+                    if stage == .egg {
+                        let glow = RarityColors.eggStyle(for: gameState.currentEggRarity)
+                        if glow.showsGlow {
+                            Circle()
+                                .fill(glow.glow.opacity(RarityColors.cardGlowOpacity(for: gameState.currentEggRarity) + 0.12))
+                                .frame(width: 180, height: 180)
+                                .blur(radius: 24)
+                        }
+                    }
+
+                    GameCard(accentColor: rarityColor) {
                     VStack(spacing: 16) {
-                        CreatureStageVisualView(
-                            creature: gameState.activeCreature.definition,
-                            stage: stage,
-                            eggRarity: gameState.currentEggRarity
-                        )
+                        if stage == .egg {
+                            RarityEggView(
+                                rarity: gameState.currentEggRarity.rawValue,
+                                size: 140
+                            )
+                            .padding(.top, 4)
+                        } else {
+                            CreatureStageVisualView(
+                                creature: gameState.activeCreature.definition,
+                                stage: stage,
+                                eggRarity: gameState.currentEggRarity
+                            )
+                        }
 
                         Text(gameState.displayName)
                             .font(.title2.bold())
                             .multilineTextAlignment(.center)
+                            .foregroundStyle(stage == .egg ? rarityColor : .primary)
 
                         HStack(spacing: 8) {
                             RarityBadge(rarity: gameState.currentEggRarity)
@@ -44,6 +64,13 @@ struct HomeView: View {
 
                         if isHatched {
                             RarityBadge(rarity: gameState.activeCreature.definition.rarity)
+                        }
+
+                        if stage == .egg {
+                            Text("Walk steps to hatch this mystery egg")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
@@ -67,6 +94,7 @@ struct HomeView: View {
                             .tint(rarityColor)
                     }
                     .frame(maxWidth: .infinity)
+                }
                 }
 
                 VStack(spacing: 12) {

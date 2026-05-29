@@ -7,17 +7,19 @@ import SwiftUI
 
 enum RarityColors {
     static func color(for rarity: Rarity) -> Color {
+        RarityEggVisual.primaryColor(for: rarity.rawValue)
+    }
+
+    static func eggStyle(for rarity: Rarity) -> RarityEggVisual.Style {
+        RarityEggVisual.style(for: rarity.rawValue)
+    }
+
+    static func cardGlowOpacity(for rarity: Rarity) -> Double {
         switch rarity {
-        case .common:
-            Color(red: 0.45, green: 0.62, blue: 0.38)
-        case .uncommon:
-            .blue
-        case .rare:
-            .purple
-        case .epic:
-            Color(red: 0.88, green: 0.38, blue: 0.55)
-        case .legendary:
-            Color(red: 0.92, green: 0.72, blue: 0.18)
+        case .common, .uncommon: 0
+        case .rare: 0.08
+        case .epic: 0.14
+        case .legendary: 0.22
         }
     }
 }

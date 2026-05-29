@@ -23,17 +23,14 @@ struct CreatureStageVisualView: View {
         }
     }
 
+    @ViewBuilder
     private var eggView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(stageVisual.accentColor.opacity(0.22))
-                .frame(width: stageVisual.size, height: stageVisual.size * 1.15)
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(stageVisual.accentColor, lineWidth: 3)
-                .frame(width: stageVisual.size, height: stageVisual.size * 1.15)
-            Text(stageVisual.displayEmoji)
-                .font(.system(size: compact ? 40 : stageVisual.emojiFontSize))
-        }
+        let rarity = eggRarity ?? creature.rarity
+        RarityEggView(
+            rarity: rarity.rawValue,
+            size: compact ? 52 : 128,
+            compact: compact
+        )
     }
 
     private var hatchedView: some View {
@@ -73,15 +70,12 @@ struct CreatureStageVisualView: View {
     VStack(spacing: 24) {
         CreatureStageVisualView(
             creature: CreatureCatalog.commonCreatures[0],
+            stage: .egg,
+            eggRarity: .legendary
+        )
+        CreatureStageVisualView(
+            creature: CreatureCatalog.commonCreatures[0],
             stage: .baby
-        )
-        CreatureStageVisualView(
-            creature: CreatureCatalog.uncommonCreatures.first { $0.name == "Carnotaurus" }!,
-            stage: .juvenile
-        )
-        CreatureStageVisualView(
-            creature: CreatureCatalog.uncommonCreatures.first { $0.name == "Carnotaurus" }!,
-            stage: .adult
         )
     }
     .padding()

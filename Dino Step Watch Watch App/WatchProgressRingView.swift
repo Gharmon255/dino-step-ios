@@ -9,6 +9,8 @@ struct WatchProgressRingView: View {
     let progressPercent: Double
     let accentColor: Color
     let placeholderEmoji: String
+    var eggRarity: String?
+    var isEggStage: Bool = false
 
     private var progress: Double {
         min(max(progressPercent / 100.0, 0), 1)
@@ -27,8 +29,7 @@ struct WatchProgressRingView: View {
                 )
                 .rotationEffect(.degrees(-90))
 
-            Text(placeholderEmoji)
-                .font(.system(size: 28))
+            centerVisual
 
             Text(String(format: "%.0f%%", progressPercent))
                 .font(.system(size: 10, weight: .semibold))
@@ -37,12 +38,24 @@ struct WatchProgressRingView: View {
         }
         .frame(width: 96, height: 96)
     }
+
+    @ViewBuilder
+    private var centerVisual: some View {
+        if isEggStage, let eggRarity {
+            RarityEggView(rarity: eggRarity, size: 36, compact: true)
+        } else {
+            Text(placeholderEmoji)
+                .font(.system(size: 28))
+        }
+    }
 }
 
 #Preview {
     WatchProgressRingView(
         progressPercent: 25,
-        accentColor: WatchRarityColors.color(for: .common),
-        placeholderEmoji: "🥚"
+        accentColor: WatchRarityColors.color(for: .legendary),
+        placeholderEmoji: "🥚",
+        eggRarity: "LEGENDARY",
+        isEggStage: true
     )
 }

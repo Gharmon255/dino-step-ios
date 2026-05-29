@@ -46,7 +46,9 @@ struct ContentView: View {
             WatchProgressRingView(
                 progressPercent: payload.ringProgressPercent,
                 accentColor: accentColor,
-                placeholderEmoji: payload.placeholderVisual
+                placeholderEmoji: payload.placeholderVisual,
+                eggRarity: payload.rarity,
+                isEggStage: payload.stage == "EGG"
             )
             .padding(.vertical, 4)
 

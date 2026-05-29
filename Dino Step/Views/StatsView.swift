@@ -116,7 +116,7 @@ struct StatsView: View {
 
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Testing")
+                        Text("Egg Testing")
                             .font(.headline)
                             .foregroundStyle(.red)
 
@@ -125,11 +125,13 @@ struct StatsView: View {
                         }
                         .buttonStyle(DebugButtonStyle(color: .gray))
 
-                        rarityGiveButton("Give Common Egg", .common)
-                        rarityGiveButton("Give Uncommon Egg", .uncommon)
-                        rarityGiveButton("Give Rare Egg", .rare)
-                        rarityGiveButton("Give Epic Egg", .epic)
-                        rarityGiveButton("Give Legendary Egg", .legendary)
+                        VStack(spacing: 10) {
+                            RarityGiveEggButton(rarity: .common) { gameState.giveEgg(rarity: .common) }
+                            RarityGiveEggButton(rarity: .uncommon) { gameState.giveEgg(rarity: .uncommon) }
+                            RarityGiveEggButton(rarity: .rare) { gameState.giveEgg(rarity: .rare) }
+                            RarityGiveEggButton(rarity: .epic) { gameState.giveEgg(rarity: .epic) }
+                            RarityGiveEggButton(rarity: .legendary) { gameState.giveEgg(rarity: .legendary) }
+                        }
 
                         Button("Reset Game") {
                             gameState.resetGame()
@@ -165,13 +167,6 @@ struct StatsView: View {
                 .multilineTextAlignment(.trailing)
         }
         .font(.subheadline)
-    }
-
-    private func rarityGiveButton(_ title: String, _ rarity: Rarity) -> some View {
-        Button(title) {
-            gameState.giveEgg(rarity: rarity)
-        }
-        .buttonStyle(DebugButtonStyle(color: RarityColors.color(for: rarity)))
     }
 }
 
