@@ -19,8 +19,12 @@ struct CollectionView: View {
             } else {
                 List(gameState.completedCreatures.reversed()) { creature in
                     HStack(spacing: 14) {
-                        Text("🦕")
-                            .font(.title2)
+                        CreatureStageVisualView(
+                            creature: creature.definition,
+                            stage: .adult,
+                            compact: true
+                        )
+                        .frame(width: 64)
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text(creature.definition.name)

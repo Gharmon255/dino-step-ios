@@ -27,7 +27,11 @@ struct HomeView: View {
 
                 GameCard(accentColor: rarityColor) {
                     VStack(spacing: 16) {
-                        creaturePlaceholder
+                        CreatureStageVisualView(
+                            creature: gameState.activeCreature.definition,
+                            stage: stage,
+                            eggRarity: gameState.currentEggRarity
+                        )
 
                         Text(gameState.displayName)
                             .font(.title2.bold())
@@ -84,32 +88,6 @@ struct HomeView: View {
             .padding()
         }
         .background(Color(.systemGroupedBackground))
-    }
-
-    @ViewBuilder
-    private var creaturePlaceholder: some View {
-        switch stage {
-        case .egg:
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(rarityColor.opacity(0.22))
-                    .frame(width: 120, height: 140)
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(rarityColor, lineWidth: 3)
-                    .frame(width: 120, height: 140)
-                Text("🥚")
-                    .font(.system(size: 64))
-            }
-        case .baby:
-            Text("🦖")
-                .font(.system(size: 48))
-        case .juvenile:
-            Text("🦕")
-                .font(.system(size: 72))
-        case .adult:
-            Text("🦕")
-                .font(.system(size: 96))
-        }
     }
 
     private var stageBadge: some View {
