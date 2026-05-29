@@ -61,8 +61,8 @@ struct StatsView: View {
                             .font(.headline)
                             .foregroundStyle(.teal)
 
-                        statRow("Available", gameState.healthKitAuthorizationStatus == .unavailable ? "No" : "Yes")
-                        statRow("Authorization", gameState.healthKitAuthorizationStatus.rawValue)
+                        statRow("Available", gameState.isHealthKitAvailable ? "Yes" : "No")
+                        statRow("Authorized", gameState.healthKitAuthorizationStatus.authorizedDisplay)
                         statRow(
                             "Last Synced Total Today",
                             gameState.lastSyncedHealthKitStepTotal.formatted()

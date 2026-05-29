@@ -16,7 +16,8 @@ final class GameState: ObservableObject {
     @Published private(set) var lastSyncedHealthKitStepTotal: Int = 0
     @Published private(set) var lastHealthKitSyncDayStart: Date?
     @Published private(set) var lastHealthKitSyncMessage: String?
-    @Published private(set) var healthKitAuthorizationStatus: HealthKitAuthorizationStatus = .unavailable
+    @Published private(set) var isHealthKitAvailable = false
+    @Published private(set) var healthKitAuthorizationStatus: HealthKitAuthorizationStatus = .unknown
     @Published private(set) var isSyncingHealthKitSteps = false
 
     private let persistenceStore: GamePersistenceStore
@@ -92,6 +93,7 @@ final class GameState: ObservableObject {
     }
 
     func refreshHealthKitStatus() {
+        isHealthKitAvailable = healthKitStepService.isAvailable
         healthKitAuthorizationStatus = healthKitStepService.authorizationStatus()
     }
 
@@ -132,7 +134,9 @@ final class GameState: ObservableObject {
             lastHealthKitSyncMessage = error.userMessage
             persistCurrentState()
         } catch {
-            lastHealthKitSyncMessage = HealthKitStepServiceError.queryFailed.userMessage
+            let message = error.localizedDescription
+            print("[HealthKitStepService] Unexpected sync error: \(message)")
+            lastHealthKitSyncMessage = "HealthKit query failed: \(message)"
             persistCurrentState()
         }
     }

@@ -14,37 +14,42 @@ enum HealthKitAuthorizationStatus: String, Equatable {
     case notDetermined = "Not Determined"
     case authorized = "Authorized"
     case denied = "Denied"
+    case unknown = "Unknown"
+
+    var authorizedDisplay: String {
+        switch self {
+        case .authorized: "Yes"
+        case .denied: "No"
+        case .notDetermined, .unknown: "Unknown"
+        case .unavailable: "No"
+        }
+    }
 }
 
-enum HealthKitStepServiceError: LocalizedError, Equatable {
+enum HealthKitStepServiceError: LocalizedError {
     case unavailable
-    case permissionDenied
-    case queryFailed
-    case noStepData
+    case permissionNotGranted
+    case noStepData(isSimulator: Bool)
+    case queryFailed(message: String)
 
     var errorDescription: String? {
-        switch self {
-        case .unavailable:
-            "HealthKit is unavailable on this device."
-        case .permissionDenied:
-            "HealthKit step access was denied."
-        case .queryFailed:
-            "Could not read steps from HealthKit."
-        case .noStepData:
-            "No step data found for today."
-        }
+        userMessage
     }
 
     var userMessage: String {
         switch self {
         case .unavailable:
-            "HealthKit unavailable"
-        case .permissionDenied:
-            "HealthKit permission denied"
-        case .queryFailed:
-            "HealthKit query failed"
-        case .noStepData:
-            "No step data for today"
+            "HealthKit unavailable on this device"
+        case .permissionNotGranted:
+            "HealthKit permission not granted"
+        case .noStepData(let isSimulator):
+            if isSimulator {
+                "No step data found today. Fake steps still work for testing."
+            } else {
+                "No step data found today"
+            }
+        case .queryFailed(let message):
+            "HealthKit query failed: \(message)"
         }
     }
 }
@@ -64,6 +69,18 @@ final class HealthKitStepService {
 #endif
     }
 
+    var isRunningOnSimulator: Bool {
+        Self.runningOnSimulator
+    }
+
+    static var runningOnSimulator: Bool {
+#if targetEnvironment(simulator)
+        true
+#else
+        false
+#endif
+    }
+
     func authorizationStatus() -> HealthKitAuthorizationStatus {
 #if os(iOS)
         guard isAvailable else { return .unavailable }
@@ -71,12 +88,13 @@ final class HealthKitStepService {
         switch healthStore.authorizationStatus(for: stepType) {
         case .notDetermined:
             return .notDetermined
-        case .sharingDenied:
-            return .denied
         case .sharingAuthorized:
             return .authorized
+        case .sharingDenied:
+            // Read-only apps often remain .sharingDenied even after read access is granted.
+            return .unknown
         @unknown default:
-            return .denied
+            return .unknown
         }
 #else
         return .unavailable
@@ -90,14 +108,17 @@ final class HealthKitStepService {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             healthStore.requestAuthorization(toShare: [], read: [stepType]) { success, error in
                 if let error {
-                    continuation.resume(throwing: error)
+                    Self.log("Authorization request failed: \(Self.shortErrorMessage(error))")
+                    continuation.resume(throwing: Self.mapError(error, context: "authorization"))
                     return
                 }
 
                 if success {
+                    Self.log("Authorization request completed")
                     continuation.resume()
                 } else {
-                    continuation.resume(throwing: HealthKitStepServiceError.permissionDenied)
+                    Self.log("Authorization request returned success=false")
+                    continuation.resume(throwing: HealthKitStepServiceError.permissionNotGranted)
                 }
             }
         }
@@ -115,23 +136,40 @@ final class HealthKitStepService {
         let now = Date()
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
 
+        Self.log("Fetching steps from \(startOfDay) to \(now) (simulator=\(Self.runningOnSimulator))")
+
         return try await withCheckedThrowingContinuation { continuation in
+            let isSimulator = Self.runningOnSimulator
             let query = HKStatisticsQuery(
                 quantityType: stepType,
                 quantitySamplePredicate: predicate,
                 options: .cumulativeSum
             ) { _, statistics, error in
-                if error != nil {
-                    continuation.resume(throwing: HealthKitStepServiceError.queryFailed)
+                if let error {
+                    Self.log("Statistics query error: \(Self.shortErrorMessage(error))")
+                    continuation.resume(throwing: Self.mapError(error, context: "statistics query"))
+                    return
+                }
+
+                guard statistics != nil else {
+                    Self.log("Statistics query returned nil statistics")
+                    continuation.resume(
+                        throwing: HealthKitStepServiceError.noStepData(isSimulator: isSimulator)
+                    )
                     return
                 }
 
                 guard let sum = statistics?.sumQuantity() else {
-                    continuation.resume(returning: 0)
+                    Self.log("Statistics query returned no step samples for today")
+                    continuation.resume(
+                        throwing: HealthKitStepServiceError.noStepData(isSimulator: isSimulator)
+                    )
                     return
                 }
 
-                continuation.resume(returning: Int(sum.doubleValue(for: .count())))
+                let steps = Int(sum.doubleValue(for: .count()))
+                Self.log("Statistics query returned \(steps) steps")
+                continuation.resume(returning: steps)
             }
 
             healthStore.execute(query)
@@ -140,4 +178,34 @@ final class HealthKitStepService {
         throw HealthKitStepServiceError.unavailable
 #endif
     }
+
+#if os(iOS)
+    nonisolated private static func mapError(_ error: Error, context: String) -> HealthKitStepServiceError {
+        if let hkError = error as? HKError {
+            switch hkError.code {
+            case .errorAuthorizationDenied, .errorAuthorizationNotDetermined:
+                log("HealthKit \(context) authorization issue: \(shortErrorMessage(hkError))")
+                return .permissionNotGranted
+            default:
+                log("HealthKit \(context) HKError: \(shortErrorMessage(hkError))")
+                return .queryFailed(message: shortErrorMessage(hkError))
+            }
+        }
+
+        log("HealthKit \(context) error: \(shortErrorMessage(error))")
+        return .queryFailed(message: shortErrorMessage(error))
+    }
+
+    nonisolated private static func shortErrorMessage(_ error: Error) -> String {
+        let description = error.localizedDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        if description.isEmpty {
+            return String(describing: error)
+        }
+        return description
+    }
+
+    nonisolated private static func log(_ message: String) {
+        print("[HealthKitStepService] \(message)")
+    }
+#endif
 }
