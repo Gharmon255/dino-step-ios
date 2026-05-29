@@ -70,6 +70,33 @@ struct HomeView: View {
                 }
 
                 VStack(spacing: 12) {
+                    Button {
+                        Task {
+                            await gameState.syncHealthKitSteps()
+                        }
+                    } label: {
+                        Group {
+                            if gameState.isSyncingHealthKitSteps {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                    Text("Syncing Steps...")
+                                }
+                            } else {
+                                Text("Sync Steps")
+                            }
+                        }
+                    }
+                    .buttonStyle(StepButtonStyle(color: .teal))
+                    .disabled(gameState.isSyncingHealthKitSteps)
+
+                    if let syncMessage = gameState.lastHealthKitSyncMessage {
+                        Text(syncMessage)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    }
+
                     HStack(spacing: 12) {
                         stepButton(amount: 500, color: .green)
                         stepButton(amount: 2000, color: .blue)

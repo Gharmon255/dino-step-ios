@@ -56,12 +56,15 @@ enum SavedGameStateMapper {
                 )
             },
             lastRewardedEggRarity: gameState.lastRewardedEggRarity?.rawValue,
-            lastRewardRollPercent: gameState.lastRewardRollPercent
+            lastRewardRollPercent: gameState.lastRewardRollPercent,
+            lastSyncedHealthKitStepTotal: gameState.lastSyncedHealthKitStepTotal,
+            lastHealthKitSyncDayStart: gameState.lastHealthKitSyncDayStart,
+            lastHealthKitSyncMessage: gameState.lastHealthKitSyncMessage
         )
     }
 
     static func restore(from savedState: SavedGameState) -> GameStateSnapshot? {
-        guard savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
+        guard savedState.schemaVersion == 1 || savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
             return nil
         }
 
@@ -86,7 +89,10 @@ enum SavedGameStateMapper {
             activeCreature: activeCreature,
             completedCreatures: completedCreatures,
             lastRewardedEggRarity: lastRewardedEggRarity,
-            lastRewardRollPercent: savedState.lastRewardRollPercent
+            lastRewardRollPercent: savedState.lastRewardRollPercent,
+            lastSyncedHealthKitStepTotal: savedState.lastSyncedHealthKitStepTotal ?? 0,
+            lastHealthKitSyncDayStart: savedState.lastHealthKitSyncDayStart,
+            lastHealthKitSyncMessage: savedState.lastHealthKitSyncMessage
         )
     }
 
@@ -125,4 +131,7 @@ struct GameStateSnapshot {
     var completedCreatures: [CompletedCreature]
     var lastRewardedEggRarity: Rarity?
     var lastRewardRollPercent: Double?
+    var lastSyncedHealthKitStepTotal: Int
+    var lastHealthKitSyncDayStart: Date?
+    var lastHealthKitSyncMessage: String?
 }

@@ -57,6 +57,25 @@ struct StatsView: View {
 
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
+                        Text("HealthKit")
+                            .font(.headline)
+                            .foregroundStyle(.teal)
+
+                        statRow("Available", gameState.healthKitAuthorizationStatus == .unavailable ? "No" : "Yes")
+                        statRow("Authorization", gameState.healthKitAuthorizationStatus.rawValue)
+                        statRow(
+                            "Last Synced Total Today",
+                            gameState.lastSyncedHealthKitStepTotal.formatted()
+                        )
+                        statRow(
+                            "Last Sync Message",
+                            gameState.lastHealthKitSyncMessage ?? "—"
+                        )
+                    }
+                }
+
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
                         Text("Last Reward Roll")
                             .font(.headline)
                             .foregroundStyle(.orange)
@@ -105,6 +124,9 @@ struct StatsView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Stats")
+        .onAppear {
+            gameState.refreshHealthKitStatus()
+        }
     }
 
     private func statRow(_ label: String, _ value: String) -> some View {
