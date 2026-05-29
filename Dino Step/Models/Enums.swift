@@ -5,14 +5,14 @@
 
 import Foundation
 
-enum GrowthStage: String, CaseIterable {
+enum GrowthStage: String, CaseIterable, Codable {
     case egg = "EGG"
     case baby = "BABY"
     case juvenile = "JUVENILE"
     case adult = "ADULT"
 }
 
-enum Rarity: String, CaseIterable {
+enum Rarity: String, CaseIterable, Codable {
     case common = "COMMON"
     case uncommon = "UNCOMMON"
     case rare = "RARE"
@@ -34,7 +34,7 @@ enum Rarity: String, CaseIterable {
     }
 }
 
-enum Habitat: String, CaseIterable {
+enum Habitat: String, CaseIterable, Codable {
     case jungle = "JUNGLE"
     case plains = "PLAINS"
     case rocky = "ROCKY"

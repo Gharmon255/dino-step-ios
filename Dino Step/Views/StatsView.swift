@@ -41,6 +41,20 @@ struct StatsView: View {
                     }
                 }
 
+                if let persistenceMessage = gameState.persistenceStatus?.message {
+                    GameCard {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Persistence")
+                                .font(.headline)
+                                .foregroundStyle(.teal)
+
+                            Text(persistenceMessage)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Last Reward Roll")
