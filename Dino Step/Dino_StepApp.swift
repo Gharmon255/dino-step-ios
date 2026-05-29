@@ -9,6 +9,12 @@ import SwiftUI
 
 @main
 struct Dino_StepApp: App {
+    init() {
+#if os(iOS)
+        PhoneWatchConnectivityManager.shared.activate()
+#endif
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

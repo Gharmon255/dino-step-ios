@@ -50,6 +50,11 @@
 			path = "Dino Step Watch Watch App";
 			sourceTree = "<group>";
 		};
+		F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Dino Step Shared";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +80,7 @@
 			children = (
 				F1ED5B2D2FCA4350004E9AEB /* Dino Step */,
 				F1ED5BA82FCA50B8004E9AEB /* Dino Step Watch Watch App */,
+				F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */,
 				F1ED5B2C2FCA4350004E9AEB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,6 +113,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				F1ED5B2D2FCA4350004E9AEB /* Dino Step */,
+				F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */,
 			);
 			name = "Dino Step";
 			packageProductDependencies = (
@@ -129,6 +136,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				F1ED5BA82FCA50B8004E9AEB /* Dino Step Watch Watch App */,
+				F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */,
 			);
 			name = "Dino Step Watch Watch App";
 			packageProductDependencies = (

@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct Dino_Step_Watch_Watch_AppApp: App {
+    init() {
+        WatchConnectivityReceiver.shared.activate()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -7,6 +7,9 @@ import SwiftUI
 
 struct StatsView: View {
     @ObservedObject var gameState: GameState
+#if os(iOS)
+    @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
+#endif
 
     var body: some View {
         ScrollView {
@@ -74,6 +77,26 @@ struct StatsView: View {
                     }
                 }
 
+#if os(iOS)
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Apple Watch Sync")
+                            .font(.headline)
+                            .foregroundStyle(.indigo)
+
+                        statRow("WC Supported", watchManager.isSupported ? "Yes" : "No")
+                        statRow("Session State", watchManager.activationStateLabel)
+                        statRow("Watch Paired", watchManager.isPaired ? "Yes" : "No")
+                        statRow("Watch App Installed", watchManager.isWatchAppInstalled ? "Yes" : "No")
+                        statRow("Watch Reachable", watchManager.isReachable ? "Yes" : "No")
+                        statRow("Last Sync Message", watchManager.lastSyncMessage ?? "—")
+                        if let syncDate = watchManager.lastSyncDate {
+                            statRow("Last Sync Time", syncDate.formatted(date: .omitted, time: .shortened))
+                        }
+                    }
+                }
+#endif
+
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Last Reward Roll")
@@ -126,6 +149,9 @@ struct StatsView: View {
         .navigationTitle("Stats")
         .onAppear {
             gameState.refreshHealthKitStatus()
+#if os(iOS)
+            watchManager.activate()
+#endif
         }
     }
 

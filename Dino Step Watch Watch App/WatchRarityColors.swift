@@ -7,6 +7,14 @@ import SwiftUI
 
 enum WatchRarityColors {
     static func color(for rarity: WatchRarity) -> Color {
+        resolvedColor(for: rarity)
+    }
+
+    static func color(forRarityString rarity: String) -> Color {
+        resolvedColor(for: WatchRarity(rawValue: rarity) ?? .common)
+    }
+
+    private static func resolvedColor(for rarity: WatchRarity) -> Color {
         switch rarity {
         case .common:
             Color(red: 0.45, green: 0.62, blue: 0.38)

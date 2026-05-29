@@ -22,6 +22,9 @@ final class GameState: ObservableObject {
 
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
+#if os(iOS)
+    private let watchConnectivityManager: PhoneWatchConnectivityManager
+#endif
 
     init(
         persistenceStore: GamePersistenceStore? = nil,
@@ -31,6 +34,9 @@ final class GameState: ObservableObject {
         let healthKitService = healthKitStepService ?? HealthKitStepService()
         self.persistenceStore = store
         self.healthKitStepService = healthKitService
+#if os(iOS)
+        self.watchConnectivityManager = PhoneWatchConnectivityManager.shared
+#endif
         self.activeCreature = Self.makeMysteryEgg(rarity: .common)
 
         switch store.load() {
@@ -50,6 +56,9 @@ final class GameState: ObservableObject {
         }
 
         refreshHealthKitStatus()
+#if os(iOS)
+        syncToWatch()
+#endif
     }
 
     var currentEggRarity: Rarity {
@@ -235,5 +244,15 @@ final class GameState: ObservableObject {
         )
         persistenceStore.save(SavedGameStateMapper.makeSavedState(from: snapshot))
         persistenceStatus = .savedLocally
+#if os(iOS)
+        syncToWatch()
+#endif
     }
+
+#if os(iOS)
+    private func syncToWatch() {
+        let payload = WatchGameStatePayloadBuilder.build(from: self)
+        watchConnectivityManager.send(payload: payload)
+    }
+#endif
 }
