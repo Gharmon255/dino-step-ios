@@ -8,65 +8,112 @@ import SwiftUI
 struct CollectionView: View {
     @ObservedObject var gameState: GameState
 
+    @State private var selectedFilter: CollectionFilter = .all
+    @State private var selectedSort: CollectionSort = .rarity
+
+    private var stats: CollectionStats {
+        CollectionCatalog.stats(from: gameState.completedCreatures)
+    }
+
+    private var displayedEntries: [CollectionRosterEntry] {
+        let entries = CollectionCatalog.rosterEntries(from: gameState.completedCreatures)
+        let filtered = CollectionCatalog.filter(entries, by: selectedFilter)
+        return CollectionCatalog.sort(filtered, by: selectedSort)
+    }
+
     var body: some View {
-        Group {
-            if gameState.completedCreatures.isEmpty {
-                ContentUnavailableView(
-                    "No Dinosaurs Yet",
-                    systemImage: "fossil.shell.fill",
-                    description: Text("Hatch and grow a dinosaur, then claim your reward to add it here.")
-                )
-            } else {
-                List(gameState.completedCreatures.reversed()) { creature in
-                    HStack(spacing: 14) {
-                        CreatureStageVisualView(
-                            creature: creature.definition,
-                            stage: .adult,
-                            compact: true
-                        )
-                        .frame(width: 64)
+        ScrollView {
+            VStack(spacing: 16) {
+                CollectionSummaryView(stats: stats)
 
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(creature.definition.name)
-                                .font(.headline)
+                filterSection
 
-                            HStack(spacing: 6) {
-                                RarityBadge(rarity: creature.definition.rarity)
-                                Text(creature.definition.habitat.rawValue)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+                sortSection
 
-                            Text("\(creature.totalStepsCompleted.formatted()) steps")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                if displayedEntries.isEmpty {
+                    emptyFilterState
+                } else {
+                    LazyVStack(spacing: 12) {
+                        ForEach(displayedEntries) { entry in
+                            CollectionSpeciesCard(entry: entry)
                         }
-
-                        Spacer()
-
-                        Text(creature.completedAt, style: .date)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
                     }
-                    .padding(.vertical, 4)
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.secondarySystemBackground))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(
-                                        RarityColors.color(for: creature.definition.rarity).opacity(0.35),
-                                        lineWidth: 1
-                                    )
-                            )
-                            .padding(.vertical, 2)
-                    )
                 }
-                .listStyle(.insetGrouped)
+            }
+            .padding()
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("Collection")
+    }
+
+    private var filterSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Filter")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(CollectionFilter.allCases) { filter in
+                        filterChip(filter)
+                    }
+                }
             }
         }
-        .navigationTitle("Collection")
-        .background(Color(.systemGroupedBackground))
+    }
+
+    private var sortSection: some View {
+        HStack {
+            Text("Sort")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Picker("Sort", selection: $selectedSort) {
+                ForEach(CollectionSort.allCases) { sort in
+                    Text(sort.rawValue).tag(sort)
+                }
+            }
+            .pickerStyle(.menu)
+        }
+    }
+
+    private var emptyFilterState: some View {
+        GameCard {
+            VStack(spacing: 8) {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+
+                Text("No dinosaurs match this filter")
+                    .font(.subheadline.weight(.semibold))
+
+                Text("Try a different rarity or collection status.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+        }
+    }
+
+    private func filterChip(_ filter: CollectionFilter) -> some View {
+        Button {
+            selectedFilter = filter
+        } label: {
+            Text(filter.rawValue)
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(selectedFilter == filter ? Color.green.opacity(0.25) : Color(.tertiarySystemFill))
+                )
+                .foregroundStyle(selectedFilter == filter ? .primary : .secondary)
+        }
+        .buttonStyle(.plain)
     }
 }
 
