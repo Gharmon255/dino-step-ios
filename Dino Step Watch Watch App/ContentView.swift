@@ -44,7 +44,7 @@ struct ContentView: View {
                 .foregroundStyle(accentColor)
 
             WatchProgressRingView(
-                progressPercent: payload.progressPercent,
+                progressPercent: payload.ringProgressPercent,
                 accentColor: accentColor,
                 placeholderEmoji: payload.placeholderVisual
             )

@@ -16,17 +16,22 @@ struct WatchGameStatePayload: Codable, Equatable {
     let nextMilestone: Int
     let totalStepsRequired: Int
     let progressPercent: Double
-    let stepsUntilNextMilestone: Int
+    let stageProgressPercent: Double
+    let stepsUntilNextStage: Int
     let nextStageLabel: String
     let isRevealed: Bool
     let placeholderVisual: String
     let updatedAt: Date
 
+    var ringProgressPercent: Double {
+        min(100.0, max(0.0, stageProgressPercent))
+    }
+
     var milestoneText: String {
         if stage == "ADULT" {
-            return "Fully grown"
+            return "Ready to claim"
         }
-        return "\(stepsUntilNextMilestone.formatted()) to \(nextStageLabel)"
+        return "\(stepsUntilNextStage.formatted()) to \(nextStageLabel)"
     }
 }
 
@@ -44,6 +49,51 @@ extension WatchGameStatePayload {
               let data = json.data(using: .utf8) else {
             return nil
         }
-        return try? JSONDecoder().decode(WatchGameStatePayload.self, from: data)
+
+        if let payload = try? JSONDecoder().decode(WatchGameStatePayload.self, from: data) {
+            return payload
+        }
+
+        return decodeLegacyPayload(from: data)
+    }
+
+    /// Supports payloads saved before stage-progress fields were added.
+    private static func decodeLegacyPayload(from data: Data) -> WatchGameStatePayload? {
+        struct LegacyPayload: Codable {
+            let displayName: String
+            let creatureName: String
+            let stage: String
+            let rarity: String
+            let currentSteps: Int
+            let nextMilestone: Int
+            let totalStepsRequired: Int
+            let progressPercent: Double
+            let stepsUntilNextMilestone: Int?
+            let nextStageLabel: String
+            let isRevealed: Bool
+            let placeholderVisual: String
+            let updatedAt: Date
+        }
+
+        guard let legacy = try? JSONDecoder().decode(LegacyPayload.self, from: data) else {
+            return nil
+        }
+
+        return WatchGameStatePayload(
+            displayName: legacy.displayName,
+            creatureName: legacy.creatureName,
+            stage: legacy.stage,
+            rarity: legacy.rarity,
+            currentSteps: legacy.currentSteps,
+            nextMilestone: legacy.nextMilestone,
+            totalStepsRequired: legacy.totalStepsRequired,
+            progressPercent: legacy.progressPercent,
+            stageProgressPercent: legacy.progressPercent,
+            stepsUntilNextStage: legacy.stepsUntilNextMilestone ?? 0,
+            nextStageLabel: legacy.nextStageLabel,
+            isRevealed: legacy.isRevealed,
+            placeholderVisual: legacy.placeholderVisual,
+            updatedAt: legacy.updatedAt
+        )
     }
 }

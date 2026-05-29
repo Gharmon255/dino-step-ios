@@ -28,21 +28,19 @@ enum WatchGameStatePayloadBuilder {
             nextMilestone: gameState.nextMilestone ?? definition.totalStepsRequired,
             totalStepsRequired: definition.totalStepsRequired,
             progressPercent: gameState.progressPercent,
-            stepsUntilNextMilestone: gameState.stepsUntilNextMilestone ?? 0,
-            nextStageLabel: nextStageLabel(for: stage),
+            stageProgressPercent: GameLogic.stageProgressPercent(
+                currentSteps: active.currentSteps,
+                creatureDefinition: definition
+            ),
+            stepsUntilNextStage: GameLogic.stepsUntilNextStage(
+                currentSteps: active.currentSteps,
+                creatureDefinition: definition
+            ),
+            nextStageLabel: GameLogic.nextStageLabel(for: stage),
             isRevealed: isRevealed,
             placeholderVisual: stage == .egg ? "🥚" : stageVisual.displayEmoji,
             updatedAt: Date()
         )
-    }
-
-    private static func nextStageLabel(for stage: GrowthStage) -> String {
-        switch stage {
-        case .egg: "hatch"
-        case .baby: "juvenile"
-        case .juvenile: "adult"
-        case .adult: "complete"
-        }
     }
 }
 #endif
