@@ -48,6 +48,8 @@ struct ContentView: View {
                 accentColor: accentColor,
                 placeholderEmoji: payload.placeholderVisual,
                 eggRarity: payload.rarity,
+                creatureName: payload.creatureName,
+                stage: payload.stage,
                 isEggStage: payload.stage == "EGG"
             )
             .padding(.vertical, 4)

@@ -15,6 +15,14 @@ struct CreatureStageVisualView: View {
         CreatureVisuals.stageVisual(for: creature, stage: stage, eggRarity: eggRarity)
     }
 
+    private var usesCreatureAsset: Bool {
+        CreatureAssetVisual.shouldUseAssetImage(for: creature.name, stage: stage.rawValue)
+    }
+
+    private var creatureAssetName: String? {
+        CreatureAssetVisual.assetName(for: creature.name, stage: stage.rawValue)
+    }
+
     var body: some View {
         if stage == .egg {
             eggView
@@ -34,27 +42,37 @@ struct CreatureStageVisualView: View {
     }
 
     private var hatchedView: some View {
-        let circleSize = compact ? 52 : stageVisual.size
-        let emojiSize = compact ? 30 : stageVisual.emojiFontSize
+        let visualSize = compact ? 52 : stageVisual.size
 
         return VStack(spacing: compact ? 0 : 6) {
             ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [stageVisual.accentColor, stageVisual.secondaryColor],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                if usesCreatureAsset, let creatureAssetName {
+                    Circle()
+                        .strokeBorder(stageVisual.accentColor.opacity(0.35), lineWidth: compact ? 2 : 3)
+                        .frame(width: visualSize, height: visualSize)
+
+                    Image(creatureAssetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: visualSize * 0.92, height: visualSize * 0.92)
+                } else {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [stageVisual.accentColor, stageVisual.secondaryColor],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .frame(width: circleSize, height: circleSize)
+                        .frame(width: visualSize, height: visualSize)
 
-                Circle()
-                    .strokeBorder(stageVisual.accentColor.opacity(0.8), lineWidth: compact ? 2 : 3)
-                    .frame(width: circleSize, height: circleSize)
+                    Circle()
+                        .strokeBorder(stageVisual.accentColor.opacity(0.8), lineWidth: compact ? 2 : 3)
+                        .frame(width: visualSize, height: visualSize)
 
-                Text(stageVisual.displayEmoji)
-                    .font(.system(size: emojiSize))
+                    Text(stageVisual.displayEmoji)
+                        .font(.system(size: compact ? 30 : stageVisual.emojiFontSize))
+                }
             }
 
             if !compact {
@@ -70,12 +88,12 @@ struct CreatureStageVisualView: View {
     VStack(spacing: 24) {
         CreatureStageVisualView(
             creature: CreatureCatalog.commonCreatures[0],
-            stage: .egg,
-            eggRarity: .legendary
+            stage: .baby
         )
         CreatureStageVisualView(
             creature: CreatureCatalog.commonCreatures[0],
-            stage: .baby
+            stage: .adult,
+            compact: true
         )
     }
     .padding()

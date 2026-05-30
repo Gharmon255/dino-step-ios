@@ -10,6 +10,8 @@ struct WatchProgressRingView: View {
     let accentColor: Color
     let placeholderEmoji: String
     var eggRarity: String?
+    var creatureName: String?
+    var stage: String?
     var isEggStage: Bool = false
 
     private var progress: Double {
@@ -43,6 +45,13 @@ struct WatchProgressRingView: View {
     private var centerVisual: some View {
         if isEggStage, let eggRarity {
             watchEggVisual(for: eggRarity)
+        } else if let creatureName, let stage,
+                  CreatureAssetVisual.shouldUseAssetImage(for: creatureName, stage: stage),
+                  let assetName = CreatureAssetVisual.assetName(for: creatureName, stage: stage) {
+            Image(assetName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 42, height: 42)
         } else {
             Text(placeholderEmoji)
                 .font(.system(size: 28))
@@ -65,9 +74,9 @@ struct WatchProgressRingView: View {
 #Preview {
     WatchProgressRingView(
         progressPercent: 25,
-        accentColor: WatchRarityColors.color(for: .legendary),
-        placeholderEmoji: "🥚",
-        eggRarity: "LEGENDARY",
-        isEggStage: true
+        accentColor: WatchRarityColors.color(for: .common),
+        placeholderEmoji: "🦖",
+        creatureName: "Tiny Raptor",
+        stage: "BABY"
     )
 }
