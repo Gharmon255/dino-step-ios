@@ -5,6 +5,10 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 enum RarityEggVisual {
     struct Style {
         let primary: Color
@@ -15,6 +19,17 @@ enum RarityEggVisual {
         let showsGlow: Bool
         let showsOuterRing: Bool
         let showsSparkle: Bool
+    }
+
+    static func assetName(for rarity: String) -> String {
+        switch rarity.uppercased() {
+        case "COMMON": "egg_common"
+        case "UNCOMMON": "egg_uncommon"
+        case "RARE": "egg_rare"
+        case "EPIC": "egg_epic"
+        case "LEGENDARY": "egg_legendary"
+        default: "egg_common"
+        }
     }
 
     static func style(for rarity: String) -> Style {
@@ -82,6 +97,22 @@ enum RarityEggVisual {
     static func primaryColor(for rarity: String) -> Color {
         style(for: rarity).primary
     }
+
+    static func assetIsAvailable(named name: String) -> Bool {
+#if canImport(UIKit)
+        UIImage(named: name) != nil
+#else
+        false
+#endif
+    }
+
+    static func shouldUseAssetImage(for rarity: String) -> Bool {
+#if os(iOS) || os(watchOS)
+        assetIsAvailable(named: assetName(for: rarity))
+#else
+        false
+#endif
+    }
 }
 
 struct EggShape: Shape {
@@ -92,71 +123,43 @@ struct EggShape: Shape {
     }
 }
 
-struct RarityEggView: View {
-    let rarity: String
-    var size: CGFloat = 120
-    var compact: Bool = false
-
-    private var style: RarityEggVisual.Style {
-        RarityEggVisual.style(for: rarity)
-    }
-
-    private var eggWidth: CGFloat { compact ? size : size }
-    private var eggHeight: CGFloat { compact ? size * 1.18 : size * 1.22 }
+struct RarityEggPlaceholderView: View {
+    let style: RarityEggVisual.Style
+    let eggWidth: CGFloat
+    let eggHeight: CGFloat
+    let compact: Bool
 
     var body: some View {
-        ZStack {
-            if style.showsGlow {
-                EggShape()
-                    .fill(style.glow.opacity(compact ? 0.28 : 0.38))
-                    .frame(width: eggWidth * 1.12, height: eggHeight * 1.08)
-                    .blur(radius: compact ? 4 : 10)
-            }
-
-            if style.showsOuterRing {
-                EggShape()
-                    .stroke(style.primary.opacity(0.55), lineWidth: compact ? 1.5 : 2.5)
-                    .frame(width: eggWidth * 1.14, height: eggHeight * 1.1)
-            }
-
-            EggShape()
-                .fill(
-                    LinearGradient(
-                        colors: [style.primary, style.secondary],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+        EggShape()
+            .fill(
+                LinearGradient(
+                    colors: [style.primary, style.secondary],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .frame(width: eggWidth, height: eggHeight)
-                .overlay {
-                    EggShape()
-                        .stroke(style.border, lineWidth: compact ? 1.5 : 2.5)
-                }
-                .overlay {
-                    speckleOverlay
-                }
-                .overlay {
-                    EggShape()
-                        .fill(
-                            LinearGradient(
-                                colors: [.white.opacity(0.28), .clear],
-                                startPoint: .topLeading,
-                                endPoint: .center
-                            )
-                        )
-                        .frame(width: eggWidth * 0.42, height: eggHeight * 0.48)
-                        .offset(x: -eggWidth * 0.14, y: -eggHeight * 0.16)
-                        .clipShape(EggShape().size(width: eggWidth, height: eggHeight))
-                }
-
-            if style.showsSparkle && !compact {
-                Image(systemName: "sparkles")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .offset(x: eggWidth * 0.28, y: -eggHeight * 0.22)
+            )
+            .frame(width: eggWidth, height: eggHeight)
+            .overlay {
+                EggShape()
+                    .stroke(style.border, lineWidth: compact ? 1.5 : 2.5)
             }
-        }
-        .frame(width: eggWidth * 1.2, height: eggHeight * 1.15)
+            .overlay {
+                speckleOverlay
+            }
+            .overlay {
+                EggShape()
+                    .fill(
+                        LinearGradient(
+                            colors: [.white.opacity(0.28), .clear],
+                            startPoint: .topLeading,
+                            endPoint: .center
+                        )
+                    )
+                    .frame(width: eggWidth * 0.42, height: eggHeight * 0.48)
+                    .offset(x: -eggWidth * 0.14, y: -eggHeight * 0.16)
+                    .frame(width: eggWidth, height: eggHeight)
+                    .clipShape(EggShape())
+            }
     }
 
     @ViewBuilder
@@ -175,12 +178,68 @@ struct RarityEggView: View {
                 .frame(width: compact ? 2 : 3, height: compact ? 2 : 3)
                 .offset(x: eggWidth * 0.04, y: -eggHeight * 0.04)
         }
-        .clipShape(EggShape().size(width: eggWidth, height: eggHeight))
+        .frame(width: eggWidth, height: eggHeight)
+        .clipShape(EggShape())
     }
 }
 
-private extension EggShape {
-    func size(width: CGFloat, height: CGFloat) -> some View {
-        frame(width: width, height: height)
+struct RarityEggView: View {
+    let rarity: String
+    var size: CGFloat = 120
+    var compact: Bool = false
+
+    private var style: RarityEggVisual.Style {
+        RarityEggVisual.style(for: rarity)
+    }
+
+    private var assetName: String {
+        RarityEggVisual.assetName(for: rarity)
+    }
+
+    private var usesAssetImage: Bool {
+        RarityEggVisual.shouldUseAssetImage(for: rarity)
+    }
+
+    private var eggWidth: CGFloat { size }
+    private var eggHeight: CGFloat { compact ? size * 1.18 : size * 1.22 }
+
+    var body: some View {
+        ZStack {
+            if style.showsGlow {
+                EggShape()
+                    .fill(style.glow.opacity(compact ? 0.28 : 0.38))
+                    .frame(width: eggWidth * 1.12, height: eggHeight * 1.08)
+                    .blur(radius: compact ? 4 : 10)
+            }
+
+            if style.showsOuterRing {
+                EggShape()
+                    .stroke(style.primary.opacity(0.55), lineWidth: compact ? 1.5 : 2.5)
+                    .frame(width: eggWidth * 1.14, height: eggHeight * 1.1)
+            }
+
+            if usesAssetImage {
+                Image(assetName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: eggWidth, height: eggHeight)
+                    .shadow(color: style.glow.opacity(style.showsGlow ? 0.35 : 0), radius: compact ? 4 : 8)
+            } else {
+                RarityEggPlaceholderView(
+                    style: style,
+                    eggWidth: eggWidth,
+                    eggHeight: eggHeight,
+                    compact: compact
+                )
+            }
+
+            if style.showsSparkle && !compact {
+                Image(systemName: "sparkles")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.85))
+                    .offset(x: eggWidth * 0.28, y: -eggHeight * 0.22)
+            }
+        }
+        .frame(width: eggWidth * 1.2, height: eggHeight * 1.15)
     }
 }

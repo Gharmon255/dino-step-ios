@@ -42,10 +42,22 @@ struct WatchProgressRingView: View {
     @ViewBuilder
     private var centerVisual: some View {
         if isEggStage, let eggRarity {
-            RarityEggView(rarity: eggRarity, size: 36, compact: true)
+            watchEggVisual(for: eggRarity)
         } else {
             Text(placeholderEmoji)
                 .font(.system(size: 28))
+        }
+    }
+
+    @ViewBuilder
+    private func watchEggVisual(for rarity: String) -> some View {
+        if RarityEggVisual.shouldUseAssetImage(for: rarity) {
+            Image(RarityEggVisual.assetName(for: rarity))
+                .resizable()
+                .scaledToFit()
+                .frame(width: 42, height: 42)
+        } else {
+            RarityEggView(rarity: rarity, size: 32, compact: true)
         }
     }
 }
