@@ -26,6 +26,13 @@ enum CreatureAssetVisual {
             case "ADULT": return "dino_triceratops_adult"
             default: return nil
             }
+        case "T-Rex":
+            switch stage.uppercased() {
+            case "BABY": return "dino_trex_baby"
+            case "JUVENILE": return "dino_trex_juvenile"
+            case "ADULT": return "dino_trex_adult"
+            default: return nil
+            }
         default:
             return nil
         }
