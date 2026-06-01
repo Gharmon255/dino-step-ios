@@ -230,6 +230,10 @@ struct StatsView: View {
                         Text("The species picker only affects Force Selected Species Egg. Rarity buttons and normal gameplay stay random.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
+
+                        Text("Collection check: Force a species → add steps through baby/juvenile/adult → claim reward → open Collection and confirm the adult card shows the correct art (or emoji fallback).")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
 #endif

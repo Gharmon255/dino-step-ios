@@ -18,10 +18,14 @@ struct CollectionSpeciesCard: View {
                 visual
 
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(entry.isCollected ? entry.definition.name : "Undiscovered")
-                            .font(.headline)
-                            .foregroundStyle(entry.isCollected ? .primary : .secondary)
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(entry.isCollected ? entry.definition.name : "Undiscovered")
+                                .font(.headline)
+                                .foregroundStyle(entry.isCollected ? .primary : .secondary)
+
+                            collectionStatusBadge
+                        }
 
                         Spacer()
 
@@ -39,6 +43,12 @@ struct CollectionSpeciesCard: View {
                         RarityBadge(rarity: entry.definition.rarity)
                         Text(entry.isCollected ? entry.definition.habitat.rawValue : "???")
                             .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if entry.isCollected {
+                        Text("Adult · Discovered")
+                            .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
 
@@ -61,6 +71,18 @@ struct CollectionSpeciesCard: View {
         .opacity(entry.isCollected ? 1.0 : 0.88)
     }
 
+    private var collectionStatusBadge: some View {
+        Text(entry.isCollected ? "Discovered" : "Locked")
+            .font(.caption2.weight(.semibold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(
+                Capsule()
+                    .fill(entry.isCollected ? Color.green.opacity(0.18) : Color(.tertiarySystemFill))
+            )
+            .foregroundStyle(entry.isCollected ? .green : .secondary)
+    }
+
     @ViewBuilder
     private var visual: some View {
         ZStack {
@@ -71,21 +93,26 @@ struct CollectionSpeciesCard: View {
                     compact: true
                 )
             } else {
-                ZStack {
-                    Circle()
-                        .fill(Color(.tertiarySystemFill))
-                        .frame(width: 52, height: 52)
-
-                    Circle()
-                        .strokeBorder(rarityColor.opacity(0.45), lineWidth: 2)
-                        .frame(width: 52, height: 52)
-
-                    Image(systemName: "lock.fill")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                lockedVisual
             }
         }
         .frame(width: 56)
+    }
+
+    private var lockedVisual: some View {
+        ZStack {
+            Circle()
+                .fill(Color(.tertiarySystemFill))
+                .frame(width: 52, height: 52)
+
+            Circle()
+                .strokeBorder(rarityColor.opacity(0.45), lineWidth: 2)
+                .frame(width: 52, height: 52)
+
+            Image(systemName: "lock.fill")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityLabel("Locked species")
     }
 }

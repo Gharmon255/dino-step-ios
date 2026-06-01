@@ -9,7 +9,7 @@ struct CollectionView: View {
     @ObservedObject var gameState: GameState
 
     @State private var selectedFilter: CollectionFilter = .all
-    @State private var selectedSort: CollectionSort = .rarity
+    @State private var selectedSort: CollectionSort = .collectedFirst
 
     private var stats: CollectionStats {
         CollectionCatalog.stats(from: gameState.completedCreatures)

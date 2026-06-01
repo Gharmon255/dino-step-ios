@@ -131,7 +131,12 @@ enum CollectionCatalog {
     static func sort(_ entries: [CollectionRosterEntry], by sort: CollectionSort) -> [CollectionRosterEntry] {
         switch sort {
         case .rarity:
-            return entries.sorted { rarityRank($0.definition.rarity) < rarityRank($1.definition.rarity) }
+            return entries.sorted {
+                let lhsRank = rarityRank($0.definition.rarity)
+                let rhsRank = rarityRank($1.definition.rarity)
+                if lhsRank != rhsRank { return lhsRank < rhsRank }
+                return catalogOrder(for: $0.definition) < catalogOrder(for: $1.definition)
+            }
         case .name:
             return entries.sorted { $0.definition.name.localizedCaseInsensitiveCompare($1.definition.name) == .orderedAscending }
         case .collectedFirst:
@@ -139,16 +144,25 @@ enum CollectionCatalog {
                 if lhs.isCollected != rhs.isCollected {
                     return lhs.isCollected && !rhs.isCollected
                 }
-                return lhs.definition.name.localizedCaseInsensitiveCompare(rhs.definition.name) == .orderedAscending
+                let lhsRarity = rarityRank(lhs.definition.rarity)
+                let rhsRarity = rarityRank(rhs.definition.rarity)
+                if lhsRarity != rhsRarity {
+                    return lhsRarity < rhsRarity
+                }
+                return catalogOrder(for: lhs.definition) < catalogOrder(for: rhs.definition)
             }
         case .stepRequirement:
             return entries.sorted {
                 if $0.definition.totalStepsRequired == $1.definition.totalStepsRequired {
-                    return $0.definition.name < $1.definition.name
+                    return catalogOrder(for: $0.definition) < catalogOrder(for: $1.definition)
                 }
                 return $0.definition.totalStepsRequired < $1.definition.totalStepsRequired
             }
         }
+    }
+
+    private static func catalogOrder(for definition: CreatureDefinition) -> Int {
+        CreatureCatalog.allCreatures.firstIndex(where: { $0.id == definition.id }) ?? Int.max
     }
 
     private static func rarityRank(_ rarity: Rarity) -> Int {
