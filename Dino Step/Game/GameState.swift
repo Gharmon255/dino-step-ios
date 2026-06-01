@@ -39,7 +39,7 @@ final class GameState: ObservableObject {
 #if os(iOS)
         self.watchConnectivityManager = PhoneWatchConnectivityManager.shared
 #endif
-        self.activeCreature = Self.makeMysteryEgg(rarity: .common)
+        self.activeCreature = Self.createRandomEggWithRarity(.common)
 
         switch store.load() {
         case .noSavedState:
@@ -172,22 +172,18 @@ final class GameState: ObservableObject {
         let outcome = EggRewardLogic.rollEggReward()
         lastRewardedEggRarity = outcome.rarity
         lastRewardRollPercent = outcome.rollPercent
-        activeCreature = Self.makeMysteryEgg(rarity: outcome.rarity)
+        activeCreature = Self.createRandomEggWithRarity(outcome.rarity)
         persistCurrentState()
     }
 
     func giveRandomEgg() {
-        let outcome = EggRewardLogic.rollEggReward()
-        lastRewardedEggRarity = outcome.rarity
-        lastRewardRollPercent = outcome.rollPercent
-        activeCreature = Self.makeMysteryEgg(rarity: outcome.rarity)
-        persistCurrentState()
+        createRandomEgg()
     }
 
     func giveEgg(rarity: Rarity) {
         lastRewardedEggRarity = rarity
         lastRewardRollPercent = nil
-        activeCreature = Self.makeMysteryEgg(rarity: rarity)
+        activeCreature = Self.createRandomEggWithRarity(rarity)
         persistCurrentState()
     }
 
@@ -195,7 +191,7 @@ final class GameState: ObservableObject {
         completedCreatures = []
         lastRewardedEggRarity = nil
         lastRewardRollPercent = nil
-        activeCreature = Self.makeMysteryEgg(rarity: .common)
+        activeCreature = Self.createRandomEggWithRarity(.common)
         persistCurrentState()
     }
 
@@ -205,47 +201,80 @@ final class GameState: ObservableObject {
     }
 
     func forceNewEggForTesting() {
-        if let forced = Self.devForcedCreatureName(),
-           let definition = CreatureCatalog.creature(named: forced) {
-            activeCreature = ActiveCreature(
-                eggRarity: definition.rarity,
-                definition: definition,
-                currentSteps: 0,
-                startedAt: Date()
-            )
-            persistCurrentState()
+        if let speciesId = Self.getCurrentTestSpeciesOverride() {
+            createForcedSpeciesEgg(speciesId: speciesId)
         } else {
-            giveRandomEgg()
+            createRandomEgg()
         }
     }
 
-    static func devForcedCreatureName() -> String? {
-        let value = UserDefaults.standard.string(forKey: devNextEggSpeciesOverrideKey)
-        guard let value, !value.isEmpty, value != "RANDOM" else { return nil }
-        return value
+    func createRandomEgg() {
+        let outcome = EggRewardLogic.rollEggReward()
+        lastRewardedEggRarity = outcome.rarity
+        lastRewardRollPercent = outcome.rollPercent
+        activeCreature = Self.createRandomEggWithRarity(outcome.rarity)
+        persistCurrentState()
     }
 
-    static func makeMysteryEgg(rarity: Rarity) -> ActiveCreature {
-        let definition: CreatureDefinition
-
-        if let forced = devForcedCreatureName(),
-           let forcedDefinition = CreatureCatalog.creature(named: forced) {
-            definition = forcedDefinition
-        } else {
-            definition = CreatureCatalog.creatures(for: rarity).randomElement()!
+    func createForcedSpeciesEgg(speciesId: String) {
+        guard let definition = CreatureCatalog.creature(withSpeciesId: speciesId) else {
             #if DEBUG
-            if let forced = devForcedCreatureName(), CreatureCatalog.creature(named: forced) == nil {
-                print("[DevTesting] Forced egg species not found in catalog: \(forced)")
-            }
+            print("[DevTesting] Unknown test species override: \(speciesId)")
             #endif
+            return
         }
 
-        return ActiveCreature(
-            eggRarity: rarity,
+        lastRewardedEggRarity = definition.rarity
+        lastRewardRollPercent = nil
+        activeCreature = ActiveCreature(
+            eggRarity: definition.rarity,
             definition: definition,
             currentSteps: 0,
             startedAt: Date()
         )
+        persistCurrentState()
+    }
+
+    static func getCurrentTestSpeciesOverride() -> String? {
+        guard let stored = UserDefaults.standard.string(forKey: devNextEggSpeciesOverrideKey),
+              !stored.isEmpty,
+              stored != "RANDOM" else {
+            return nil
+        }
+        return resolveTestSpeciesOverride(stored)
+    }
+
+    static func getRandomSpeciesForRarity(_ rarity: Rarity) -> CreatureDefinition {
+        CreatureCatalog.creatures(for: rarity).randomElement()!
+    }
+
+    static func createRandomEggWithRarity(_ rarity: Rarity) -> ActiveCreature {
+        ActiveCreature(
+            eggRarity: rarity,
+            definition: getRandomSpeciesForRarity(rarity),
+            currentSteps: 0,
+            startedAt: Date()
+        )
+    }
+
+    private static func resolveTestSpeciesOverride(_ stored: String) -> String? {
+        if CreatureCatalog.creature(withSpeciesId: stored) != nil {
+            return stored
+        }
+
+        if let creature = CreatureCatalog.creature(named: stored) {
+            return creature.speciesId
+        }
+
+        if let normalized = CreatureAssetVisual.normalizedSpeciesId(from: stored),
+           CreatureCatalog.creature(withSpeciesId: normalized) != nil {
+            return normalized
+        }
+
+        #if DEBUG
+        print("[DevTesting] Unrecognized test species override: \(stored)")
+        #endif
+        return nil
     }
 
     private func apply(_ snapshot: GameStateSnapshot) {

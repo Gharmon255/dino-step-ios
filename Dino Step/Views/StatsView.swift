@@ -7,9 +7,11 @@ import SwiftUI
 
 struct StatsView: View {
     @ObservedObject var gameState: GameState
-#if os(iOS)
+#if DEBUG && os(iOS)
     @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
     @AppStorage(GameState.devNextEggSpeciesOverrideKey) private var devNextEggSpecies: String = "RANDOM"
+#elseif os(iOS)
+    @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
 #endif
 
     var body: some View {
@@ -115,6 +117,7 @@ struct StatsView: View {
                     }
                 }
 
+#if DEBUG && os(iOS)
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Egg Testing")
@@ -125,6 +128,10 @@ struct StatsView: View {
                             gameState.giveRandomEgg()
                         }
                         .buttonStyle(DebugButtonStyle(color: .gray))
+
+                        Text("Give Random Egg by Rarity")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
 
                         VStack(spacing: 10) {
                             RarityGiveEggButton(rarity: .common) { gameState.giveEgg(rarity: .common) }
@@ -146,33 +153,32 @@ struct StatsView: View {
                     }
                 }
 
-#if DEBUG && os(iOS)
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Developer Testing")
                             .font(.headline)
                             .foregroundStyle(.pink)
 
-                        Picker("Next Egg Species", selection: $devNextEggSpecies) {
+                        Picker("Test Species Override", selection: $devNextEggSpecies) {
                             Text("Random / Normal").tag("RANDOM")
-                            Text("Tiny Raptor").tag("Tiny Raptor")
-                            Text("Triceratops").tag("Triceratops")
-                            Text("T-Rex").tag("T-Rex")
-                            Text("Stegosaurus").tag("Stegosaurus")
-                            Text("Brachiosaurus").tag("Brachiosaurus")
-                            Text("Ankylosaurus").tag("Ankylosaurus")
-                            Text("Parasaurolophus").tag("Parasaurolophus")
-                            Text("Spinosaurus").tag("Spinosaurus")
-                            Text("Pteranodon").tag("Pteranodon")
+                            Text("Tiny Raptor").tag("tiny_raptor")
+                            Text("Triceratops").tag("triceratops")
+                            Text("T-Rex").tag("trex")
+                            Text("Stegosaurus").tag("stegosaurus")
+                            Text("Brachiosaurus").tag("brachiosaurus")
+                            Text("Ankylosaurus").tag("ankylosaurus")
+                            Text("Parasaurolophus").tag("parasaurolophus")
+                            Text("Spinosaurus").tag("spinosaurus")
+                            Text("Pteranodon").tag("pteranodon")
                         }
                         .pickerStyle(.menu)
 
-                        Button("Force New Egg (Uses Selected Species)") {
+                        Button("Force Selected Species Egg") {
                             gameState.forceNewEggForTesting()
                         }
                         .buttonStyle(DebugButtonStyle(color: .pink))
 
-                        Text("This is a DEBUG-only testing tool. Set to Random / Normal to restore standard egg behavior.")
+                        Text("The species picker only affects Force Selected Species Egg. Rarity buttons and normal gameplay stay random.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
