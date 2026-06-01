@@ -163,7 +163,7 @@ struct StatsView: View {
                             Text("Ankylosaurus").tag("Ankylosaurus")
                             Text("Parasaurolophus").tag("Parasaurolophus")
                             Text("Spinosaurus").tag("Spinosaurus")
-                            Text("Pteranodon").tag("Pterodactyl")
+                            Text("Pteranodon").tag("Pteranodon")
                         }
                         .pickerStyle(.menu)
 
