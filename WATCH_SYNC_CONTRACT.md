@@ -58,7 +58,7 @@ iPhone computes `stageProgressPercent` in `GameLogic.stageProgressPercent` per s
 Canonical asset-backed species IDs (Sprint 1 catalog):
 
 - `tiny_raptor`, `triceratops`, `trex`, `stegosaurus`, `brachiosaurus`
-- `ankylosaurus`, `parasaurolophus`, `spinosaurus`, `pteranodon`
+- `ankylosaurus`, `parasaurolophus`, `spinosaurus`, `pteranodon`, `dilophosaurus`
 
 **Asset naming pattern (Sprint 2):**
 

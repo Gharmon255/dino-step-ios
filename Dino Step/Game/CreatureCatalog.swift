@@ -51,7 +51,7 @@ enum CreatureCatalog {
     static let uncommonCreatures: [CreatureDefinition] = [
         creature(7, "Stegosaurus", .uncommon, .forest, 18000, 3600, 9000, speciesId: "stegosaurus"),
         creature(8, "Pteranodon", .uncommon, .mountain, 22000, 4400, 11000, speciesId: "pteranodon"),
-        creature(9, "Dilophosaurus", .uncommon, .jungle, 20000, 4000, 10000),
+        creature(9, "Dilophosaurus", .uncommon, .jungle, 20000, 4000, 10000, speciesId: "dilophosaurus"),
         creature(10, "Iguanodon", .uncommon, .forest, 19000, 3800, 9500),
         creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000),
         creature(12, "Baryonyx", .uncommon, .swamp, 25000, 5000, 12500),

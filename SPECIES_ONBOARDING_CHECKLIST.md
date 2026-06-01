@@ -2,8 +2,6 @@
 
 Use this checklist when adding a **new asset-backed dinosaur** to the Dino Step iOS and watchOS apps.
 
-> **Dilophosaurus** is intentionally **not** onboarded yet. Wait until clean baby/juvenile/adult PNGs are ready.
-
 ## Current asset-backed species (reference)
 
 | speciesId | Display name | Rarity |
@@ -17,6 +15,10 @@ Use this checklist when adding a **new asset-backed dinosaur** to the Dino Step 
 | `brachiosaurus` | Brachiosaurus | Uncommon |
 | `trex` | T-Rex | Rare |
 | `spinosaurus` | Spinosaurus | Rare |
+| `pteranodon` | Pteranodon | Uncommon |
+| `dilophosaurus` | Dilophosaurus | Uncommon |
+
+> **Note:** Dilophosaurus uses the existing catalog entry (index 9, Uncommon, jungle). Assets: `dino_dilophosaurus_{baby,juvenile,adult}`.
 
 ---
 

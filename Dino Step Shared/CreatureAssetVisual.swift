@@ -20,6 +20,7 @@ enum CreatureAssetVisual {
         "parasaurolophus",
         "spinosaurus",
         "pteranodon",
+        "dilophosaurus",
     ]
 
     /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.

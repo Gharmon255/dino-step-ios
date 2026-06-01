@@ -219,6 +219,7 @@ struct StatsView: View {
                             Text("Parasaurolophus").tag("parasaurolophus")
                             Text("Spinosaurus").tag("spinosaurus")
                             Text("Pteranodon").tag("pteranodon")
+                            Text("Dilophosaurus").tag("dilophosaurus")
                         }
                         .pickerStyle(.menu)
 
