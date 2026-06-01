@@ -6,17 +6,7 @@
 import Foundation
 
 enum CreatureCatalog {
-    static let assetBackedSpeciesIds: Set<String> = [
-        "tiny_raptor",
-        "triceratops",
-        "trex",
-        "stegosaurus",
-        "brachiosaurus",
-        "ankylosaurus",
-        "parasaurolophus",
-        "spinosaurus",
-        "pteranodon",
-    ]
+    static let assetBackedSpeciesIds = CreatureAssetVisual.assetBackedSpeciesIds
 
     static let allCreatures: [CreatureDefinition] = commonCreatures
         + uncommonCreatures

@@ -10,74 +10,51 @@ import UIKit
 #endif
 
 enum CreatureAssetVisual {
-    static func assetName(for creatureName: String, stage: String) -> String? {
-        switch creatureName {
-        case "Tiny Raptor":
-            switch stage.uppercased() {
-            case "BABY": return "dino_tiny_raptor_baby"
-            case "JUVENILE": return "dino_tiny_raptor_juvenile"
-            case "ADULT": return "dino_tiny_raptor_adult"
-            default: return nil
-            }
-        case "Triceratops":
-            switch stage.uppercased() {
-            case "BABY": return "dino_triceratops_baby"
-            case "JUVENILE": return "dino_triceratops_juvenile"
-            case "ADULT": return "dino_triceratops_adult"
-            default: return nil
-            }
-        case "T-Rex":
-            switch stage.uppercased() {
-            case "BABY": return "dino_trex_baby"
-            case "JUVENILE": return "dino_trex_juvenile"
-            case "ADULT": return "dino_trex_adult"
-            default: return nil
-            }
-        case "Stegosaurus":
-            switch stage.uppercased() {
-            case "BABY": return "dino_stegosaurus_baby"
-            case "JUVENILE": return "dino_stegosaurus_juvenile"
-            case "ADULT": return "dino_stegosaurus_adult"
-            default: return nil
-            }
-        case "Brachiosaurus":
-            switch stage.uppercased() {
-            case "BABY": return "dino_brachiosaurus_baby"
-            case "JUVENILE": return "dino_brachiosaurus_juvenile"
-            case "ADULT": return "dino_brachiosaurus_adult"
-            default: return nil
-            }
-        case "Ankylosaurus":
-            switch stage.uppercased() {
-            case "BABY": return "dino_ankylosaurus_baby"
-            case "JUVENILE": return "dino_ankylosaurus_juvenile"
-            case "ADULT": return "dino_ankylosaurus_adult"
-            default: return nil
-            }
-        case "Parasaurolophus":
-            switch stage.uppercased() {
-            case "BABY": return "dino_parasaurolophus_baby"
-            case "JUVENILE": return "dino_parasaurolophus_juvenile"
-            case "ADULT": return "dino_parasaurolophus_adult"
-            default: return nil
-            }
-        case "Spinosaurus":
-            switch stage.uppercased() {
-            case "BABY": return "dino_spinosaurus_baby"
-            case "JUVENILE": return "dino_spinosaurus_juvenile"
-            case "ADULT": return "dino_spinosaurus_adult"
-            default: return nil
-            }
-        case "Pterodactyl", "Pteranodon":
-            switch stage.uppercased() {
-            case "BABY": return "dino_pteranodon_baby"
-            case "JUVENILE": return "dino_pteranodon_juvenile"
-            case "ADULT": return "dino_pteranodon_adult"
-            default: return nil
-            }
-        default:
+    static let assetBackedSpeciesIds: Set<String> = [
+        "tiny_raptor",
+        "triceratops",
+        "trex",
+        "stegosaurus",
+        "brachiosaurus",
+        "ankylosaurus",
+        "parasaurolophus",
+        "spinosaurus",
+        "pteranodon",
+    ]
+
+    /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.
+    private static let speciesIdAliases: [String: String] = [
+        "pterodactyl": "pteranodon",
+        "t_rex": "trex",
+        "t-rex": "trex",
+        "tyrannosaurus": "trex",
+        "tyrannosaurus_rex": "trex",
+    ]
+
+    /// Resolves a canonical species ID when the input is asset-backed; otherwise nil.
+    static func normalizedSpeciesId(from input: String) -> String? {
+        let slug = input
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: " ", with: "_")
+            .replacingOccurrences(of: "-", with: "_")
+
+        let resolved = speciesIdAliases[slug] ?? slug
+        guard assetBackedSpeciesIds.contains(resolved) else { return nil }
+        return resolved
+    }
+
+    static func assetName(forSpeciesId speciesId: String, stage: String) -> String? {
+        guard let resolved = normalizedSpeciesId(from: speciesId),
+              let stageSuffix = normalizedStageSuffix(from: stage) else {
             return nil
         }
+        return "dino_\(resolved)_\(stageSuffix)"
+    }
+
+    /// Accepts a canonical species ID or legacy display name/slug.
+    static func assetName(for speciesOrName: String, stage: String) -> String? {
+        assetName(forSpeciesId: speciesOrName, stage: stage)
     }
 
     static func assetIsAvailable(named name: String) -> Bool {
@@ -88,9 +65,9 @@ enum CreatureAssetVisual {
 #endif
     }
 
-    static func shouldUseAssetImage(for creatureName: String, stage: String) -> Bool {
+    static func shouldUseAssetImage(forSpeciesId speciesId: String, stage: String) -> Bool {
 #if os(iOS) || os(watchOS)
-        guard let assetName = assetName(for: creatureName, stage: stage) else { return false }
+        guard let assetName = assetName(forSpeciesId: speciesId, stage: stage) else { return false }
         let available = assetIsAvailable(named: assetName)
         #if DEBUG
         if !available {
@@ -101,5 +78,19 @@ enum CreatureAssetVisual {
 #else
         false
 #endif
+    }
+
+    /// Accepts a canonical species ID or legacy display name/slug.
+    static func shouldUseAssetImage(for speciesOrName: String, stage: String) -> Bool {
+        shouldUseAssetImage(forSpeciesId: speciesOrName, stage: stage)
+    }
+
+    private static func normalizedStageSuffix(from stage: String) -> String? {
+        switch stage.uppercased() {
+        case "BABY": return "baby"
+        case "JUVENILE": return "juvenile"
+        case "ADULT": return "adult"
+        default: return nil
+        }
     }
 }

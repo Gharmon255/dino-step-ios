@@ -16,11 +16,11 @@ struct CreatureStageVisualView: View {
     }
 
     private var usesCreatureAsset: Bool {
-        CreatureAssetVisual.shouldUseAssetImage(for: creature.name, stage: stage.rawValue)
+        CreatureAssetVisual.shouldUseAssetImage(forSpeciesId: creature.speciesId, stage: stage.rawValue)
     }
 
     private var creatureAssetName: String? {
-        CreatureAssetVisual.assetName(for: creature.name, stage: stage.rawValue)
+        CreatureAssetVisual.assetName(forSpeciesId: creature.speciesId, stage: stage.rawValue)
     }
 
     var body: some View {
