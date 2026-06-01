@@ -8,6 +8,8 @@ import Foundation
 
 @MainActor
 final class GameState: ObservableObject {
+    static let devNextEggSpeciesOverrideKey = "dev.nextEggSpeciesOverride"
+
     @Published private(set) var activeCreature: ActiveCreature
     @Published private(set) var completedCreatures: [CompletedCreature] = []
     @Published private(set) var lastRewardedEggRarity: Rarity?
@@ -202,8 +204,42 @@ final class GameState: ObservableObject {
         persistCurrentState()
     }
 
+    func forceNewEggForTesting() {
+        if let forced = Self.devForcedCreatureName(),
+           let definition = CreatureCatalog.creature(named: forced) {
+            activeCreature = ActiveCreature(
+                eggRarity: definition.rarity,
+                definition: definition,
+                currentSteps: 0,
+                startedAt: Date()
+            )
+            persistCurrentState()
+        } else {
+            giveRandomEgg()
+        }
+    }
+
+    static func devForcedCreatureName() -> String? {
+        let value = UserDefaults.standard.string(forKey: devNextEggSpeciesOverrideKey)
+        guard let value, !value.isEmpty, value != "RANDOM" else { return nil }
+        return value
+    }
+
     static func makeMysteryEgg(rarity: Rarity) -> ActiveCreature {
-        let definition = CreatureCatalog.creatures(for: rarity).randomElement()!
+        let definition: CreatureDefinition
+
+        if let forced = devForcedCreatureName(),
+           let forcedDefinition = CreatureCatalog.creature(named: forced) {
+            definition = forcedDefinition
+        } else {
+            definition = CreatureCatalog.creatures(for: rarity).randomElement()!
+            #if DEBUG
+            if let forced = devForcedCreatureName(), CreatureCatalog.creature(named: forced) == nil {
+                print("[DevTesting] Forced egg species not found in catalog: \(forced)")
+            }
+            #endif
+        }
+
         return ActiveCreature(
             eggRarity: rarity,
             definition: definition,

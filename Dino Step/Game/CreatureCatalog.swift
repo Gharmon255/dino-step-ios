@@ -26,6 +26,10 @@ enum CreatureCatalog {
         allCreatures.first { $0.id == id }
     }
 
+    static func creature(named name: String) -> CreatureDefinition? {
+        allCreatures.first { $0.name == name }
+    }
+
     static let commonCreatures: [CreatureDefinition] = [
         creature(1, "Tiny Raptor", .common, .jungle, 8000, 1600, 4000),
         creature(2, "Triceratops", .common, .plains, 10000, 2000, 5000),

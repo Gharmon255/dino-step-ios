@@ -9,6 +9,7 @@ struct StatsView: View {
     @ObservedObject var gameState: GameState
 #if os(iOS)
     @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
+    @AppStorage(GameState.devNextEggSpeciesOverrideKey) private var devNextEggSpecies: String = "RANDOM"
 #endif
 
     var body: some View {
@@ -144,6 +145,39 @@ struct StatsView: View {
                         .buttonStyle(DebugButtonStyle(color: .orange))
                     }
                 }
+
+#if DEBUG && os(iOS)
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Developer Testing")
+                            .font(.headline)
+                            .foregroundStyle(.pink)
+
+                        Picker("Next Egg Species", selection: $devNextEggSpecies) {
+                            Text("Random / Normal").tag("RANDOM")
+                            Text("Tiny Raptor").tag("Tiny Raptor")
+                            Text("Triceratops").tag("Triceratops")
+                            Text("T-Rex").tag("T-Rex")
+                            Text("Stegosaurus").tag("Stegosaurus")
+                            Text("Brachiosaurus").tag("Brachiosaurus")
+                            Text("Ankylosaurus").tag("Ankylosaurus")
+                            Text("Parasaurolophus").tag("Parasaurolophus")
+                            Text("Spinosaurus").tag("Spinosaurus")
+                            Text("Pteranodon").tag("Pterodactyl")
+                        }
+                        .pickerStyle(.menu)
+
+                        Button("Force New Egg (Uses Selected Species)") {
+                            gameState.forceNewEggForTesting()
+                        }
+                        .buttonStyle(DebugButtonStyle(color: .pink))
+
+                        Text("This is a DEBUG-only testing tool. Set to Random / Normal to restore standard egg behavior.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+#endif
             }
             .padding()
         }
