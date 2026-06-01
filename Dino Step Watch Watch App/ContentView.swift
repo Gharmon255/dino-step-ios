@@ -48,6 +48,7 @@ struct ContentView: View {
                 accentColor: accentColor,
                 placeholderEmoji: payload.placeholderVisual,
                 eggRarity: payload.rarity,
+                speciesId: payload.speciesId,
                 creatureName: payload.creatureName,
                 stage: payload.stage,
                 isEggStage: payload.stage == "EGG"

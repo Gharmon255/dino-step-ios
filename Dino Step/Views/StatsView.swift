@@ -96,8 +96,57 @@ struct StatsView: View {
                         if let syncDate = watchManager.lastSyncDate {
                             statRow("Last Sync Time", syncDate.formatted(date: .omitted, time: .shortened))
                         }
+
+                        if let payload = watchManager.lastSentPayload {
+                            Divider()
+                            Text("Last Outbound Payload")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.secondary)
+
+                            statRow("Species ID", payload.speciesId ?? "— (legacy)")
+                            statRow("Display Name", payload.displayName)
+                            statRow("Creature Name", payload.creatureName)
+                            statRow("Stage", payload.stage)
+                            statRow("Rarity", payload.rarity)
+                            statRow("Ring Progress", String(format: "%.1f%%", payload.ringProgressPercent))
+                            statRow("Stage Progress", String(format: "%.1f%%", payload.stageProgressPercent))
+                            statRow("Lifetime Progress", String(format: "%.1f%%", payload.progressPercent))
+                            statRow("Steps Until Next", payload.stepsUntilNextStage.formatted())
+                        } else {
+                            statRow("Last Outbound Payload", "Not sent yet")
+                        }
                     }
                 }
+
+#if DEBUG && os(iOS)
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Watch Sync Debug")
+                            .font(.headline)
+                            .foregroundStyle(.indigo)
+
+                        statRow("Active Species ID", gameState.activeCreature.definition.speciesId)
+                        statRow("Active Display Name", gameState.displayName)
+                        statRow("Active Stage", gameState.currentStage.rawValue)
+                        statRow("Egg Rarity", gameState.currentEggRarity.rawValue)
+                        statRow(
+                            "Stage Progress (Ring)",
+                            String(format: "%.1f%%", GameLogic.stageProgressPercent(
+                                currentSteps: gameState.activeCreature.currentSteps,
+                                creatureDefinition: gameState.activeCreature.definition
+                            ))
+                        )
+                        statRow(
+                            "Lifetime Progress",
+                            String(format: "%.1f%%", gameState.progressPercent)
+                        )
+                        statRow("Watch Reachable", watchManager.isReachable ? "Yes" : "No")
+                        if let syncDate = watchManager.lastSyncDate {
+                            statRow("Last Sync Time", syncDate.formatted(date: .omitted, time: .shortened))
+                        }
+                    }
+                }
+#endif
 #endif
 
                 GameCard {

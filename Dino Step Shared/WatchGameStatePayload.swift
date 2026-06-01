@@ -5,17 +5,23 @@
 
 import Foundation
 
+/// JSON payload sent from iPhone to Apple Watch via WatchConnectivity application context.
+/// See `WATCH_SYNC_CONTRACT.md` for field meanings and compatibility rules.
 struct WatchGameStatePayload: Codable, Equatable {
     static let contextKey = "watchGameStatePayload"
 
     let displayName: String
     let creatureName: String
+    /// Canonical species slug (e.g. `trex`, `pteranodon`). Optional for backward compatibility with older payloads.
+    let speciesId: String?
     let stage: String
     let rarity: String
     let currentSteps: Int
     let nextMilestone: Int
     let totalStepsRequired: Int
+    /// Lifetime progress toward fully grown (0–100). Not used for the watch ring.
     let progressPercent: Double
+    /// Progress within the current growth stage toward the next stage (0–100). Drives the watch ring.
     let stageProgressPercent: Double
     let stepsUntilNextStage: Int
     let nextStageLabel: String
@@ -23,6 +29,7 @@ struct WatchGameStatePayload: Codable, Equatable {
     let placeholderVisual: String
     let updatedAt: Date
 
+    /// Progress shown on the watch ring: current stage → next stage, not total lifetime progress.
     var ringProgressPercent: Double {
         min(100.0, max(0.0, stageProgressPercent))
     }
@@ -32,6 +39,14 @@ struct WatchGameStatePayload: Codable, Equatable {
             return "Ready to claim"
         }
         return "\(stepsUntilNextStage.formatted()) to \(nextStageLabel)"
+    }
+
+    /// Species key for asset lookup: prefers `speciesId`, falls back to normalizing `creatureName`.
+    var resolvedSpeciesIdForAssets: String? {
+        if let speciesId, !speciesId.isEmpty {
+            return CreatureAssetVisual.normalizedSpeciesId(from: speciesId) ?? speciesId
+        }
+        return CreatureAssetVisual.normalizedSpeciesId(from: creatureName)
     }
 }
 
@@ -82,6 +97,7 @@ extension WatchGameStatePayload {
         return WatchGameStatePayload(
             displayName: legacy.displayName,
             creatureName: legacy.creatureName,
+            speciesId: nil,
             stage: legacy.stage,
             rarity: legacy.rarity,
             currentSteps: legacy.currentSteps,

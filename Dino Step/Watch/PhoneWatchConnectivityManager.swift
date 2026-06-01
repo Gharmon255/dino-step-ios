@@ -20,6 +20,7 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
     @Published private(set) var isReachable = false
     @Published private(set) var lastSyncMessage: String?
     @Published private(set) var lastSyncDate: Date?
+    @Published private(set) var lastSentPayload: WatchGameStatePayload?
 
     private override init() {
         super.init()
@@ -70,6 +71,7 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
 
         do {
             try session.updateApplicationContext(context)
+            lastSentPayload = payload
             lastSyncDate = Date()
             lastSyncMessage = "Sent state to watch"
 

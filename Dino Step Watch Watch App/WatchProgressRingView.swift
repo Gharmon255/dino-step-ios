@@ -10,12 +10,21 @@ struct WatchProgressRingView: View {
     let accentColor: Color
     let placeholderEmoji: String
     var eggRarity: String?
+    var speciesId: String?
     var creatureName: String?
     var stage: String?
     var isEggStage: Bool = false
 
     private var progress: Double {
         min(max(progressPercent / 100.0, 0), 1)
+    }
+
+    private var assetLookupSpeciesId: String? {
+        if let speciesId, !speciesId.isEmpty {
+            return CreatureAssetVisual.normalizedSpeciesId(from: speciesId) ?? speciesId
+        }
+        guard let creatureName, !creatureName.isEmpty else { return nil }
+        return CreatureAssetVisual.normalizedSpeciesId(from: creatureName)
     }
 
     var body: some View {
@@ -43,17 +52,19 @@ struct WatchProgressRingView: View {
 
     @ViewBuilder
     private var centerVisual: some View {
-        if isEggStage, let eggRarity {
+        if isEggStage, let eggRarity, !eggRarity.isEmpty {
             watchEggVisual(for: eggRarity)
-        } else if let creatureName, let stage,
-                  CreatureAssetVisual.shouldUseAssetImage(for: creatureName, stage: stage),
-                  let assetName = CreatureAssetVisual.assetName(for: creatureName, stage: stage) {
+        } else if let assetLookupSpeciesId,
+                  let stage,
+                  !stage.isEmpty,
+                  CreatureAssetVisual.shouldUseAssetImage(forSpeciesId: assetLookupSpeciesId, stage: stage),
+                  let assetName = CreatureAssetVisual.assetName(forSpeciesId: assetLookupSpeciesId, stage: stage) {
             Image(assetName)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 42, height: 42)
         } else {
-            Text(placeholderEmoji)
+            Text(placeholderEmoji.isEmpty ? "🦖" : placeholderEmoji)
                 .font(.system(size: 28))
         }
     }
@@ -76,6 +87,7 @@ struct WatchProgressRingView: View {
         progressPercent: 25,
         accentColor: WatchRarityColors.color(for: .common),
         placeholderEmoji: "🦖",
+        speciesId: "tiny_raptor",
         creatureName: "Tiny Raptor",
         stage: "BABY"
     )

@@ -47,6 +47,7 @@ enum GameLogic {
     }
 
     static func stageProgressPercent(currentSteps: Int, creatureDefinition: CreatureDefinition) -> Double {
+        // Progress within the current stage toward the next milestone (not lifetime / fully grown).
         let stage = calculateStage(currentSteps: currentSteps, creatureDefinition: creatureDefinition)
 
         switch stage {

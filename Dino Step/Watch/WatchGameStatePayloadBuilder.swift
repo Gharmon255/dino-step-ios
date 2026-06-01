@@ -22,6 +22,7 @@ enum WatchGameStatePayloadBuilder {
         return WatchGameStatePayload(
             displayName: gameState.displayName,
             creatureName: definition.name,
+            speciesId: definition.speciesId,
             stage: stage.rawValue,
             rarity: active.eggRarity.rawValue,
             currentSteps: active.currentSteps,
