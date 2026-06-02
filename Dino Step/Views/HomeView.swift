@@ -125,12 +125,14 @@ struct HomeView: View {
                             .frame(maxWidth: .infinity)
                     }
 
+#if DEBUG
                     HStack(spacing: 12) {
                         stepButton(amount: 500, color: .green)
                         stepButton(amount: 2000, color: .blue)
                     }
 
                     stepButton(amount: 10000, color: .purple)
+#endif
 
                     if stage == .adult {
                         Button("Claim Reward") {
