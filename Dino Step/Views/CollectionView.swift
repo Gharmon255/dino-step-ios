@@ -33,7 +33,7 @@ struct CollectionView: View {
                 if displayedEntries.isEmpty {
                     emptyFilterState
                 } else {
-                    LazyVStack(spacing: 12) {
+                    LazyVStack(spacing: 14) {
                         ForEach(displayedEntries) { entry in
                             CollectionSpeciesCard(entry: entry)
                         }

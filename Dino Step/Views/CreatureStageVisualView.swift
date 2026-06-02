@@ -10,9 +10,15 @@ struct CreatureStageVisualView: View {
     let stage: GrowthStage
     var eggRarity: Rarity?
     var compact: Bool = false
+    /// When set, overrides compact/default sizing (e.g. Collection card prominence).
+    var fixedVisualSize: CGFloat? = nil
 
     private var stageVisual: StageVisual {
         CreatureVisuals.stageVisual(for: creature, stage: stage, eggRarity: eggRarity)
+    }
+
+    private var visualSize: CGFloat {
+        fixedVisualSize ?? (compact ? 52 : stageVisual.size)
     }
 
     private var usesCreatureAsset: Bool {
@@ -36,13 +42,13 @@ struct CreatureStageVisualView: View {
         let rarity = eggRarity ?? creature.rarity
         RarityEggView(
             rarity: rarity.rawValue,
-            size: compact ? 52 : 128,
+            size: compact ? (fixedVisualSize ?? 52) : 128,
             compact: compact
         )
     }
 
     private var hatchedView: some View {
-        let visualSize = compact ? 52 : stageVisual.size
+        let visualSize = self.visualSize
 
         return VStack(spacing: compact ? 0 : 6) {
             ZStack {
