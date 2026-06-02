@@ -17,8 +17,11 @@ Use this checklist when adding a **new asset-backed dinosaur** to the Dino Step 
 | `spinosaurus` | Spinosaurus | Rare |
 | `pteranodon` | Pteranodon | Uncommon |
 | `dilophosaurus` | Dilophosaurus | Uncommon |
-
-> **Note:** Dilophosaurus uses the existing catalog entry (index 9, Uncommon, jungle). Assets: `dino_dilophosaurus_{baby,juvenile,adult}`.
+| `carnotaurus` | Carnotaurus | Uncommon |
+| `mosasaurus` | Mosasaurus | Rare |
+| `pachycephalosaurus` | Pachycephalosaurus | Common |
+| `allosaurus` | Allosaurus | Rare |
+| `iguanodon` | Iguanodon | Uncommon |
 
 ---
 

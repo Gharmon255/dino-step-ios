@@ -44,7 +44,7 @@ enum CreatureCatalog {
         creature(2, "Triceratops", .common, .plains, 10000, 2000, 5000, speciesId: "triceratops"),
         creature(3, "Ankylosaurus", .common, .rocky, 12000, 2400, 6000, speciesId: "ankylosaurus"),
         creature(4, "Parasaurolophus", .common, .forest, 11000, 2200, 5500, speciesId: "parasaurolophus"),
-        creature(5, "Pachycephalosaurus", .common, .rocky, 12500, 2500, 6250),
+        creature(5, "Pachycephalosaurus", .common, .rocky, 12500, 2500, 6250, speciesId: "pachycephalosaurus"),
         creature(6, "Gallimimus", .common, .plains, 9000, 1800, 4500),
     ]
 
@@ -52,8 +52,8 @@ enum CreatureCatalog {
         creature(7, "Stegosaurus", .uncommon, .forest, 18000, 3600, 9000, speciesId: "stegosaurus"),
         creature(8, "Pteranodon", .uncommon, .mountain, 22000, 4400, 11000, speciesId: "pteranodon"),
         creature(9, "Dilophosaurus", .uncommon, .jungle, 20000, 4000, 10000, speciesId: "dilophosaurus"),
-        creature(10, "Iguanodon", .uncommon, .forest, 19000, 3800, 9500),
-        creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000),
+        creature(10, "Iguanodon", .uncommon, .forest, 19000, 3800, 9500, speciesId: "iguanodon"),
+        creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000, speciesId: "carnotaurus"),
         creature(12, "Baryonyx", .uncommon, .swamp, 25000, 5000, 12500),
         creature(29, "Brachiosaurus", .uncommon, .plains, 20000, 4000, 10000, speciesId: "brachiosaurus"),
     ]
@@ -62,9 +62,9 @@ enum CreatureCatalog {
         creature(13, "T-Rex", .rare, .volcano, 50000, 10000, 25000, speciesId: "trex"),
         creature(14, "Spinosaurus", .rare, .swamp, 60000, 12000, 30000, speciesId: "spinosaurus"),
         creature(15, "Velociraptor Alpha", .rare, .jungle, 45000, 9000, 22500),
-        creature(16, "Allosaurus", .rare, .rocky, 48000, 9600, 24000),
+        creature(16, "Allosaurus", .rare, .rocky, 48000, 9600, 24000, speciesId: "allosaurus"),
         creature(17, "Therizinosaurus", .rare, .forest, 55000, 11000, 27500),
-        creature(18, "Mosasaurus", .rare, .ocean, 65000, 13000, 32500),
+        creature(18, "Mosasaurus", .rare, .ocean, 65000, 13000, 32500, speciesId: "mosasaurus"),
     ]
 
     static let epicCreatures: [CreatureDefinition] = [
