@@ -29,7 +29,8 @@ enum CreatureCatalog {
     }
 
     static func creature(withSpeciesId speciesId: String) -> CreatureDefinition? {
-        allCreatures.first { $0.speciesId == speciesId }
+        let resolved = legacySpeciesNameAliases[speciesId] ?? speciesId
+        return allCreatures.first { $0.speciesId == resolved }
     }
 
     static func creature(named name: String) -> CreatureDefinition? {
@@ -70,7 +71,7 @@ enum CreatureCatalog {
     static let epicCreatures: [CreatureDefinition] = [
         creature(19, "Giganotosaurus", .epic, .plains, 85000, 17000, 42500),
         creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000),
-        creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500),
+        creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500, speciesId: "indominus_hybrid"),
         creature(22, "Ancient Spinosaurus", .epic, .swamp, 100000, 20000, 50000),
     ]
 
@@ -83,10 +84,11 @@ enum CreatureCatalog {
         creature(28, "Ancient Apex Rex", .legendary, .volcano, 200000, 40000, 100000),
     ]
 
-    /// Legacy display names and dev-picker values mapped to canonical species IDs.
+    /// Legacy display names, slugs, and dev-picker values mapped to canonical species IDs.
     private static let legacySpeciesNameAliases: [String: String] = [
         "Pterodactyl": "pteranodon",
         "pterodactyl": "pteranodon",
+        "indominus_rex_style_hybrid": "indominus_hybrid",
     ]
 
     private static func creature(

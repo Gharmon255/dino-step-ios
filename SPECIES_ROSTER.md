@@ -65,7 +65,7 @@ Emoji / placeholder visuals only. **Never** use another species’ `dino_*` art 
 | `therizinosaurus` | Therizinosaurus | Rare | Forest | 11,000 | 16,500 | 27,500 | 55,000 | false | — | |
 | `giganotosaurus` | Giganotosaurus | Epic | Plains | 17,000 | 25,500 | 42,500 | 85,000 | false | — | |
 | `quetzalcoatlus` | Quetzalcoatlus | Epic | Mountain | 18,000 | 27,000 | 45,000 | 90,000 | false | — | |
-| `indominus_rex_style_hybrid` | Indominus Rex Style Hybrid | Epic | Lab | 19,000 | 28,500 | 47,500 | 95,000 | false | — | iOS auto-slug; Android catalog id is `indominus_hybrid` — see [Legacy IDs](#legacy-ids-and-aliases) |
+| `indominus_hybrid` | Indominus Rex Style Hybrid | Epic | Lab | 19,000 | 28,500 | 47,500 | 95,000 | false | — | Canonical id (aligned with Android); iOS historically auto-slugged `indominus_rex_style_hybrid` |
 | `ancient_spinosaurus` | Ancient Spinosaurus | Epic | Swamp | 20,000 | 30,000 | 50,000 | 100,000 | false | — | Distinct legendary variant; not base `spinosaurus` art |
 | `volcanic_t_rex` | Volcanic T-Rex | Legendary | Volcano | 25,000 | 37,500 | 62,500 | 125,000 | false | — | Not `trex` art |
 | `frost_raptor` | Frost Raptor | Legendary | Ice | 22,000 | 33,000 | 55,000 | 110,000 | false | — | |
@@ -106,7 +106,7 @@ Canonical values are **iOS** (this document). **Android** `CreatureCatalog.kt` m
 | `pterodactyl` | `pteranodon` | Older saves; display name “Pterodactyl” |
 | `Pterodactyl` (display) | `pteranodon` | iOS `legacySpeciesNameAliases` |
 | `tyrannosaurus`, `tyrannosaurus_rex` | `trex` | Dev picker / asset resolver (iOS) |
-| `indominus_hybrid` | — | Android catalog id for Indominus Rex Style Hybrid; iOS slug may be `indominus_rex_style_hybrid` until ids unified |
+| `indominus_rex_style_hybrid` | `indominus_hybrid` | iOS auto-slug from display name before explicit `speciesId`; dev picker / slug lookup |
 
 **Do not** map `volcanic_t_rex` or `ancient_apex_rex` to `trex` for artwork.
 
@@ -140,5 +140,6 @@ After Android alignment, uncommon eggs include: Stegosaurus, Pteranodon, Brachio
 
 | Date | Change |
 |------|--------|
+| 2026-06-02 | Indominus Rex Style Hybrid canonical id unified to `indominus_hybrid` on iOS (legacy slug `indominus_rex_style_hybrid`) |
 | 2026-06-02 | Iguanodon PNGs shipped on iOS/watch; asset status **shipped** |
 | 2026-06-01 | Initial canonical roster from iOS `CreatureCatalog.swift`; documented Android drift for Brachiosaurus steps and five rarity mismatches |
