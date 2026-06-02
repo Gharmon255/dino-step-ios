@@ -9,6 +9,7 @@ struct WatchProgressRingView: View {
     let progressPercent: Double
     let accentColor: Color
     let placeholderEmoji: String
+    var ringSize: CGFloat = 92
     var eggRarity: String?
     var speciesId: String?
     var creatureName: String?
@@ -41,13 +42,8 @@ struct WatchProgressRingView: View {
                 .rotationEffect(.degrees(-90))
 
             centerVisual
-
-            Text(String(format: "%.0f%%", progressPercent))
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .offset(y: 34)
         }
-        .frame(width: 96, height: 96)
+        .frame(width: ringSize, height: ringSize)
     }
 
     @ViewBuilder
@@ -62,10 +58,10 @@ struct WatchProgressRingView: View {
             Image(assetName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 42, height: 42)
+                .frame(width: ringSize * 0.44, height: ringSize * 0.44)
         } else {
             Text(placeholderEmoji.isEmpty ? "🦖" : placeholderEmoji)
-                .font(.system(size: 28))
+                .font(.system(size: ringSize * 0.30))
         }
     }
 
@@ -87,6 +83,7 @@ struct WatchProgressRingView: View {
         progressPercent: 25,
         accentColor: WatchRarityColors.color(for: .common),
         placeholderEmoji: "🦖",
+        ringSize: 92,
         speciesId: "tiny_raptor",
         creatureName: "Tiny Raptor",
         stage: "BABY"

@@ -76,13 +76,7 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             statRow(label: "Steps", value: "\(gameState.activeCreature.currentSteps.formatted())")
 
-                            if let milestone = gameState.nextMilestone {
-                                statRow(label: "Next Milestone", value: "\(milestone.formatted())")
-                            }
-
-                            if let remaining = gameState.stepsUntilNextMilestone {
-                                statRow(label: "Steps Until Milestone", value: "\(remaining.formatted())")
-                            }
+                            statRow(label: "Next", value: nextStageCopy)
 
                             statRow(
                                 label: "Progress",
@@ -172,6 +166,26 @@ struct HomeView: View {
             gameState.addSteps(amount)
         }
         .buttonStyle(StepButtonStyle(color: color))
+    }
+
+    private var nextStageCopy: String {
+        if stage == .adult {
+            return "Ready to claim reward"
+        }
+
+        let stepsRemaining = max(
+            0,
+            GameLogic.stepsUntilNextStage(
+                currentSteps: gameState.activeCreature.currentSteps,
+                creatureDefinition: gameState.activeCreature.definition
+            )
+        )
+
+        let label = GameLogic.nextStageLabel(for: stage)
+        if stepsRemaining == 0 {
+            return "Ready to \(label)"
+        }
+        return "\(stepsRemaining.formatted()) steps to \(label)"
     }
 }
 
