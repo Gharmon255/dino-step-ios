@@ -79,12 +79,17 @@ struct HomeView: View {
                             statRow(label: "Next", value: nextStageCopy)
 
                             statRow(
-                                label: "Progress",
-                                value: String(format: "%.1f%%", gameState.progressPercent)
+                                label: "Stage Progress",
+                                value: stageProgressDisplay
+                            )
+
+                            statRow(
+                                label: "Overall Progress",
+                                value: overallProgressDisplay
                             )
                         }
 
-                        ProgressView(value: gameState.progressPercent, total: 100)
+                        ProgressView(value: stageProgressPercent, total: 100)
                             .tint(rarityColor)
                     }
                     .frame(maxWidth: .infinity)
@@ -166,6 +171,21 @@ struct HomeView: View {
             gameState.addSteps(amount)
         }
         .buttonStyle(StepButtonStyle(color: color))
+    }
+
+    private var stageProgressPercent: Double {
+        GameLogic.stageProgressPercent(
+            currentSteps: gameState.activeCreature.currentSteps,
+            creatureDefinition: gameState.activeCreature.definition
+        )
+    }
+
+    private var stageProgressDisplay: String {
+        String(format: "%.1f%%", stageProgressPercent)
+    }
+
+    private var overallProgressDisplay: String {
+        String(format: "%.1f%% to adult", gameState.progressPercent)
     }
 
     private var nextStageCopy: String {
