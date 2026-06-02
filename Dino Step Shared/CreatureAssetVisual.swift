@@ -26,6 +26,11 @@ enum CreatureAssetVisual {
         "pachycephalosaurus",
         "allosaurus",
         "iguanodon",
+        "gallimimus",
+        "baryonyx",
+        "velociraptor_alpha",
+        "therizinosaurus",
+        "giganotosaurus",
     ]
 
     /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.
