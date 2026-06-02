@@ -2,26 +2,8 @@
 
 Use this checklist when adding a **new asset-backed dinosaur** to the Dino Step iOS and watchOS apps.
 
-## Current asset-backed species (reference)
-
-| speciesId | Display name | Rarity |
-|-----------|--------------|--------|
-| `tiny_raptor` | Tiny Raptor | Common |
-| `triceratops` | Triceratops | Common |
-| `ankylosaurus` | Ankylosaurus | Common |
-| `parasaurolophus` | Parasaurolophus | Common |
-| `stegosaurus` | Stegosaurus | Uncommon |
-| `pteranodon` | Pteranodon | Uncommon |
-| `brachiosaurus` | Brachiosaurus | Uncommon |
-| `trex` | T-Rex | Rare |
-| `spinosaurus` | Spinosaurus | Rare |
-| `pteranodon` | Pteranodon | Uncommon |
-| `dilophosaurus` | Dilophosaurus | Uncommon |
-| `carnotaurus` | Carnotaurus | Uncommon |
-| `mosasaurus` | Mosasaurus | Rare |
-| `pachycephalosaurus` | Pachycephalosaurus | Common |
-| `allosaurus` | Allosaurus | Rare |
-| `iguanodon` | Iguanodon | Uncommon |
+**Canonical roster (ids, rarities, steps, asset status):** see [`SPECIES_ROSTER.md`](SPECIES_ROSTER.md).  
+Do not duplicate roster tables here — update `SPECIES_ROSTER.md` when design changes.
 
 ---
 
@@ -58,11 +40,12 @@ Watch uses the same naming pattern via `CreatureAssetVisual` (`dino_{speciesId}_
 
 ## 4. Creature catalog (Sprint 1)
 
-Edit `Dino Step/Game/CreatureCatalog.swift`:
+Edit `Dino Step/Game/CreatureCatalog.swift` to match [`SPECIES_ROSTER.md`](SPECIES_ROSTER.md):
 
 - [ ] Add `CreatureDefinition` with stable **`speciesId`** slug (e.g. `new_species`)
-- [ ] Set display **name**, **rarity**, **habitat**, step thresholds
+- [ ] Set display **name**, **rarity**, **habitat**, step thresholds per roster
 - [ ] Use a **new catalog index** / UUID — do not reuse an existing creature’s UUID (preserves saves)
+- [ ] Update `SPECIES_ROSTER.md` in both app repos when adding a species
 
 ## 5. Asset-backed registry (Sprint 2)
 
@@ -139,3 +122,4 @@ and verify collection/home/watch rendering for {speciesId}.
 | Dev picker | `Dino Step/Views/StatsView.swift` |
 | Watch payload | `Dino Step Shared/WatchGameStatePayload.swift` |
 | Watch sync docs | `WATCH_SYNC_CONTRACT.md` |
+| Canonical roster | `SPECIES_ROSTER.md` |
