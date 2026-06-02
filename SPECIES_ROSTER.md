@@ -42,7 +42,7 @@ These ids are in `CreatureAssetVisual.assetBackedSpeciesIds` (iOS) and `Creature
 | `pteranodon` | Pteranodon | Uncommon | Mountain | 4,400 | 6,600 | 11,000 | 22,000 | true | `dino_pteranodon` | **shipped** |
 | `brachiosaurus` | Brachiosaurus | Uncommon | Plains | 4,000 | 6,000 | 10,000 | 20,000 | true | `dino_brachiosaurus` | **shipped** |
 | `dilophosaurus` | Dilophosaurus | Uncommon | Jungle | 4,000 | 6,000 | 10,000 | 20,000 | true | `dino_dilophosaurus` | **shipped** |
-| `iguanodon` | Iguanodon | Uncommon | Forest | 3,800 | 5,700 | 9,500 | 19,000 | true | `dino_iguanodon` | **code-wired; assets missing** |
+| `iguanodon` | Iguanodon | Uncommon | Forest | 3,800 | 5,700 | 9,500 | 19,000 | true | `dino_iguanodon` | **shipped** |
 | `carnotaurus` | Carnotaurus | Uncommon | Volcano | 4,800 | 7,200 | 12,000 | 24,000 | true | `dino_carnotaurus` | **shipped** |
 | `trex` | T-Rex | Rare | Volcano | 10,000 | 15,000 | 25,000 | 50,000 | true | `dino_trex` | **shipped** |
 | `spinosaurus` | Spinosaurus | Rare | Swamp | 12,000 | 18,000 | 30,000 | 60,000 | true | `dino_spinosaurus` | **shipped** |
@@ -50,8 +50,6 @@ These ids are in `CreatureAssetVisual.assetBackedSpeciesIds` (iOS) and `Creature
 | `mosasaurus` | Mosasaurus | Rare | Ocean | 13,000 | 19,500 | 32,500 | 65,000 | true | `dino_mosasaurus` | **shipped** |
 
 **Stage file names (when shipped):** `dino_{speciesId}_baby`, `dino_{speciesId}_juvenile`, `dino_{speciesId}_adult`.
-
-**Iguanodon:** Listed in `assetBackedSpeciesIds` on both platforms; resolver will look up PNGs and fall back to emoji/placeholder until art is imported. Do not remove from asset-backed set until assets ship or an explicit roster change.
 
 ---
 
@@ -96,7 +94,7 @@ Canonical values are **iOS** (this document). **Android** `CreatureCatalog.kt` m
 | `mosasaurus` | rarity | Rare | Legendary | **Android** |
 
 **iOS:** Already matches this roster for the rows above.  
-**Iguanodon:** Rarity Uncommon on both; asset gap on both — no catalog drift, only missing PNGs.
+**Iguanodon:** Rarity Uncommon on both; stage PNGs shipped on iOS (`dino_iguanodon_{baby,juvenile,adult}`) and watch bundle.
 
 ---
 
@@ -142,4 +140,5 @@ After Android alignment, uncommon eggs include: Stegosaurus, Pteranodon, Brachio
 
 | Date | Change |
 |------|--------|
-| 2026-06-01 | Initial canonical roster from iOS `CreatureCatalog.swift`; documented Android drift for Brachiosaurus steps and five rarity mismatches; Iguanodon marked code-wired / assets missing |
+| 2026-06-02 | Iguanodon PNGs shipped on iOS/watch; asset status **shipped** |
+| 2026-06-01 | Initial canonical roster from iOS `CreatureCatalog.swift`; documented Android drift for Brachiosaurus steps and five rarity mismatches |
