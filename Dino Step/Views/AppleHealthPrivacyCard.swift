@@ -1,0 +1,73 @@
+//
+//  AppleHealthPrivacyCard.swift
+//  Dino Step
+//
+
+import SwiftUI
+
+/// User-facing HealthKit disclosure shown in Release builds (mirrors Android HealthConnectCard).
+struct AppleHealthPrivacyCard: View {
+    @ObservedObject var gameState: GameState
+
+    var body: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Apple Health")
+                    .font(.headline)
+                    .foregroundStyle(.teal)
+
+                Text(healthStatusLine)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Text(
+                    "Step data stays on your device. Dino Step reads your step count only when you tap Sync Steps on Home — not automatically in the background. We do not sell or share your steps for ads."
+                )
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+
+                if gameState.healthKitAuthorizationStatus.isAuthorized {
+                    statRow(
+                        "Last synced total today",
+                        gameState.lastSyncedHealthKitStepTotal.formatted()
+                    )
+                }
+
+                PrivacyPolicyLink()
+            }
+        }
+    }
+
+    private var healthStatusLine: String {
+        if !gameState.isHealthKitAvailable {
+            return "Apple Health is not available on this device."
+        }
+        switch gameState.healthKitAuthorizationStatus {
+        case .authorized:
+            return "Step access is enabled. Sync from the Home tab."
+        case .notDetermined:
+            return "Allow step access when prompted, then use Sync Steps on Home."
+        case .denied:
+            return "Step access is off. Enable Health permissions for Dino Step in Settings → Health."
+        case .unknown, .unavailable:
+            return "Step access status is unknown. Try Sync Steps on Home."
+        }
+    }
+
+    private func statRow(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(value)
+                .fontWeight(.semibold)
+        }
+        .font(.subheadline)
+    }
+}
+
+private extension HealthKitAuthorizationStatus {
+    var isAuthorized: Bool {
+        self == .authorized
+    }
+}

@@ -31,7 +31,7 @@ Start with a mystery egg and sync your step count from Apple Health. As you walk
 
 Dino Step reads step count data from Apple Health to provide app functionality. Location data is not used.
 
-Privacy policy: *[URL TBD — publish before submission]*
+Privacy policy: https://gharmon255.github.io/dino-step-ios/privacy-policy.html *(host `docs/privacy-policy.html` via GitHub Pages — see `docs/PRIVACY_POLICY_HOSTING.md`)*
 
 ## Keywords (100 characters max, comma-separated)
 
@@ -48,15 +48,17 @@ Expected: **4+** (no restricted content; confirm via App Store Connect questionn
 
 ## Support URL
 
-*[TBD — e.g. GitHub issues page or support site]*
+https://github.com/gharmon255/dino-step-ios/issues *(or your support site — update before submission)*
 
 ## Marketing URL (optional)
 
-*[TBD]*
+*[Optional — leave blank for v1]*
 
 ## Privacy policy URL
 
-*[TBD — required before TestFlight external / App Store review]*
+https://gharmon255.github.io/dino-step-ios/privacy-policy.html
+
+Host steps: `docs/PRIVACY_POLICY_HOSTING.md`
 
 ---
 
@@ -84,6 +86,8 @@ Capture on supported device sizes per App Store Connect (verify current required
 ---
 
 ## App Store privacy questionnaire (notes)
+
+Full answers: **`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`**
 
 - **Data collected:** Fitness (step count via HealthKit)
 - **Linked to user:** No (per `PrivacyInfo.xcprivacy`)

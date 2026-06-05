@@ -15,6 +15,8 @@ struct StatsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                AppleHealthPrivacyCard(gameState: gameState)
+
                 GameCard(accentColor: RarityColors.color(for: gameState.currentEggRarity)) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Current Run")
