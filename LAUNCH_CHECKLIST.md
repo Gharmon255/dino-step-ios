@@ -7,10 +7,10 @@ Update checkboxes as items are completed.
 
 ## App icons
 
-- [ ] **iOS AppIcon complete** — `Dino Step/Assets.xcassets/AppIcon.appiconset` (currently missing image files; slots defined only)
-- [ ] **watchOS AppIcon complete** — `Dino Step Watch Watch App/Assets.xcassets/AppIcon.appiconset`
-- [ ] **1024×1024 App Store marketing icon** assigned in Xcode
-- [ ] Verify icons render correctly in Xcode asset catalog before **Product → Archive**
+- [x] **iOS AppIcon complete** — `Dino Step/Assets.xcassets/AppIcon.appiconset` (`AppIcon-1024.png` from `dino-step-assets/icons/app_icon_1024.png`)
+- [x] **watchOS AppIcon complete** — `Dino Step Watch Watch App/Assets.xcassets/AppIcon.appiconset` (`AppIcon-Watch-1024.png` from `app_icon_watch_1024.png`)
+- [x] **1024×1024 App Store marketing icon** assigned in Xcode (iOS universal 1024 slot)
+- [x] Verify icons render correctly in Xcode asset catalog before **Product → Archive** (simulator builds pass; confirm visually in Xcode before Archive)
 
 ---
 
@@ -84,3 +84,4 @@ Update checkboxes as items are completed.
 | Date | Note |
 |------|------|
 | 2026-06-02 | Initial launch checklist; store-hardening sprint gates DEBUG Stats UI, adds PrivacyInfo.xcprivacy |
+| 2026-06-05 | App icons imported from `dino-step-assets/icons/` into iPhone + watch AppIcon.appiconset |
