@@ -70,7 +70,7 @@ enum CreatureCatalog {
 
     static let epicCreatures: [CreatureDefinition] = [
         creature(19, "Giganotosaurus", .epic, .plains, 85000, 17000, 42500, speciesId: "giganotosaurus"),
-        creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000),
+        creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000, speciesId: "quetzalcoatlus"),
         creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500, speciesId: "indominus_hybrid"),
         creature(22, "Ancient Spinosaurus", .epic, .swamp, 100000, 20000, 50000),
     ]

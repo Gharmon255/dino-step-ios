@@ -31,6 +31,11 @@ enum CreatureAssetVisual {
         "velociraptor_alpha",
         "therizinosaurus",
         "giganotosaurus",
+        "quetzalcoatlus",
+        "indominus_hybrid",
+        "ancient_spinosaurus",
+        "frost_raptor",
+        "volcanic_t_rex",
     ]
 
     /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.
@@ -40,6 +45,7 @@ enum CreatureAssetVisual {
         "t-rex": "trex",
         "tyrannosaurus": "trex",
         "tyrannosaurus_rex": "trex",
+        "indominus_rex_style_hybrid": "indominus_hybrid",
     ]
 
     /// Resolves a canonical species ID when the input is asset-backed; otherwise nil.

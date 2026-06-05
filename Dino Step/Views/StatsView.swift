@@ -227,6 +227,11 @@ struct StatsView: View {
                             Text("Velociraptor Alpha").tag("velociraptor_alpha")
                             Text("Therizinosaurus").tag("therizinosaurus")
                             Text("Giganotosaurus").tag("giganotosaurus")
+                            Text("Quetzalcoatlus").tag("quetzalcoatlus")
+                            Text("Indominus Hybrid").tag("indominus_hybrid")
+                            Text("Ancient Spinosaurus").tag("ancient_spinosaurus")
+                            Text("Frost Raptor").tag("frost_raptor")
+                            Text("Volcanic T-Rex").tag("volcanic_t_rex")
                         }
                         .pickerStyle(.menu)
 
