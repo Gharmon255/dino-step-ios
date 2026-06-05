@@ -44,7 +44,11 @@ enum HealthKitStepServiceError: LocalizedError {
             "HealthKit permission not granted"
         case .noStepData(let isSimulator):
             if isSimulator {
+#if DEBUG
                 "No step data found today. Fake steps still work for testing."
+#else
+                "No step data found today"
+#endif
             } else {
                 "No step data found today"
             }

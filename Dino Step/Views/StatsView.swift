@@ -10,8 +10,6 @@ struct StatsView: View {
 #if DEBUG && os(iOS)
     @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
     @AppStorage(GameState.devNextEggSpeciesOverrideKey) private var devNextEggSpecies: String = "RANDOM"
-#elseif os(iOS)
-    @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
 #endif
 
     var body: some View {
@@ -47,6 +45,7 @@ struct StatsView: View {
                     }
                 }
 
+#if DEBUG
                 if let persistenceMessage = gameState.persistenceStatus?.message {
                     GameCard {
                         VStack(alignment: .leading, spacing: 8) {
@@ -118,7 +117,6 @@ struct StatsView: View {
                     }
                 }
 
-#if DEBUG && os(iOS)
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Watch Sync Debug")
@@ -147,7 +145,6 @@ struct StatsView: View {
                     }
                 }
 #endif
-#endif
 
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
@@ -166,7 +163,7 @@ struct StatsView: View {
                     }
                 }
 
-#if DEBUG && os(iOS)
+#if os(iOS)
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Egg Testing")
@@ -248,6 +245,7 @@ struct StatsView: View {
                     }
                 }
 #endif
+#endif
             }
             .padding()
         }
@@ -255,7 +253,7 @@ struct StatsView: View {
         .navigationTitle("Stats")
         .onAppear {
             gameState.refreshHealthKitStatus()
-#if os(iOS)
+#if DEBUG && os(iOS)
             watchManager.activate()
 #endif
         }
