@@ -9,13 +9,21 @@ struct HomeView: View {
     @ObservedObject var gameState: GameState
 
     private var stage: GrowthStage { gameState.currentStage }
-    private var rarityColor: Color { RarityColors.color(for: gameState.currentEggRarity) }
+    private var rarityColor: Color { RarityColors.color(for: ambientRarity) }
     private var isHatched: Bool { GameLogic.isHatched(gameState.activeCreature) }
+
+    /// Egg rarity before hatch; creature rarity once revealed (matches Android Home).
+    private var ambientRarity: Rarity {
+        if isHatched {
+            return gameState.activeCreature.definition.rarity
+        }
+        return gameState.currentEggRarity
+    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                Text("Dino Step")
+                Text("Stepasaurus")
                     .font(.largeTitle.bold())
                     .foregroundStyle(
                         LinearGradient(
@@ -143,7 +151,10 @@ struct HomeView: View {
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
+        .background {
+            RarityScreenBackground(rarity: ambientRarity)
+                .animation(.easeInOut(duration: 0.35), value: ambientRarity)
+        }
     }
 
     private var stageBadge: some View {
@@ -209,6 +220,24 @@ struct HomeView: View {
     }
 }
 
-#Preview {
+#Preview("Common Egg") {
     HomeView(gameState: GameState())
+}
+
+#Preview("Rare Egg") {
+    let state = GameState()
+    state.giveEgg(rarity: .rare)
+    return HomeView(gameState: state)
+}
+
+#Preview("Epic Egg") {
+    let state = GameState()
+    state.giveEgg(rarity: .epic)
+    return HomeView(gameState: state)
+}
+
+#Preview("Legendary Egg") {
+    let state = GameState()
+    state.giveEgg(rarity: .legendary)
+    return HomeView(gameState: state)
 }

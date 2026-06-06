@@ -21,7 +21,7 @@ struct AppleHealthPrivacyCard: View {
                     .foregroundStyle(.secondary)
 
                 Text(
-                    "Step data stays on your device. Dino Step reads your step count only when you tap Sync Steps on Home — not automatically in the background. We do not sell or share your steps for ads."
+                    "Step data stays on your device. Stepasaurus reads your step count only when you tap Sync Steps on Home — not automatically in the background. We do not sell or share your steps for ads."
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -48,7 +48,7 @@ struct AppleHealthPrivacyCard: View {
         case .notDetermined:
             return "Allow step access when prompted, then use Sync Steps on Home."
         case .denied:
-            return "Step access is off. Enable Health permissions for Dino Step in Settings → Health."
+            return "Step access is off. Enable Health permissions for Stepasaurus in Settings → Health."
         case .unknown, .unavailable:
             return "Step access status is unknown. Try Sync Steps on Home."
         }

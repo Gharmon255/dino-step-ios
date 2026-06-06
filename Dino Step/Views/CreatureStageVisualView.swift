@@ -51,31 +51,13 @@ struct CreatureStageVisualView: View {
         let visualSize = self.visualSize
 
         return VStack(spacing: compact ? 0 : 6) {
-            ZStack {
+            Group {
                 if usesCreatureAsset, let creatureAssetName {
-                    Circle()
-                        .strokeBorder(stageVisual.accentColor.opacity(0.35), lineWidth: compact ? 2 : 3)
-                        .frame(width: visualSize, height: visualSize)
-
                     Image(creatureAssetName)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: visualSize * 0.92, height: visualSize * 0.92)
+                        .frame(width: visualSize, height: visualSize)
                 } else {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [stageVisual.accentColor, stageVisual.secondaryColor],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: visualSize, height: visualSize)
-
-                    Circle()
-                        .strokeBorder(stageVisual.accentColor.opacity(0.8), lineWidth: compact ? 2 : 3)
-                        .frame(width: visualSize, height: visualSize)
-
                     Text(stageVisual.displayEmoji)
                         .font(.system(size: compact ? 30 : stageVisual.emojiFontSize))
                 }

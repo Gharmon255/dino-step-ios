@@ -1,4 +1,4 @@
-# Dino Step — App Store Connect Metadata (Draft)
+# Stepasaurus — App Store Connect Metadata (Draft)
 
 Draft for **dino-step-ios** TestFlight / App Store submission.  
 Review and edit before pasting into App Store Connect.
@@ -7,7 +7,7 @@ Review and edit before pasting into App Store Connect.
 
 ## App name
 
-**Dino Step**
+**Stepasaurus**
 
 ## Subtitle (30 characters max)
 
@@ -19,7 +19,7 @@ Walk to sync steps from Apple Health, hatch mystery eggs, and grow dinosaurs fro
 
 ## Description
 
-Dino Step turns your daily steps into a dinosaur adventure.
+Stepasaurus turns your daily steps into a dinosaur adventure.
 
 Start with a mystery egg and sync your step count from Apple Health. As you walk, your egg hatches and your dinosaur grows through baby, juvenile, and adult stages. Claim your fully grown dinosaur to add it to your collection, then start a new egg and discover another species.
 
@@ -29,7 +29,7 @@ Start with a mystery egg and sync your step count from Apple Health. As you walk
 - Collection and Dino Dex — track species you've discovered
 - Apple Watch companion — see your egg or dinosaur and stage progress on your wrist
 
-Dino Step reads step count data from Apple Health to provide app functionality. Location data is not used.
+Stepasaurus reads step count data from Apple Health to provide app functionality. Location data is not used.
 
 Privacy policy: https://gharmon255.github.io/dino-step-ios/privacy-policy.html *(host `docs/privacy-policy.html` via GitHub Pages — see `docs/PRIVACY_POLICY_HOSTING.md`)*
 
