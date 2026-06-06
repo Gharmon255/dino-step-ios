@@ -2,19 +2,25 @@
 # Dino Step iOS Handoff Report
 
 **Repo:** dino-step-ios  
-**Date:** 2026-06-04  
+**Date:** 2026-06-04 (report); **updated 2026-06-06** for asset/doc status  
 **Branch:** main  
-**Latest commit:** `31f7f791bb226dbf6efeefadd5e15130f1fc7553` — Harden iOS release readiness  
-**Unpushed commits:** 1 — `31f7f79` (Harden iOS release readiness, 2026-06-04)
 
-## Executive summary
+> **June 2026 update:** Catalog art is **29/29 asset-backed**. All dino stage PNGs are **1024×1024** in phone and watch asset catalogs (87 imagesets + 5 eggs). See `SPECIES_ROSTER.md` and `README.md` for current counts. Sections below retain the original 2026-06-04 handoff snapshot unless noted.
 
-- Store-hardening commit **`31f7f79`** is on local `main`, **1 commit ahead** of `origin/main`; working tree is **clean**.
-- Release vs DEBUG audit found **no dev/diagnostic UI leaks** in Release builds; no code fixes required this session.
-- **iOS + watchOS simulator builds pass** (`xcodebuild`, exit 0); Release Archive and TestFlight upload not yet verified.
-- **App icons are empty** (phone + watch `AppIcon.appiconset` slots only); primary blocker for Archive/App Store.
-- **29 species / 20 asset-backed / 9 placeholder**; dino + egg PNGs complete in both asset catalogs.
-- Draft App Store metadata added at `docs/APP_STORE_METADATA.md`; all `LAUNCH_CHECKLIST.md` checkboxes remain unchecked.
+## Executive summary (June 2026 — current)
+
+- **29 catalog species**, **29 asset-backed**, **0 placeholder** — full PNG coverage on iPhone + watch.
+- **87** dino stage PNGs + **5** egg PNGs in both `Assets.xcassets` catalogs.
+- Legacy `trex`, `triceratops`, `tiny_raptor` PNGs normalized to **1024×1024** (June 2026).
+- App icons imported from `dino-step-assets/icons/` (see `LAUNCH_CHECKLIST.md`).
+- TestFlight upload pending Apple Developer Program enrollment (see prior session notes).
+
+## Executive summary (2026-06-04 original snapshot)
+
+- Store-hardening commit **`31f7f79`** on `main`.
+- Release vs DEBUG audit: **no dev/diagnostic UI leaks** in Release builds.
+- **iOS + watchOS simulator builds pass** (`xcodebuild`, exit 0).
+- Draft App Store metadata at `docs/APP_STORE_METADATA.md`.
 
 ## 1. Workspace identity & git state
 
@@ -58,9 +64,9 @@
 
 ### Catalog & assets
 - 29-species catalog — `Dino Step/Game/CreatureCatalog.swift`
-- 20 asset-backed species resolver — `Dino Step Shared/CreatureAssetVisual.swift`
-- iPhone PNGs: 65 (60 dino stage + 5 eggs) — `Dino Step/Assets.xcassets/`
-- Watch PNGs: 65 (mirrored) — `Dino Step Watch Watch App/Assets.xcassets/`
+- 29 asset-backed species resolver — `Dino Step Shared/CreatureAssetVisual.swift`
+- iPhone PNGs: 92 (87 dino stage + 5 eggs) — `Dino Step/Assets.xcassets/`
+- Watch PNGs: 92 (mirrored) — `Dino Step Watch Watch App/Assets.xcassets/`
 
 ### Store hardening (31f7f79)
 - Release Stats gating — `Dino Step/Views/StatsView.swift`
@@ -113,19 +119,17 @@
 
 | Metric | Count | Source |
 |--------|-------|--------|
-| Catalog species | **29** | `CreatureCatalog.swift` (29 `creature(` entries) |
-| Asset-backed species | **20** | `CreatureAssetVisual.assetBackedSpeciesIds` |
-| Placeholder / emoji only | **9** | `SPECIES_ROSTER.md` |
-| iPhone baby imagesets | **20** | `Dino Step/Assets.xcassets/` |
-| Watch baby imagesets | **20** | `Dino Step Watch Watch App/Assets.xcassets/` |
-| iPhone PNG files | **65** | 60 dino stages + 5 egg rarities |
-| Watch PNG files | **65** | Mirrored |
-| iPhone AppIcon PNGs assigned | **0** | `AppIcon.appiconset/Contents.json` — slots only, no `"filename"` entries |
-| Watch AppIcon PNGs assigned | **0** | Same |
+| Catalog species | **29** | `CreatureCatalog.swift` |
+| Asset-backed species | **29** | `CreatureAssetVisual.assetBackedSpeciesIds` |
+| Placeholder / emoji only | **0** | `SPECIES_ROSTER.md` |
+| iPhone baby imagesets | **29** | `Dino Step/Assets.xcassets/` |
+| Watch baby imagesets | **29** | `Dino Step Watch Watch App/Assets.xcassets/` |
+| iPhone PNG files | **92** | 87 dino stages + 5 egg rarities |
+| Watch PNG files | **92** | Mirrored |
 
-**Non-asset species (9):** quetzalcoatlus, indominus_hybrid, ancient_spinosaurus, volcanic_t_rex, frost_raptor, shadow_triceratops, titanosaur, cosmic_pterodactyl, ancient_apex_rex — per `SPECIES_ROSTER.md`.
+**Non-asset species:** None — full catalog is asset-backed (June 2026).
 
-**Orphan/missing PNGs:** None detected for the 20 asset-backed ids (all three stages present on phone and watch).
+**Orphan/missing PNGs:** None — all 29 species have baby/juvenile/adult on phone and watch.
 
 ## 6. Launch readiness — TestFlight
 
@@ -137,7 +141,7 @@
 - HealthKit purpose string updated (Debug + Release build settings)
 - HealthKit entitlement present
 - iOS + watch simulator builds succeed
-- 20/20 asset-backed species PNGs in bundle
+- 29/29 asset-backed species PNGs in bundle
 - `LAUNCH_CHECKLIST.md` and draft `docs/APP_STORE_METADATA.md`
 
 ### In progress

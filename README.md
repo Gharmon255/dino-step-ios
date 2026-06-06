@@ -26,8 +26,8 @@ See [`SPECIES_ROSTER.md`](SPECIES_ROSTER.md) for the full roster.
 | | Count |
 |---|------|
 | Catalog species | **29** |
-| Asset-backed (PNG art) | **20** |
-| Placeholder / emoji only | **9** |
+| Asset-backed (PNG art) | **29** |
+| Placeholder / emoji only | **0** |
 
 **Source assets** live in the sibling repo **`dino-step-assets`** (`dinos/` folder). Import into this project after art is ready.
 
@@ -60,7 +60,7 @@ Non-backed species use emoji fallbacks only — never another species’ `dino_*
 In **Debug** builds only (`#if DEBUG`):
 
 - **Stats** tab — egg testing: random egg, per-rarity eggs, reset game, clear collection
-- **Stats** tab — **Force Selected Species Egg** with species picker (20 asset-backed ids)
+- **Stats** tab — **Force Selected Species Egg** with species picker (29 asset-backed ids)
 - **Home** — fake step buttons (+500 / +2000 / +10000)
 - **Stats** — watch sync debug readout
 
@@ -91,6 +91,6 @@ Physical iPhone / Apple Watch testing is recommended before release but not requ
 
 ## Known limitations / next work
 
-- **9** catalog species still use placeholder / emoji art (see `dino-step-assets/species_queue.md`).
-- More species art, UI polish, and on-device HealthKit / WatchConnectivity validation on real hardware.
+- Catalog art is **complete** (29/29 species, all stages). See `dino-step-assets/species_queue.md` for expansion notes.
+- UI polish and on-device HealthKit / WatchConnectivity validation on real hardware.
 - Watch is read-only; all progression happens on the phone.

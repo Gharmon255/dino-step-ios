@@ -10,7 +10,7 @@ Do not duplicate roster tables here — update `SPECIES_ROSTER.md` when design c
 ## 1. Art preparation
 
 - [ ] Generate or clean source PNGs (baby, juvenile, adult)
-- [ ] Export as **RGBA**, **1024×1024** (or consistent size with existing dinos)
+- [ ] Export as **RGBA**, **1024×1024** (required — all catalog PNGs use this canvas)
 - [ ] Alpha channel **0–255**; clear hidden RGB under transparent pixels
 - [ ] Visual review: no stray pixels, consistent scale/padding vs existing species
 
