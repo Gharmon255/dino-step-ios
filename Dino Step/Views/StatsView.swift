@@ -234,6 +234,10 @@ struct StatsView: View {
                             Text("Ancient Spinosaurus").tag("ancient_spinosaurus")
                             Text("Frost Raptor").tag("frost_raptor")
                             Text("Volcanic T-Rex").tag("volcanic_t_rex")
+                            Text("Shadow Triceratops").tag("shadow_triceratops")
+                            Text("Cosmic Pterodactyl").tag("cosmic_pterodactyl")
+                            Text("Titanosaur").tag("titanosaur")
+                            Text("Ancient Apex Rex").tag("ancient_apex_rex")
                         }
                         .pickerStyle(.menu)
 
