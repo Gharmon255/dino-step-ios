@@ -103,6 +103,14 @@ final class GameState: ObservableObject {
         GameLogic.isHatched(activeCreature) ? activeCreature.definition.rarity : nil
     }
 
+    var duplicateTradeOffer: DuplicateTradeOffer? {
+        DuplicateTradeLogic.offer(
+            activeCreature: activeCreature,
+            currentStage: currentStage,
+            completedCreatures: completedCreatures
+        )
+    }
+
     func refreshHealthKitStatus() {
         isHealthKitAvailable = healthKitStepService.isAvailable
         healthKitAuthorizationStatus = healthKitStepService.authorizationStatus()
@@ -159,6 +167,10 @@ final class GameState: ObservableObject {
     }
 
     func claimReward() {
+        claimRandomReward()
+    }
+
+    func claimRandomReward() {
         guard currentStage == .adult else { return }
 
         let completed = CompletedCreature(
@@ -173,6 +185,22 @@ final class GameState: ObservableObject {
         lastRewardedEggRarity = outcome.rarity
         lastRewardRollPercent = outcome.rollPercent
         activeCreature = Self.createRandomEggWithRarity(outcome.rarity)
+        persistCurrentState()
+    }
+
+    func tradeDuplicatesForTierUpEgg() {
+        guard let offer = duplicateTradeOffer else { return }
+
+        guard DuplicateTradeLogic.removeOneCompleted(
+            speciesId: offer.speciesId,
+            from: &completedCreatures
+        ) else {
+            return
+        }
+
+        lastRewardedEggRarity = offer.rewardEggRarity
+        lastRewardRollPercent = nil
+        activeCreature = Self.createRandomEggWithRarity(offer.rewardEggRarity)
         persistCurrentState()
     }
 

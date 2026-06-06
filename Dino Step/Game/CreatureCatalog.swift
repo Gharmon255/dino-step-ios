@@ -47,6 +47,7 @@ enum CreatureCatalog {
         creature(4, "Parasaurolophus", .common, .forest, 11000, 2200, 5500, speciesId: "parasaurolophus"),
         creature(5, "Pachycephalosaurus", .common, .rocky, 12500, 2500, 6250, speciesId: "pachycephalosaurus"),
         creature(6, "Gallimimus", .common, .plains, 9000, 1800, 4500, speciesId: "gallimimus"),
+        creature(30, "Compsognathus", .common, .jungle, 7500, 1500, 3750, speciesId: "compsognathus"),
     ]
 
     static let uncommonCreatures: [CreatureDefinition] = [
@@ -57,6 +58,7 @@ enum CreatureCatalog {
         creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000, speciesId: "carnotaurus"),
         creature(12, "Baryonyx", .uncommon, .swamp, 25000, 5000, 12500, speciesId: "baryonyx"),
         creature(29, "Brachiosaurus", .uncommon, .plains, 20000, 4000, 10000, speciesId: "brachiosaurus"),
+        creature(31, "Plesiosaurus", .uncommon, .ocean, 21000, 4200, 10500, speciesId: "plesiosaurus"),
     ]
 
     static let rareCreatures: [CreatureDefinition] = [
@@ -66,6 +68,7 @@ enum CreatureCatalog {
         creature(16, "Allosaurus", .rare, .rocky, 48000, 9600, 24000, speciesId: "allosaurus"),
         creature(17, "Therizinosaurus", .rare, .forest, 55000, 11000, 27500, speciesId: "therizinosaurus"),
         creature(18, "Mosasaurus", .rare, .ocean, 65000, 13000, 32500, speciesId: "mosasaurus"),
+        creature(32, "Diplodocus", .rare, .plains, 52000, 10400, 26000, speciesId: "diplodocus"),
     ]
 
     static let epicCreatures: [CreatureDefinition] = [
@@ -73,6 +76,7 @@ enum CreatureCatalog {
         creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000, speciesId: "quetzalcoatlus"),
         creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500, speciesId: "indominus_hybrid"),
         creature(22, "Ancient Spinosaurus", .epic, .swamp, 100000, 20000, 50000),
+        creature(33, "Crystal Ceratosaurus", .epic, .ice, 92000, 18400, 46000, speciesId: "crystal_ceratosaurus"),
     ]
 
     static let legendaryCreatures: [CreatureDefinition] = [
@@ -82,6 +86,7 @@ enum CreatureCatalog {
         creature(26, "Titanosaur", .legendary, .plains, 150000, 30000, 75000),
         creature(27, "Cosmic Pterodactyl", .legendary, .sky, 175000, 35000, 87500),
         creature(28, "Ancient Apex Rex", .legendary, .volcano, 200000, 40000, 100000),
+        creature(34, "Abyssal Mosasaurus", .legendary, .ocean, 190000, 38000, 95000, speciesId: "abyssal_mosasaurus"),
     ]
 
     /// Legacy display names, slugs, and dev-picker values mapped to canonical species IDs.

@@ -238,6 +238,11 @@ struct StatsView: View {
                             Text("Cosmic Pterodactyl").tag("cosmic_pterodactyl")
                             Text("Titanosaur").tag("titanosaur")
                             Text("Ancient Apex Rex").tag("ancient_apex_rex")
+                            Text("Compsognathus").tag("compsognathus")
+                            Text("Plesiosaurus").tag("plesiosaurus")
+                            Text("Diplodocus").tag("diplodocus")
+                            Text("Crystal Ceratosaurus").tag("crystal_ceratosaurus")
+                            Text("Abyssal Mosasaurus").tag("abyssal_mosasaurus")
                         }
                         .pickerStyle(.menu)
 

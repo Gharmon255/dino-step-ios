@@ -18,6 +18,13 @@
 			remoteGlobalIDString = F1ED5BA62FCA50B8004E9AEB;
 			remoteInfo = "Dino Step Watch Watch App";
 		};
+		F1ED5BD72FCA60000004E9AEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F1ED5B232FCA4350004E9AEB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1ED5B2A2FCA4350004E9AEB;
+			remoteInfo = "Dino Step";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +44,7 @@
 /* Begin PBXFileReference section */
 		F1ED5B2B2FCA4350004E9AEB /* Dino Step.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dino Step.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1ED5BA72FCA50B8004E9AEB /* Dino Step Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dino Step Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1ED5BD12FCA60000004E9AEB /* Dino StepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Dino StepTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -53,6 +61,11 @@
 		F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Dino Step Shared";
+			sourceTree = "<group>";
+		};
+		F1ED5BD22FCA60000004E9AEB /* Dino StepTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Dino StepTests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -72,6 +85,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1ED5BD52FCA60000004E9AEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,6 +101,7 @@
 				F1ED5B2D2FCA4350004E9AEB /* Dino Step */,
 				F1ED5BA82FCA50B8004E9AEB /* Dino Step Watch Watch App */,
 				F1ED5BC02FCA51000004E9AEB /* Dino Step Shared */,
+				F1ED5BD22FCA60000004E9AEB /* Dino StepTests */,
 				F1ED5B2C2FCA4350004E9AEB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +111,7 @@
 			children = (
 				F1ED5B2B2FCA4350004E9AEB /* Dino Step.app */,
 				F1ED5BA72FCA50B8004E9AEB /* Dino Step Watch Watch App.app */,
+				F1ED5BD12FCA60000004E9AEB /* Dino StepTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -145,6 +167,29 @@
 			productReference = F1ED5BA72FCA50B8004E9AEB /* Dino Step Watch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F1ED5BD32FCA60000004E9AEB /* Dino StepTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1ED5BDB2FCA60000004E9AEB /* Build configuration list for PBXNativeTarget "Dino StepTests" */;
+			buildPhases = (
+				F1ED5BD42FCA60000004E9AEB /* Sources */,
+				F1ED5BD52FCA60000004E9AEB /* Frameworks */,
+				F1ED5BD62FCA60000004E9AEB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1ED5BD82FCA60000004E9AEB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F1ED5BD22FCA60000004E9AEB /* Dino StepTests */,
+			);
+			name = "Dino StepTests";
+			packageProductDependencies = (
+			);
+			productName = "Dino StepTests";
+			productReference = F1ED5BD12FCA60000004E9AEB /* Dino StepTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -160,6 +205,10 @@
 					};
 					F1ED5BA62FCA50B8004E9AEB = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					F1ED5BD32FCA60000004E9AEB = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = F1ED5B2A2FCA4350004E9AEB;
 					};
 				};
 			};
@@ -179,6 +228,7 @@
 			targets = (
 				F1ED5B2A2FCA4350004E9AEB /* Dino Step */,
 				F1ED5BA62FCA50B8004E9AEB /* Dino Step Watch Watch App */,
+				F1ED5BD32FCA60000004E9AEB /* Dino StepTests */,
 			);
 		};
 /* End PBXProject section */
@@ -192,6 +242,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1ED5BA52FCA50B8004E9AEB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1ED5BD62FCA60000004E9AEB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -215,6 +272,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1ED5BD42FCA60000004E9AEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -222,6 +286,11 @@
 			isa = PBXTargetDependency;
 			target = F1ED5BA62FCA50B8004E9AEB /* Dino Step Watch Watch App */;
 			targetProxy = F1ED5BAF2FCA50B9004E9AEB /* PBXContainerItemProxy */;
+		};
+		F1ED5BD82FCA60000004E9AEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1ED5B2A2FCA4350004E9AEB /* Dino Step */;
+			targetProxy = F1ED5BD72FCA60000004E9AEB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -503,6 +572,47 @@
 			};
 			name = Release;
 		};
+		F1ED5BD92FCA60000004E9AEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5YZ54R8M4H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gharmon255.Dino-StepTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dino Step.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dino Step";
+			};
+			name = Debug;
+		};
+		F1ED5BDA2FCA60000004E9AEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5YZ54R8M4H;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gharmon255.Dino-StepTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dino Step.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dino Step";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -529,6 +639,15 @@
 			buildConfigurations = (
 				F1ED5BB32FCA50B9004E9AEB /* Debug */,
 				F1ED5BB42FCA50B9004E9AEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1ED5BDB2FCA60000004E9AEB /* Build configuration list for PBXNativeTarget "Dino StepTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1ED5BD92FCA60000004E9AEB /* Debug */,
+				F1ED5BDA2FCA60000004E9AEB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

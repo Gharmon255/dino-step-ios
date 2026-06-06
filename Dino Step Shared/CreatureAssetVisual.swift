@@ -40,6 +40,9 @@ enum CreatureAssetVisual {
         "cosmic_pterodactyl",
         "titanosaur",
         "ancient_apex_rex",
+        "compsognathus",
+        "plesiosaurus",
+        "diplodocus",
     ]
 
     /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.

@@ -7,6 +7,7 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject var gameState: GameState
+    @State private var showTradeConfirmation = false
 
     private var stage: GrowthStage { gameState.currentStage }
     private var rarityColor: Color { RarityColors.color(for: ambientRarity) }
@@ -130,14 +131,41 @@ struct HomeView: View {
 #endif
 
                     if stage == .adult {
-                        Button("Claim Reward") {
-                            gameState.claimReward()
+                        Button("Claim Random Egg") {
+                            gameState.claimRandomReward()
                         }
                         .buttonStyle(StepButtonStyle(color: RarityColors.color(for: .legendary)))
+
+                        if let tradeOffer = gameState.duplicateTradeOffer {
+                            Button(tradeOffer.tradeButtonTitle) {
+                                showTradeConfirmation = true
+                            }
+                            .buttonStyle(StepButtonStyle(color: RarityColors.color(for: tradeOffer.rewardEggRarity)))
+
+                            Text(tradeOffer.helperText)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                 }
             }
             .padding()
+        }
+        .confirmationDialog(
+            "Trade for tier-up egg?",
+            isPresented: $showTradeConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Trade", role: .destructive) {
+                gameState.tradeDuplicatesForTierUpEgg()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            if let tradeOffer = gameState.duplicateTradeOffer {
+                Text(tradeOffer.confirmationMessage)
+            }
         }
         .background {
             RarityScreenBackground(rarity: ambientRarity)

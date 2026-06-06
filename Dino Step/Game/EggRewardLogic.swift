@@ -20,7 +20,12 @@ enum EggRewardLogic {
     ]
 
     static func rollEggReward() -> EggRewardOutcome {
-        let roll = Double.random(in: 0..<100)
+        rollEggReward(rollPercent: Double.random(in: 0..<100))
+    }
+
+    /// Deterministic roll for unit tests (`rollPercent` in 0..<100).
+    static func rollEggReward(rollPercent: Double) -> EggRewardOutcome {
+        let roll = min(99.999, max(0, rollPercent))
         var cumulative = 0.0
 
         for (rarity, weight) in weights {

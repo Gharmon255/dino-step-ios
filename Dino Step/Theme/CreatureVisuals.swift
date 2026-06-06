@@ -127,6 +127,11 @@ enum CreatureVisuals {
         "Titanosaur": .init(shortCode: "TIT", baseEmoji: "🦕", colorVariant: 1),
         "Cosmic Pterodactyl": .init(shortCode: "CPT", baseEmoji: "🦖", colorVariant: 2),
         "Ancient Apex Rex": .init(shortCode: "AAR", baseEmoji: "🦖", colorVariant: 0),
+        "Compsognathus": .init(shortCode: "CMP", baseEmoji: "🦖", colorVariant: 1),
+        "Plesiosaurus": .init(shortCode: "PLE", baseEmoji: "🦕", colorVariant: 0),
+        "Diplodocus": .init(shortCode: "DIP", baseEmoji: "🦕", colorVariant: 2),
+        "Crystal Ceratosaurus": .init(shortCode: "CCR", baseEmoji: "🦖", colorVariant: 0),
+        "Abyssal Mosasaurus": .init(shortCode: "ABY", baseEmoji: "🦖", colorVariant: 1),
     ]
 
     // MARK: - Helpers
