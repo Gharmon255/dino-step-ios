@@ -33,18 +33,7 @@ struct HomeView: View {
                         )
                     )
 
-                ZStack {
-                    if stage == .egg {
-                        let glow = RarityColors.eggStyle(for: gameState.currentEggRarity)
-                        if glow.showsGlow {
-                            Circle()
-                                .fill(glow.glow.opacity(RarityColors.cardGlowOpacity(for: gameState.currentEggRarity) + 0.12))
-                                .frame(width: 180, height: 180)
-                                .blur(radius: 24)
-                        }
-                    }
-
-                    GameCard(accentColor: rarityColor) {
+                GameCard(accentColor: rarityColor) {
                     VStack(spacing: 16) {
                         if stage == .egg {
                             RarityEggView(
@@ -101,7 +90,6 @@ struct HomeView: View {
                             .tint(rarityColor)
                     }
                     .frame(maxWidth: .infinity)
-                }
                 }
 
                 VStack(spacing: 12) {

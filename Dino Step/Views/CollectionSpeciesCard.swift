@@ -14,7 +14,6 @@ struct CollectionSpeciesCard: View {
 
     private let collectedArtSize: CGFloat = 72
     private let collectedFrameSize: CGFloat = 88
-    private let lockedFrameSize: CGFloat = 60
 
     var body: some View {
         GameCard(accentColor: entry.isCollected ? rarityColor : rarityColor.opacity(0.35)) {
@@ -125,52 +124,25 @@ struct CollectionSpeciesCard: View {
     }
 
     private var collectedVisual: some View {
-        ZStack {
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [rarityColor.opacity(0.22), rarityColor.opacity(0.04)],
-                        center: .center,
-                        startRadius: 8,
-                        endRadius: collectedFrameSize / 2
-                    )
-                )
-                .frame(width: collectedFrameSize, height: collectedFrameSize)
-
-            Circle()
-                .strokeBorder(rarityColor.opacity(0.35), lineWidth: 2)
-                .frame(width: collectedFrameSize, height: collectedFrameSize)
-
-            CreatureStageVisualView(
-                creature: entry.definition,
-                stage: .adult,
-                compact: true,
-                fixedVisualSize: collectedArtSize
-            )
-        }
+        CreatureStageVisualView(
+            creature: entry.definition,
+            stage: .adult,
+            compact: true,
+            fixedVisualSize: collectedArtSize
+        )
         .frame(width: collectedFrameSize, height: collectedFrameSize)
         .accessibilityLabel("\(entry.definition.name) adult")
     }
 
     private var lockedVisual: some View {
-        ZStack {
-            Circle()
-                .fill(Color(.tertiarySystemFill))
-                .frame(width: lockedFrameSize, height: lockedFrameSize)
+        VStack(spacing: 2) {
+            Image(systemName: "questionmark")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.secondary)
 
-            Circle()
-                .strokeBorder(rarityColor.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [4, 4]))
-                .frame(width: lockedFrameSize, height: lockedFrameSize)
-
-            VStack(spacing: 2) {
-                Image(systemName: "questionmark")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.secondary)
-
-                Image(systemName: "lock.fill")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.tertiary)
-            }
+            Image(systemName: "lock.fill")
+                .font(.system(size: 10))
+                .foregroundStyle(.tertiary)
         }
         .frame(width: collectedFrameSize, height: collectedFrameSize)
         .accessibilityLabel("Locked species")

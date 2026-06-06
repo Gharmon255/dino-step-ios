@@ -205,25 +205,47 @@ struct RarityEggView: View {
 
     var body: some View {
         ZStack {
-            if style.showsGlow {
+            if !usesAssetImage, style.showsGlow {
                 EggShape()
                     .fill(style.glow.opacity(compact ? 0.28 : 0.38))
                     .frame(width: eggWidth * 1.12, height: eggHeight * 1.08)
                     .blur(radius: compact ? 4 : 10)
             }
 
-            if style.showsOuterRing {
+            if !usesAssetImage, style.showsOuterRing {
                 EggShape()
                     .stroke(style.primary.opacity(0.55), lineWidth: compact ? 1.5 : 2.5)
                     .frame(width: eggWidth * 1.14, height: eggHeight * 1.1)
             }
 
             if usesAssetImage {
-                Image(assetName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: eggWidth, height: eggHeight)
-                    .shadow(color: style.glow.opacity(style.showsGlow ? 0.35 : 0), radius: compact ? 4 : 8)
+                ZStack(alignment: .bottom) {
+                    if style.showsGlow, !compact {
+                        Ellipse()
+                            .fill(
+                                RadialGradient(
+                                    colors: [
+                                        style.glow.opacity(0.42),
+                                        style.glow.opacity(0.12),
+                                        .clear,
+                                    ],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: eggWidth * 0.34
+                                )
+                            )
+                            .frame(width: eggWidth * 0.72, height: eggHeight * 0.14)
+                            .offset(y: eggHeight * 0.06)
+                            .blur(radius: 5)
+                    }
+
+                    Image(assetName)
+                        .resizable()
+                        .interpolation(.high)
+                        .antialiased(true)
+                        .scaledToFit()
+                        .frame(width: eggWidth, height: eggHeight)
+                }
             } else {
                 RarityEggPlaceholderView(
                     style: style,
@@ -233,7 +255,7 @@ struct RarityEggView: View {
                 )
             }
 
-            if style.showsSparkle && !compact {
+            if !usesAssetImage, style.showsSparkle, !compact {
                 Image(systemName: "sparkles")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.85))
