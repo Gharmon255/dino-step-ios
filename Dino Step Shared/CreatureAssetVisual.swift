@@ -43,6 +43,8 @@ enum CreatureAssetVisual {
         "compsognathus",
         "plesiosaurus",
         "diplodocus",
+        "crystal_ceratosaurus",
+        "abyssal_mosasaurus",
     ]
 
     /// Legacy display names, slugs, and alternate spellings mapped to canonical species IDs.

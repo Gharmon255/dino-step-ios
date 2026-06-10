@@ -3,7 +3,7 @@ import XCTest
 
 final class CreatureAssetVisualTests: XCTestCase {
     func testAssetBackedSpeciesCount() {
-        XCTAssertEqual(CreatureAssetVisual.assetBackedSpeciesIds.count, 32)
+        XCTAssertEqual(CreatureAssetVisual.assetBackedSpeciesIds.count, 34)
     }
 
     func testNormalizedSpeciesId_aliases() {
