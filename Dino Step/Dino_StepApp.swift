@@ -13,6 +13,7 @@ struct Dino_StepApp: App {
 #if os(iOS)
         PhoneWatchConnectivityManager.shared.activate()
         HealthKitBackgroundSyncCoordinator.shared.registerBackgroundTasks()
+        StageMilestoneNotifier.configure()
 #endif
     }
 

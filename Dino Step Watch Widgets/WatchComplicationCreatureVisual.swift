@@ -33,7 +33,7 @@ struct WatchComplicationCreatureVisual: View {
 
     @ViewBuilder
     private func complicationImage(named assetName: String) -> some View {
-        Image(assetName, bundle: .main)
+        Image(assetName, bundle: WatchCreatureAssetBundle.resourceBundle)
             .resizable()
             .scaledToFit()
     }

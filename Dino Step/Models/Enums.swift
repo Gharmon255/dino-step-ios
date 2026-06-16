@@ -30,7 +30,7 @@ enum Rarity: String, CaseIterable, Codable {
     }
 
     var mysteryEggTitle: String {
-        "Mystery \(displayName) Egg"
+        "Mystery Egg"
     }
 }
 

@@ -17,9 +17,24 @@ struct StatsView: View {
             VStack(spacing: 16) {
                 AppleHealthPrivacyCard(gameState: gameState)
 
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Your stats")
+                            .font(.headline)
+
+                        statRow("Today's steps", gameState.lastSyncedHealthKitStepTotal.formatted())
+                        statRow("All-time steps", gameState.lifetimeStepsApplied.formatted())
+                        statRow(
+                            "Dino Dex",
+                            "\(gameState.collectionStats.uniqueSpeciesCollected)/\(gameState.collectionStats.totalPossibleSpecies) discovered"
+                        )
+                    }
+                }
+
+#if DEBUG
                 GameCard(accentColor: RarityColors.color(for: gameState.currentEggRarity)) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Current Run")
+                        Text("Active creature (debug)")
                             .font(.headline)
                             .foregroundStyle(RarityColors.color(for: gameState.currentEggRarity))
 
@@ -31,15 +46,6 @@ struct StatsView: View {
                         )
                         statRow("Current Stage", gameState.currentStage.rawValue)
                         statRow("Progress", String(format: "%.1f%%", gameState.progressPercent))
-                    }
-                }
-
-                GameCard {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Lifetime")
-                            .font(.headline)
-                            .foregroundStyle(.purple)
-
                         statRow(
                             "Completed Dinosaurs",
                             "\(gameState.completedCreatures.count)"
@@ -47,7 +53,6 @@ struct StatsView: View {
                     }
                 }
 
-#if DEBUG
                 if let persistenceMessage = gameState.persistenceStatus?.message {
                     GameCard {
                         VStack(alignment: .leading, spacing: 8) {

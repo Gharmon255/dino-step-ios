@@ -59,7 +59,8 @@ enum SavedGameStateMapper {
             lastRewardRollPercent: gameState.lastRewardRollPercent,
             lastSyncedHealthKitStepTotal: gameState.lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: gameState.lastHealthKitSyncDayStart,
-            lastHealthKitSyncMessage: gameState.lastHealthKitSyncMessage
+            lastHealthKitSyncMessage: gameState.lastHealthKitSyncMessage,
+            lifetimeStepsApplied: gameState.lifetimeStepsApplied
         )
     }
 
@@ -92,7 +93,8 @@ enum SavedGameStateMapper {
             lastRewardRollPercent: savedState.lastRewardRollPercent,
             lastSyncedHealthKitStepTotal: savedState.lastSyncedHealthKitStepTotal ?? 0,
             lastHealthKitSyncDayStart: savedState.lastHealthKitSyncDayStart,
-            lastHealthKitSyncMessage: savedState.lastHealthKitSyncMessage
+            lastHealthKitSyncMessage: savedState.lastHealthKitSyncMessage,
+            lifetimeStepsApplied: savedState.lifetimeStepsApplied ?? 0
         )
     }
 
@@ -134,4 +136,5 @@ struct GameStateSnapshot {
     var lastSyncedHealthKitStepTotal: Int
     var lastHealthKitSyncDayStart: Date?
     var lastHealthKitSyncMessage: String?
+    var lifetimeStepsApplied: Int
 }

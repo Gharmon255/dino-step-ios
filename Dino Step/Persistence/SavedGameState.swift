@@ -16,6 +16,7 @@ struct SavedGameState: Codable {
     var lastSyncedHealthKitStepTotal: Int?
     var lastHealthKitSyncDayStart: Date?
     var lastHealthKitSyncMessage: String?
+    var lifetimeStepsApplied: Int?
 }
 
 struct SavedActiveCreatureState: Codable {

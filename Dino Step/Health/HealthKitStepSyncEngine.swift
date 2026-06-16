@@ -61,10 +61,18 @@ enum HealthKitStepSyncEngine {
             let delta = currentTotal - snapshot.lastSyncedHealthKitStepTotal
 
             if delta > 0 {
+                let previousCreature = snapshot.activeCreature
                 snapshot.activeCreature.currentSteps += delta
                 snapshot.lastSyncedHealthKitStepTotal = currentTotal
+                snapshot.lifetimeStepsApplied += delta
                 let message = "Synced \(delta.formatted()) new steps"
                 snapshot.lastHealthKitSyncMessage = message
+#if os(iOS)
+                StageMilestoneNotifier.notifyIfNeeded(
+                    previous: previousCreature,
+                    current: snapshot.activeCreature
+                )
+#endif
                 return HealthKitStepSyncResult(appliedDelta: delta, message: message)
             }
 

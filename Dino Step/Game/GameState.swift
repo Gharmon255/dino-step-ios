@@ -18,6 +18,8 @@ final class GameState: ObservableObject {
     @Published private(set) var lastSyncedHealthKitStepTotal: Int = 0
     @Published private(set) var lastHealthKitSyncDayStart: Date?
     @Published private(set) var lastHealthKitSyncMessage: String?
+    @Published private(set) var lastHealthKitSyncDate: Date?
+    @Published private(set) var lifetimeStepsApplied: Int = 0
     @Published private(set) var isHealthKitAvailable = false
     @Published private(set) var healthKitAuthorizationStatus: HealthKitAuthorizationStatus = .unknown
     @Published private(set) var isSyncingHealthKitSteps = false
@@ -123,6 +125,10 @@ final class GameState: ObservableObject {
         )
     }
 
+    var collectionStats: CollectionStats {
+        CollectionCatalog.stats(from: completedCreatures)
+    }
+
     func refreshHealthKitStatus() {
         isHealthKitAvailable = healthKitStepService.isAvailable
         healthKitAuthorizationStatus = healthKitStepService.authorizationStatus()
@@ -155,6 +161,13 @@ final class GameState: ObservableObject {
         apply(currentSnapshot)
         persistCurrentState()
 
+        if healthKitAuthorizationStatus == .authorized {
+            lastHealthKitSyncDate = Date()
+#if os(iOS)
+            StageMilestoneNotifier.requestAuthorizationIfNeeded()
+#endif
+        }
+
 #if os(iOS)
         HealthKitBackgroundSyncCoordinator.shared.startAutomaticSyncIfAuthorized(
             healthKitStepService: healthKitStepService
@@ -179,7 +192,8 @@ final class GameState: ObservableObject {
             lastRewardRollPercent: lastRewardRollPercent,
             lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
-            lastHealthKitSyncMessage: lastHealthKitSyncMessage
+            lastHealthKitSyncMessage: lastHealthKitSyncMessage,
+            lifetimeStepsApplied: lifetimeStepsApplied
         )
     }
 
@@ -196,8 +210,13 @@ final class GameState: ObservableObject {
 
     func addSteps(_ amount: Int) {
         guard amount > 0 else { return }
+        let previousCreature = activeCreature
         activeCreature.currentSteps += amount
+        lifetimeStepsApplied += amount
         persistCurrentState()
+#if os(iOS)
+        StageMilestoneNotifier.notifyIfNeeded(previous: previousCreature, current: activeCreature)
+#endif
     }
 
     func claimReward() {
@@ -347,6 +366,7 @@ final class GameState: ObservableObject {
         lastSyncedHealthKitStepTotal = snapshot.lastSyncedHealthKitStepTotal
         lastHealthKitSyncDayStart = snapshot.lastHealthKitSyncDayStart
         lastHealthKitSyncMessage = snapshot.lastHealthKitSyncMessage
+        lifetimeStepsApplied = snapshot.lifetimeStepsApplied
         resetHealthKitSyncBaselineIfNeeded()
     }
 
@@ -367,7 +387,8 @@ final class GameState: ObservableObject {
             lastRewardRollPercent: lastRewardRollPercent,
             lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
-            lastHealthKitSyncMessage: lastHealthKitSyncMessage
+            lastHealthKitSyncMessage: lastHealthKitSyncMessage,
+            lifetimeStepsApplied: lifetimeStepsApplied
         )
         persistenceStore.save(SavedGameStateMapper.makeSavedState(from: snapshot))
         persistenceStatus = .savedLocally

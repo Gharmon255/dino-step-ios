@@ -10,6 +10,10 @@ struct WatchCreatureCenterVisual: View {
     let payload: WatchGameStatePayload?
     var visualSize: CGFloat
 
+    private var assetBundle: Bundle {
+        WatchCreatureAssetBundle.resourceBundle
+    }
+
     private var placeholderEmoji: String {
         WatchCreatureVisualResolver.placeholderEmoji(for: payload)
     }
@@ -18,12 +22,12 @@ struct WatchCreatureCenterVisual: View {
         if WatchCreatureVisualResolver.isEggStage(payload),
            let rarity = payload?.rarity,
            let eggAsset = WatchCreatureVisualResolver.eggAssetName(for: rarity) {
-            Image(eggAsset)
+            Image(eggAsset, bundle: assetBundle)
                 .resizable()
                 .scaledToFit()
                 .frame(width: visualSize, height: visualSize)
         } else if let assetName = WatchCreatureVisualResolver.creatureAssetName(for: payload) {
-            Image(assetName)
+            Image(assetName, bundle: assetBundle)
                 .resizable()
                 .scaledToFit()
                 .frame(width: visualSize, height: visualSize)

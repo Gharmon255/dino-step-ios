@@ -28,7 +28,8 @@ Update checkboxes as items are completed.
 
 ## HealthKit
 
-- [ ] **NSHealthShareUsageDescription** reviewed in Xcode build settings (`INFOPLIST_KEY_NSHealthShareUsageDescription`)
+- [x] **NSHealthShareUsageDescription** reviewed in Xcode build settings (`INFOPLIST_KEY_NSHealthShareUsageDescription`)
+- [x] **NSHealthUpdateUsageDescription** added (`INFOPLIST_KEY_NSHealthUpdateUsageDescription`) — required for HealthKit entitlement on upload
 - [ ] Wording states: reads step count, used to hatch/grow dinosaurs, no location
 - [ ] **Physical iPhone HealthKit test** — authorize, sync steps, verify hatch/progression
 - [ ] HealthKit entitlement enabled (`Dino Step.entitlements`)

@@ -129,4 +129,4 @@ Bump in Xcode → target **Dino Step** → **General**:
 - **Version** (`MARKETING_VERSION`) — user-facing, e.g. `1.0`
 - **Build** (`CURRENT_PROJECT_VERSION`) — must increase every upload, e.g. `1`, `2`, `3`…
 
-**Current repo values:** `MARKETING_VERSION` **1.0**, build **2**.
+**Current repo values:** `MARKETING_VERSION` **1.0**, build **3** (build 2 rejected: duplicate watch assets exceeded 75MB watch limit).

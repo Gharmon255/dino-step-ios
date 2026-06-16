@@ -56,7 +56,9 @@ struct HomeView: View {
                             .foregroundStyle(stage == .egg ? rarityColor : .primary)
 
                         HStack(spacing: 8) {
-                            RarityBadge(rarity: gameState.currentEggRarity)
+                            if stage != .egg {
+                                RarityBadge(rarity: gameState.currentEggRarity)
+                            }
                             stageBadge
                         }
 
@@ -94,31 +96,56 @@ struct HomeView: View {
                 }
 
                 VStack(spacing: 12) {
-                    Button {
-                        Task {
-                            await gameState.syncHealthKitSteps(manual: true)
+                    if gameState.healthKitAuthorizationStatus == .authorized {
+                        Text(
+                            HomeSyncStatusText.format(
+                                isSyncing: gameState.isSyncingHealthKitSteps,
+                                lastSyncDate: gameState.lastHealthKitSyncDate,
+                                syncMessage: gameState.lastHealthKitSyncMessage
+                            )
+                        )
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+
+                        Button {
+                            Task {
+                                await gameState.syncHealthKitSteps(manual: true)
+                            }
+                        } label: {
+                            Text(gameState.isSyncingHealthKitSteps ? "Syncing…" : "Sync again")
+                                .font(.subheadline.weight(.semibold))
                         }
-                    } label: {
-                        Group {
-                            if gameState.isSyncingHealthKitSteps {
-                                HStack(spacing: 8) {
-                                    ProgressView()
-                                    Text("Syncing Steps...")
+                        .buttonStyle(.borderless)
+                        .disabled(gameState.isSyncingHealthKitSteps)
+                    } else {
+                        Button {
+                            Task {
+                                await gameState.syncHealthKitSteps(manual: true)
+                            }
+                        } label: {
+                            Group {
+                                if gameState.isSyncingHealthKitSteps {
+                                    HStack(spacing: 8) {
+                                        ProgressView()
+                                        Text("Syncing Steps...")
+                                    }
+                                } else {
+                                    Text("Sync Now")
                                 }
-                            } else {
-                                Text("Sync Now")
                             }
                         }
-                    }
-                    .buttonStyle(StepButtonStyle(color: .teal))
-                    .disabled(gameState.isSyncingHealthKitSteps)
+                        .buttonStyle(StepButtonStyle(color: .teal))
+                        .disabled(gameState.isSyncingHealthKitSteps)
 
-                    if let syncMessage = gameState.lastHealthKitSyncMessage {
-                        Text(syncMessage)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
+                        if let syncMessage = gameState.lastHealthKitSyncMessage {
+                            Text(syncMessage)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
 
 #if DEBUG

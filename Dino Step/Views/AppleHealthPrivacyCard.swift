@@ -21,7 +21,7 @@ struct AppleHealthPrivacyCard: View {
                     .foregroundStyle(.secondary)
 
                 Text(
-                    "Step data stays on your device. Stepasaurus reads your step count from Apple Health when you open the app and about once per hour in the background. You can also tap Sync Steps anytime. We do not sell or share your steps for ads."
+                    "Step data stays on your device. Stepasaurus reads your step count from Apple Health when you open the app and about once per hour in the background. We do not sell or share your steps for ads."
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -46,11 +46,11 @@ struct AppleHealthPrivacyCard: View {
         case .authorized:
             return "Step access is enabled. Steps sync automatically about every hour."
         case .notDetermined:
-            return "Allow step access when prompted, then use Sync Steps on Home."
+            return "Allow step access when prompted to start automatic step sync."
         case .denied:
             return "Step access is off. Enable Health permissions for Stepasaurus in Settings → Health."
         case .unknown, .unavailable:
-            return "Step access status is unknown. Try Sync Steps on Home."
+            return "Step access status is unknown. Try syncing from Home."
         }
     }
 
