@@ -60,9 +60,20 @@ final class GameState: ObservableObject {
 
         refreshHealthKitStatus()
 #if os(iOS)
+        watchConnectivityManager.payloadProvider = { [weak self] in
+            guard let self else { return nil }
+            return WatchGameStatePayloadBuilder.build(from: self)
+        }
         syncToWatch()
 #endif
     }
+
+#if os(iOS)
+    func syncToWatch() {
+        let payload = WatchGameStatePayloadBuilder.build(from: self)
+        watchConnectivityManager.send(payload: payload)
+    }
+#endif
 
     var currentEggRarity: Rarity {
         activeCreature.eggRarity
@@ -364,11 +375,4 @@ final class GameState: ObservableObject {
         syncToWatch()
 #endif
     }
-
-#if os(iOS)
-    private func syncToWatch() {
-        let payload = WatchGameStatePayloadBuilder.build(from: self)
-        watchConnectivityManager.send(payload: payload)
-    }
-#endif
 }

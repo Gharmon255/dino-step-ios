@@ -9,6 +9,13 @@ struct ContentView: View {
     @StateObject private var receiver = WatchConnectivityReceiver.shared
 
     var body: some View {
+        NavigationStack {
+            watchBody
+        }
+    }
+
+    @ViewBuilder
+    private var watchBody: some View {
         GeometryReader { proxy in
             let availableHeight = proxy.size.height
             let ringSize = max(74, min(92, availableHeight * 0.42))
@@ -28,6 +35,10 @@ struct ContentView: View {
         .background(Color.black)
         .onAppear {
             receiver.activate()
+            receiver.refreshComplications()
+        }
+        .onChange(of: receiver.payload?.updatedAt) { _, _ in
+            receiver.refreshComplications()
         }
     }
 
@@ -63,7 +74,8 @@ struct ContentView: View {
                 speciesId: payload.speciesId,
                 creatureName: payload.creatureName,
                 stage: payload.stage,
-                isEggStage: payload.stage == "EGG"
+                isEggStage: payload.stage == "EGG",
+                payload: payload
             )
 
             // Percent moved out of the ring for clarity.
@@ -79,6 +91,15 @@ struct ContentView: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
                 .padding(.top, 2)
+
+            NavigationLink {
+                WatchFaceSetupView()
+            } label: {
+                Text("Watch Face Setup")
+                    .font(.caption2.weight(.semibold))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 4)
         }
     }
 
@@ -103,6 +124,15 @@ struct ContentView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
+
+            NavigationLink {
+                WatchFaceSetupView()
+            } label: {
+                Text("Watch Face Setup")
+                    .font(.caption2.weight(.semibold))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 4)
         }
     }
 

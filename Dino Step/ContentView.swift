@@ -44,6 +44,9 @@ struct ContentView: View {
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active else { return }
             gameState.reloadFromPersistence()
+#if os(iOS)
+            gameState.syncToWatch()
+#endif
             Task {
                 await gameState.syncHealthKitSteps()
             }

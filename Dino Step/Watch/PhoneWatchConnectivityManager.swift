@@ -22,6 +22,10 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
     @Published private(set) var lastSyncDate: Date?
     @Published private(set) var lastSentPayload: WatchGameStatePayload?
 
+    var payloadProvider: (@MainActor () -> WatchGameStatePayload?)?
+
+    private var pendingPayload: WatchGameStatePayload?
+
     private override init() {
         super.init()
     }
@@ -41,6 +45,22 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
     }
 
     func send(payload: WatchGameStatePayload) {
+        pendingPayload = payload
+        deliver(payload: payload)
+    }
+
+    func resendLatestPayload() {
+        if let pendingPayload {
+            deliver(payload: pendingPayload)
+            return
+        }
+
+        if let payload = payloadProvider?() {
+            deliver(payload: payload)
+        }
+    }
+
+    private func deliver(payload: WatchGameStatePayload) {
         guard WCSession.isSupported() else {
             lastSyncMessage = "WatchConnectivity not supported"
             return
@@ -49,7 +69,8 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
         let session = WCSession.default
 
         guard session.activationState == .activated else {
-            lastSyncMessage = "Watch session not activated"
+            lastSyncMessage = "Watch session not activated — queued"
+            Self.log("Queued payload until watch session activates")
             return
         }
 
@@ -71,9 +92,10 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
 
         do {
             try session.updateApplicationContext(context)
+            pendingPayload = payload
             lastSentPayload = payload
             lastSyncDate = Date()
-            lastSyncMessage = "Sent state to watch"
+            lastSyncMessage = "Sent \(payload.creatureName) \(payload.stage) to watch"
 
             if session.isReachable {
                 session.sendMessage(context, replyHandler: nil) { error in
@@ -83,6 +105,11 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
                     }
                 }
             }
+
+            Self.log(
+                "Sent \(payload.creatureName) \(payload.stage) " +
+                "(species: \(payload.speciesId ?? "nil"), steps: \(payload.currentSteps))"
+            )
         } catch {
             Self.log("updateApplicationContext failed: \(error.localizedDescription)")
             lastSyncMessage = "Watch sync failed: \(error.localizedDescription)"
@@ -105,6 +132,20 @@ final class PhoneWatchConnectivityManager: NSObject, ObservableObject {
         isReachable = session.isReachable
     }
 
+    private func deliverPendingPayloadIfPossible(from session: WCSession) {
+        refreshSessionStatus(from: session)
+        guard session.activationState == .activated else { return }
+
+        if let pendingPayload {
+            deliver(payload: pendingPayload)
+            return
+        }
+
+        if let payload = payloadProvider?() {
+            deliver(payload: payload)
+        }
+    }
+
     nonisolated private static func log(_ message: String) {
         print("[PhoneWatchConnectivityManager] \(message)")
     }
@@ -123,7 +164,7 @@ extension PhoneWatchConnectivityManager: WCSessionDelegate {
             } else {
                 Self.log("Activation complete: \(activationState.rawValue)")
             }
-            refreshSessionStatus(from: session)
+            deliverPendingPayloadIfPossible(from: session)
         }
     }
 
@@ -142,7 +183,26 @@ extension PhoneWatchConnectivityManager: WCSessionDelegate {
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
-            refreshSessionStatus(from: session)
+            deliverPendingPayloadIfPossible(from: session)
+        }
+    }
+
+    nonisolated func session(
+        _ session: WCSession,
+        didReceiveMessage message: [String: Any],
+        replyHandler: @escaping ([String: Any]) -> Void
+    ) {
+        Task { @MainActor in
+            if message[WatchConnectivityKeys.requestSyncMessageKey] as? Bool == true {
+                let payload = payloadProvider?() ?? lastSentPayload ?? pendingPayload
+                if let payload {
+                    replyHandler(payload.applicationContext())
+                    Self.log("Replied to watch sync request with \(payload.creatureName) \(payload.stage)")
+                } else {
+                    replyHandler([:])
+                    Self.log("Watch sync request received but no payload available")
+                }
+            }
         }
     }
 }

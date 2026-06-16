@@ -15,17 +15,10 @@ struct WatchProgressRingView: View {
     var creatureName: String?
     var stage: String?
     var isEggStage: Bool = false
+    var payload: WatchGameStatePayload? = nil
 
     private var progress: Double {
         min(max(progressPercent / 100.0, 0), 1)
-    }
-
-    private var assetLookupSpeciesId: String? {
-        if let speciesId, !speciesId.isEmpty {
-            return CreatureAssetVisual.normalizedSpeciesId(from: speciesId) ?? speciesId
-        }
-        guard let creatureName, !creatureName.isEmpty else { return nil }
-        return CreatureAssetVisual.normalizedSpeciesId(from: creatureName)
     }
 
     var body: some View {
@@ -48,33 +41,31 @@ struct WatchProgressRingView: View {
 
     @ViewBuilder
     private var centerVisual: some View {
-        if isEggStage, let eggRarity, !eggRarity.isEmpty {
-            watchEggVisual(for: eggRarity)
-        } else if let assetLookupSpeciesId,
-                  let stage,
-                  !stage.isEmpty,
-                  CreatureAssetVisual.shouldUseAssetImage(forSpeciesId: assetLookupSpeciesId, stage: stage),
-                  let assetName = CreatureAssetVisual.assetName(forSpeciesId: assetLookupSpeciesId, stage: stage) {
-            Image(assetName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: ringSize * 0.44, height: ringSize * 0.44)
-        } else {
-            Text(placeholderEmoji.isEmpty ? "🦖" : placeholderEmoji)
-                .font(.system(size: ringSize * 0.30))
-        }
+        WatchCreatureCenterVisual(
+            payload: payload ?? payloadFromFields,
+            visualSize: ringSize * 0.44
+        )
     }
 
-    @ViewBuilder
-    private func watchEggVisual(for rarity: String) -> some View {
-        if RarityEggVisual.shouldUseAssetImage(for: rarity) {
-            Image(RarityEggVisual.assetName(for: rarity))
-                .resizable()
-                .scaledToFit()
-                .frame(width: 42, height: 42)
-        } else {
-            RarityEggView(rarity: rarity, size: 32, compact: true)
-        }
+    private var payloadFromFields: WatchGameStatePayload? {
+        guard let stage, !stage.isEmpty else { return nil }
+        return WatchGameStatePayload(
+            displayName: creatureName ?? "Creature",
+            creatureName: creatureName ?? "Creature",
+            speciesId: speciesId,
+            stage: stage,
+            rarity: eggRarity ?? "COMMON",
+            currentSteps: 0,
+            nextMilestone: 1,
+            totalStepsRequired: 1,
+            progressPercent: progressPercent,
+            stageProgressPercent: progressPercent,
+            stepsUntilNextStage: 0,
+            nextStageLabel: "",
+            isRevealed: !isEggStage,
+            placeholderVisual: placeholderEmoji,
+            updatedAt: Date()
+        )
     }
 }
 
