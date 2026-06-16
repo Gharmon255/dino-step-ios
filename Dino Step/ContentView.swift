@@ -54,6 +54,33 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .healthKitStepsDidSync)) { _ in
             gameState.reloadFromPersistence()
         }
+        .fullScreenCover(isPresented: $gameState.showOnboarding) {
+            OnboardingView(onFinished: gameState.completeOnboarding)
+        }
+        .alert("What's new", isPresented: $gameState.showWhatsNew) {
+            Button("Got it", action: gameState.dismissWhatsNew)
+        } message: {
+            Text(
+                "• Daily step goal: walk 5,000+ steps or your dino resets to an egg (500 steps left).\n" +
+                    "• Egg cracks, dino facts, and your collection on Home.\n" +
+                    "• Steps must flow into Apple Health."
+            )
+        }
+        .alert(
+            "Your dino needs more steps",
+            isPresented: Binding(
+                get: { gameState.inactivityPenaltyAlert != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        gameState.dismissInactivityPenaltyAlert()
+                    }
+                }
+            )
+        ) {
+            Button("OK", action: gameState.dismissInactivityPenaltyAlert)
+        } message: {
+            Text(gameState.inactivityPenaltyAlert ?? "")
+        }
     }
 
     private static func initialTabIndex() -> Int {

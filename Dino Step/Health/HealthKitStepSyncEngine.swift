@@ -12,6 +12,7 @@ import HealthKit
 struct HealthKitStepSyncResult: Equatable {
     let appliedDelta: Int
     let message: String
+    let inactivityPenaltyApplied: Bool
 }
 
 enum HealthKitStepSyncBaseline {
@@ -34,10 +35,33 @@ enum HealthKitStepSyncEngine {
         healthKitStepService: HealthKitStepService,
         requestAuthorizationIfNeeded: Bool = true
     ) async -> HealthKitStepSyncResult {
+        let rollover = await DayRolloverEvaluator.evaluateIfNeeded(
+            activeCreature: snapshot.activeCreature,
+            lastSyncedHealthKitStepTotal: snapshot.lastSyncedHealthKitStepTotal,
+            lastHealthKitSyncDayStart: snapshot.lastHealthKitSyncDayStart,
+            fetchYesterdaySteps: {
+                let calendar = Calendar.current
+                let todayStart = calendar.startOfDay(for: Date())
+                let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: todayStart) ?? todayStart
+                return try await healthKitStepService.fetchStepCount(from: yesterdayStart, to: todayStart)
+            }
+        )
+        snapshot.activeCreature = rollover.activeCreature
+        let penaltyApplied = rollover.penalty != nil
+        if let penalty = rollover.penalty {
+#if os(iOS)
+            InactivityPenaltyNotifier.notify(yesterdaySteps: penalty.yesterdaySteps)
+#endif
+        }
+
         guard healthKitStepService.isAvailable else {
             let message = HealthKitStepServiceError.unavailable.userMessage
             snapshot.lastHealthKitSyncMessage = message
-            return HealthKitStepSyncResult(appliedDelta: 0, message: message)
+            return HealthKitStepSyncResult(
+                appliedDelta: 0,
+                message: message,
+                inactivityPenaltyApplied: penaltyApplied
+            )
         }
 
         if requestAuthorizationIfNeeded,
@@ -46,11 +70,19 @@ enum HealthKitStepSyncEngine {
                 try await healthKitStepService.requestAuthorization()
             } catch let error as HealthKitStepServiceError {
                 snapshot.lastHealthKitSyncMessage = error.userMessage
-                return HealthKitStepSyncResult(appliedDelta: 0, message: error.userMessage)
+                return HealthKitStepSyncResult(
+                    appliedDelta: 0,
+                    message: error.userMessage,
+                    inactivityPenaltyApplied: penaltyApplied
+                )
             } catch {
                 let message = error.localizedDescription
                 snapshot.lastHealthKitSyncMessage = "HealthKit query failed: \(message)"
-                return HealthKitStepSyncResult(appliedDelta: 0, message: message)
+                return HealthKitStepSyncResult(
+                    appliedDelta: 0,
+                    message: message,
+                    inactivityPenaltyApplied: penaltyApplied
+                )
             }
         }
 
@@ -73,19 +105,35 @@ enum HealthKitStepSyncEngine {
                     current: snapshot.activeCreature
                 )
 #endif
-                return HealthKitStepSyncResult(appliedDelta: delta, message: message)
+                return HealthKitStepSyncResult(
+                    appliedDelta: delta,
+                    message: message,
+                    inactivityPenaltyApplied: penaltyApplied
+                )
             }
 
             let message = "No new steps to sync"
             snapshot.lastHealthKitSyncMessage = message
-            return HealthKitStepSyncResult(appliedDelta: 0, message: message)
+            return HealthKitStepSyncResult(
+                appliedDelta: 0,
+                message: message,
+                inactivityPenaltyApplied: penaltyApplied
+            )
         } catch let error as HealthKitStepServiceError {
             snapshot.lastHealthKitSyncMessage = error.userMessage
-            return HealthKitStepSyncResult(appliedDelta: 0, message: error.userMessage)
+            return HealthKitStepSyncResult(
+                appliedDelta: 0,
+                message: error.userMessage,
+                inactivityPenaltyApplied: penaltyApplied
+            )
         } catch {
             let message = error.localizedDescription
             snapshot.lastHealthKitSyncMessage = "HealthKit query failed: \(message)"
-            return HealthKitStepSyncResult(appliedDelta: 0, message: message)
+            return HealthKitStepSyncResult(
+                appliedDelta: 0,
+                message: "HealthKit query failed: \(message)",
+                inactivityPenaltyApplied: penaltyApplied
+            )
         }
     }
 

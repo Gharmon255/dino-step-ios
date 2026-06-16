@@ -75,13 +75,13 @@ final class WatchConnectivityReceiver: NSObject, ObservableObject {
             return
         }
 
-        let shouldRefreshComplications = self.payload?.updatedAt != payload.updatedAt
+        let payloadChanged = self.payload != payload
         self.payload = payload
         hasReceivedPayload = true
         syncStatus = "Synced"
-        WatchComplicationSharedStore.save(payload)
 
-        if shouldRefreshComplications {
+        if payloadChanged {
+            WatchComplicationSharedStore.save(payload)
             WatchComplicationTimelineRefresher.reloadAll()
         }
 

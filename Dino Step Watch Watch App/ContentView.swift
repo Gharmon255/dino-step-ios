@@ -35,10 +35,6 @@ struct ContentView: View {
         .background(Color.black)
         .onAppear {
             receiver.activate()
-            receiver.refreshComplications()
-        }
-        .onChange(of: receiver.payload?.updatedAt) { _, _ in
-            receiver.refreshComplications()
         }
     }
 

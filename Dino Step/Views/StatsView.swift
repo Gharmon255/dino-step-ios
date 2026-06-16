@@ -265,6 +265,33 @@ struct StatsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Daily activity penalty")
+                            .font(.headline)
+                            .foregroundStyle(.orange)
+
+                        Text("Simulates a new day where yesterday had too few steps. Uses real rollover logic.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+
+                        Button("Simulate yesterday: 0 steps") {
+                            Task { await gameState.simulateInactiveDayForTesting(yesterdaySteps: 0) }
+                        }
+                        .buttonStyle(DebugButtonStyle(color: .orange))
+
+                        Button("Simulate yesterday: 4,999 steps") {
+                            Task { await gameState.simulateInactiveDayForTesting(yesterdaySteps: 4_999) }
+                        }
+                        .buttonStyle(DebugButtonStyle(color: .orange))
+
+                        Button("Simulate yesterday: 5,000 steps (no penalty)") {
+                            Task { await gameState.simulateInactiveDayForTesting(yesterdaySteps: 5_000) }
+                        }
+                        .buttonStyle(DebugButtonStyle(color: .gray))
+                    }
+                }
 #endif
 #endif
             }

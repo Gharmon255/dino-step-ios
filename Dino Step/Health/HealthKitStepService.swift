@@ -133,14 +133,21 @@ final class HealthKitStepService {
 
     func fetchTodayStepCount() async throws -> Int {
 #if os(iOS)
-        guard isAvailable else { throw HealthKitStepServiceError.unavailable }
-
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
-        let now = Date()
-        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
+        return try await fetchStepCount(from: startOfDay, to: Date())
+#else
+        throw HealthKitStepServiceError.unavailable
+#endif
+    }
 
-        Self.log("Fetching steps from \(startOfDay) to \(now) (simulator=\(Self.runningOnSimulator))")
+    func fetchStepCount(from start: Date, to end: Date) async throws -> Int {
+#if os(iOS)
+        guard isAvailable else { throw HealthKitStepServiceError.unavailable }
+
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+
+        Self.log("Fetching steps from \(start) to \(end) (simulator=\(Self.runningOnSimulator))")
 
         return try await withCheckedThrowingContinuation { continuation in
             let isSimulator = Self.runningOnSimulator
@@ -164,10 +171,8 @@ final class HealthKitStepService {
                 }
 
                 guard let sum = statistics?.sumQuantity() else {
-                    Self.log("Statistics query returned no step samples for today")
-                    continuation.resume(
-                        throwing: HealthKitStepServiceError.noStepData(isSimulator: isSimulator)
-                    )
+                    Self.log("Statistics query returned no step samples")
+                    continuation.resume(returning: 0)
                     return
                 }
 

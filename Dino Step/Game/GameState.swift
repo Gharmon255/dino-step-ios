@@ -24,6 +24,9 @@ final class GameState: ObservableObject {
     @Published private(set) var isHealthKitAvailable = false
     @Published private(set) var healthKitAuthorizationStatus: HealthKitAuthorizationStatus = .unknown
     @Published private(set) var isSyncingHealthKitSteps = false
+    @Published var showOnboarding = false
+    @Published var showWhatsNew = false
+    @Published var inactivityPenaltyAlert: String?
 
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
@@ -62,6 +65,7 @@ final class GameState: ObservableObject {
         }
 
         refreshHealthKitStatus()
+        refreshExperiencePresentation()
 #if os(iOS)
         watchConnectivityManager.payloadProvider = { [weak self] in
             guard let self else { return nil }
@@ -155,12 +159,15 @@ final class GameState: ObservableObject {
 
         let previousCreature = activeCreature
         var currentSnapshot = snapshot()
-        _ = await HealthKitStepSyncEngine.sync(
+        let result = await HealthKitStepSyncEngine.sync(
             snapshot: &currentSnapshot,
             healthKitStepService: healthKitStepService,
             requestAuthorizationIfNeeded: true
         )
         apply(currentSnapshot)
+        if result.inactivityPenaltyApplied {
+            inactivityPenaltyAlert = inactivityPenaltyMessage()
+        }
         maybeCelebrateDiscovery(previous: previousCreature, current: activeCreature)
         persistCurrentState()
 
@@ -435,5 +442,65 @@ final class GameState: ObservableObject {
 #if os(iOS)
         syncToWatch()
 #endif
+    }
+
+    func completeOnboarding() {
+        AppExperienceStore.setOnboardingCompleted()
+        AppExperienceStore.setLastSeenWhatsNewVersion(AppExperienceStore.currentWhatsNewVersion)
+        refreshExperiencePresentation()
+    }
+
+    func dismissWhatsNew() {
+        AppExperienceStore.setLastSeenWhatsNewVersion(AppExperienceStore.currentWhatsNewVersion)
+        refreshExperiencePresentation()
+    }
+
+    func dismissInactivityPenaltyAlert() {
+        inactivityPenaltyAlert = nil
+    }
+
+#if DEBUG
+    func simulateInactiveDayForTesting(yesterdaySteps: Int = 0) async {
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        guard let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: todayStart) else {
+            return
+        }
+
+        AppExperienceStore.setLastActivityEvaluationDayStart(yesterdayStart)
+        lastSyncedHealthKitStepTotal = max(0, yesterdaySteps)
+        lastHealthKitSyncDayStart = yesterdayStart
+
+        let rollover = await DayRolloverEvaluator.evaluateIfNeeded(
+            activeCreature: activeCreature,
+            lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
+            lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
+            fetchYesterdaySteps: { max(0, yesterdaySteps) }
+        )
+        activeCreature = rollover.activeCreature
+
+        if rollover.penalty != nil {
+            inactivityPenaltyAlert = inactivityPenaltyMessage()
+            lastHealthKitSyncMessage =
+                "DEBUG: Inactivity penalty applied (yesterday=\(yesterdaySteps) steps)."
+        } else {
+            lastHealthKitSyncMessage =
+                "DEBUG: No penalty for yesterday=\(yesterdaySteps) steps."
+        }
+
+        persistCurrentState()
+    }
+#endif
+
+    private func refreshExperiencePresentation() {
+        showOnboarding = !AppExperienceStore.hasCompletedOnboarding
+        showWhatsNew = !showOnboarding &&
+            AppExperienceStore.lastSeenWhatsNewVersion < AppExperienceStore.currentWhatsNewVersion
+    }
+
+    private func inactivityPenaltyMessage() -> String {
+        "You walked fewer than \(DailyActivityPenalty.minimumDailySteps.formatted()) steps yesterday. " +
+            "Your dino is back in an egg with \(DailyActivityPenalty.penaltyRemainingSteps) steps of progress. " +
+            "Keep walking every day!"
     }
 }
