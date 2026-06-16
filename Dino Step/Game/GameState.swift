@@ -24,6 +24,7 @@ final class GameState: ObservableObject {
 
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
+    private var lastAutomaticHealthKitSyncAttempt: Date?
 #if os(iOS)
     private let watchConnectivityManager: PhoneWatchConnectivityManager
 #endif
@@ -116,8 +117,17 @@ final class GameState: ObservableObject {
         healthKitAuthorizationStatus = healthKitStepService.authorizationStatus()
     }
 
-    func syncHealthKitSteps() async {
+    func syncHealthKitSteps(manual: Bool = false) async {
         guard !isSyncingHealthKitSteps else { return }
+
+        if !manual,
+           let lastAttempt = lastAutomaticHealthKitSyncAttempt,
+           Date().timeIntervalSince(lastAttempt) < 120 {
+            return
+        }
+        if !manual {
+            lastAutomaticHealthKitSyncAttempt = Date()
+        }
 
         isSyncingHealthKitSteps = true
         defer {
@@ -125,38 +135,51 @@ final class GameState: ObservableObject {
             refreshHealthKitStatus()
         }
 
-        do {
-            guard healthKitStepService.isAvailable else {
-                throw HealthKitStepServiceError.unavailable
+        var currentSnapshot = snapshot()
+        _ = await HealthKitStepSyncEngine.sync(
+            snapshot: &currentSnapshot,
+            healthKitStepService: healthKitStepService,
+            requestAuthorizationIfNeeded: true
+        )
+        apply(currentSnapshot)
+        persistCurrentState()
+
+#if os(iOS)
+        HealthKitBackgroundSyncCoordinator.shared.startAutomaticSyncIfAuthorized(
+            healthKitStepService: healthKitStepService
+        )
+#endif
+    }
+
+    func configureAutomaticBackgroundSync() {
+#if os(iOS)
+        HealthKitBackgroundSyncCoordinator.shared.scheduleHourlyBackgroundRefresh()
+        HealthKitBackgroundSyncCoordinator.shared.startAutomaticSyncIfAuthorized(
+            healthKitStepService: healthKitStepService
+        )
+#endif
+    }
+
+    func snapshot() -> GameStateSnapshot {
+        GameStateSnapshot(
+            activeCreature: activeCreature,
+            completedCreatures: completedCreatures,
+            lastRewardedEggRarity: lastRewardedEggRarity,
+            lastRewardRollPercent: lastRewardRollPercent,
+            lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
+            lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
+            lastHealthKitSyncMessage: lastHealthKitSyncMessage
+        )
+    }
+
+    func reloadFromPersistence() {
+        switch persistenceStore.load() {
+        case .success(let savedState):
+            if let restored = SavedGameStateMapper.restore(from: savedState) {
+                apply(restored)
             }
-
-            if healthKitStepService.authorizationStatus() == .notDetermined {
-                try await healthKitStepService.requestAuthorization()
-                refreshHealthKitStatus()
-            }
-
-            resetHealthKitSyncBaselineIfNeeded()
-
-            let currentTotal = try await healthKitStepService.fetchTodayStepCount()
-            let delta = currentTotal - lastSyncedHealthKitStepTotal
-
-            if delta > 0 {
-                activeCreature.currentSteps += delta
-                lastSyncedHealthKitStepTotal = currentTotal
-                lastHealthKitSyncMessage = "Synced \(delta.formatted()) new steps"
-                persistCurrentState()
-            } else {
-                lastHealthKitSyncMessage = "No new steps to sync"
-                persistCurrentState()
-            }
-        } catch let error as HealthKitStepServiceError {
-            lastHealthKitSyncMessage = error.userMessage
-            persistCurrentState()
-        } catch {
-            let message = error.localizedDescription
-            print("[HealthKitStepService] Unexpected sync error: \(message)")
-            lastHealthKitSyncMessage = "HealthKit query failed: \(message)"
-            persistCurrentState()
+        case .noSavedState, .invalidData:
+            break
         }
     }
 

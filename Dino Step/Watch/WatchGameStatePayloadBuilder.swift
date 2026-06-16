@@ -9,26 +9,42 @@ import Foundation
 enum WatchGameStatePayloadBuilder {
     @MainActor
     static func build(from gameState: GameState) -> WatchGameStatePayload {
-        let active = gameState.activeCreature
+        build(from: gameState.snapshot())
+    }
+
+    @MainActor
+    static func build(from snapshot: GameStateSnapshot) -> WatchGameStatePayload {
+        let active = snapshot.activeCreature
         let definition = active.definition
-        let stage = gameState.currentStage
+        let stage = GameLogic.calculateStage(
+            currentSteps: active.currentSteps,
+            creatureDefinition: definition
+        )
         let isRevealed = GameLogic.isHatched(active)
         let stageVisual = CreatureVisuals.stageVisual(
             for: definition,
             stage: stage,
             eggRarity: active.eggRarity
         )
+        let displayName = GameLogic.displayName(for: active)
+        let nextMilestone = GameLogic.nextMilestone(
+            currentSteps: active.currentSteps,
+            creatureDefinition: definition
+        )
 
         return WatchGameStatePayload(
-            displayName: gameState.displayName,
+            displayName: displayName,
             creatureName: definition.name,
             speciesId: definition.speciesId,
             stage: stage.rawValue,
             rarity: active.eggRarity.rawValue,
             currentSteps: active.currentSteps,
-            nextMilestone: gameState.nextMilestone ?? definition.totalStepsRequired,
+            nextMilestone: nextMilestone ?? definition.totalStepsRequired,
             totalStepsRequired: definition.totalStepsRequired,
-            progressPercent: gameState.progressPercent,
+            progressPercent: GameLogic.progressPercent(
+                currentSteps: active.currentSteps,
+                creatureDefinition: definition
+            ),
             stageProgressPercent: GameLogic.stageProgressPercent(
                 currentSteps: active.currentSteps,
                 creatureDefinition: definition

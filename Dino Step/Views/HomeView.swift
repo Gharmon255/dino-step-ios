@@ -96,7 +96,7 @@ struct HomeView: View {
                 VStack(spacing: 12) {
                     Button {
                         Task {
-                            await gameState.syncHealthKitSteps()
+                            await gameState.syncHealthKitSteps(manual: true)
                         }
                     } label: {
                         Group {
@@ -106,7 +106,7 @@ struct HomeView: View {
                                     Text("Syncing Steps...")
                                 }
                             } else {
-                                Text("Sync Steps")
+                                Text("Sync Now")
                             }
                         }
                     }
@@ -122,12 +122,14 @@ struct HomeView: View {
                     }
 
 #if DEBUG
-                    HStack(spacing: 12) {
-                        stepButton(amount: 500, color: .green)
-                        stepButton(amount: 2000, color: .blue)
-                    }
+                    if !ProcessInfo.processInfo.arguments.contains("-screenshotMode") {
+                        HStack(spacing: 12) {
+                            stepButton(amount: 500, color: .green)
+                            stepButton(amount: 2000, color: .blue)
+                        }
 
-                    stepButton(amount: 10000, color: .purple)
+                        stepButton(amount: 10000, color: .purple)
+                    }
 #endif
 
                     if stage == .adult {
