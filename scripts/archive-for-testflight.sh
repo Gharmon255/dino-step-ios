@@ -14,6 +14,7 @@ xcodebuild \
   -destination "generic/platform=iOS" \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
+  -allowProvisioningUpdates \
   archive
 
 echo ""
@@ -23,7 +24,8 @@ xcodebuild \
   -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
   -exportPath "$EXPORT_PATH" \
-  -exportOptionsPlist "$EXPORT_OPTIONS"
+  -exportOptionsPlist "$EXPORT_OPTIONS" \
+  -allowProvisioningUpdates
 
 echo ""
 echo "Done."

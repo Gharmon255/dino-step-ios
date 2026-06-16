@@ -11,8 +11,8 @@
 | HealthKit entitlement | ✅ `Dino Step.entitlements` |
 | Privacy policy URL | ✅ https://gharmon255.github.io/dino-step-ios/privacy-policy.html |
 | Release build | ✅ Compiles |
-| Archive | ✅ `xcodebuild archive` succeeds locally |
-| App Store Connect upload | ⏳ **You** — ~10 min in Xcode (first time) |
+| Archive | ✅ `xcodebuild archive -allowProvisioningUpdates` succeeds |
+| App Store Connect upload | ✅ Build **2** uploaded via `xcodebuild -exportArchive` |
 
 ---
 
@@ -29,9 +29,23 @@ open ~/projects/dino-step-ios/Dino\ Step.xcodeproj
 1. Project **Dino Step** → target **Dino Step** → **Signing & Capabilities**
 2. ✅ **Automatically manage signing**
 3. **Team:** your personal/company team (same as `5YZ54R8M4H`)
-4. Repeat for **Dino Step Watch Watch App**
+4. Repeat for **Dino Step Watch Watch App** and **Dino Step Watch Widgets**
 
-If Xcode shows a **HealthKit** or provisioning error, click **Try Again** — fresh enrollment sometimes takes an hour to propagate.
+**App IDs must have App Groups** enabled on [developer.apple.com](https://developer.apple.com/account/resources/identifiers/list) for:
+
+- `com.gharmon255.Dino-Step`
+- `com.gharmon255.Dino-Step.watchkitapp`
+- `com.gharmon255.Dino-Step.watchkitapp.widgets`
+
+App Group: `group.com.gharmon255.dinostep`
+
+If archive fails with “doesn't include the App Groups capability”, run from terminal (refreshes profiles):
+
+```bash
+./scripts/archive-for-testflight.sh
+```
+
+The script passes **`-allowProvisioningUpdates`** so Xcode can regenerate provisioning profiles.
 
 ### 3. Archive
 
