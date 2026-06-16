@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct CollectedSpeciesSummary {
+struct CollectedSpeciesSummary: Equatable {
     let definition: CreatureDefinition
     let collectedCount: Int
     let latestCompletedAt: Date
@@ -28,12 +28,20 @@ struct RarityCollectionProgress {
     }
 }
 
-struct CollectionRosterEntry: Identifiable {
+struct CollectionRosterEntry: Identifiable, Hashable {
     let definition: CreatureDefinition
     let collection: CollectedSpeciesSummary?
 
     var id: UUID { definition.id }
     var isCollected: Bool { collection != nil }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: CollectionRosterEntry, rhs: CollectionRosterEntry) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 enum CollectionFilter: String, CaseIterable, Identifiable {

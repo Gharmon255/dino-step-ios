@@ -10,6 +10,7 @@ struct CreatureStageVisualView: View {
     let stage: GrowthStage
     var eggRarity: Rarity?
     var compact: Bool = false
+    var currentSteps: Int = 0
     /// When set, overrides compact/default sizing (e.g. Collection card prominence).
     var fixedVisualSize: CGFloat? = nil
 
@@ -43,7 +44,11 @@ struct CreatureStageVisualView: View {
         RarityEggView(
             rarity: rarity.rawValue,
             size: compact ? (fixedVisualSize ?? 52) : 128,
-            compact: compact
+            compact: compact,
+            crackLevel: EggCrackLevel.forEgg(
+                currentSteps: currentSteps,
+                hatchStep: creature.hatchStep
+            )
         )
     }
 

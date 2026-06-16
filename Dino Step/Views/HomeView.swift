@@ -39,7 +39,8 @@ struct HomeView: View {
                         if stage == .egg {
                             RarityEggView(
                                 rarity: gameState.currentEggRarity.rawValue,
-                                size: 140
+                                size: 140,
+                                crackLevel: eggCrackLevel
                             )
                             .padding(.top, 4)
                         } else {
@@ -94,6 +95,12 @@ struct HomeView: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
+
+                HomeCollectionStrip(
+                    entries: CollectionCatalog.rosterEntries(from: gameState.completedCreatures),
+                    dexDiscovered: gameState.collectionStats.uniqueSpeciesCollected,
+                    dexTotal: gameState.collectionStats.totalPossibleSpecies
+                )
 
                 VStack(spacing: 12) {
                     if gameState.healthKitAuthorizationStatus == .authorized {
@@ -200,6 +207,34 @@ struct HomeView: View {
             RarityScreenBackground(rarity: ambientRarity)
                 .animation(.easeInOut(duration: 0.35), value: ambientRarity)
         }
+        .alert("Egg hatched!", isPresented: discoveryAlertBinding) {
+            Button("Awesome!") {
+                gameState.clearPendingDiscovery()
+            }
+        } message: {
+            if let discovery = gameState.pendingDiscovery {
+                Text("Meet \(discovery.speciesName)!\n\n\(discovery.funFact)")
+            }
+        }
+    }
+
+    private var discoveryAlertBinding: Binding<Bool> {
+        Binding(
+            get: { gameState.pendingDiscovery != nil },
+            set: { isPresented in
+                if !isPresented {
+                    gameState.clearPendingDiscovery()
+                }
+            }
+        )
+    }
+
+    private var eggCrackLevel: Int {
+        guard stage == .egg else { return 0 }
+        return EggCrackLevel.forEgg(
+            currentSteps: gameState.activeCreature.currentSteps,
+            hatchStep: gameState.activeCreature.definition.hatchStep
+        )
     }
 
     private var stageBadge: some View {

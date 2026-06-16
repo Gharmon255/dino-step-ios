@@ -187,6 +187,7 @@ struct RarityEggView: View {
     let rarity: String
     var size: CGFloat = 120
     var compact: Bool = false
+    var crackLevel: Int = 0
 
     private var style: RarityEggVisual.Style {
         RarityEggVisual.style(for: rarity)
@@ -261,6 +262,12 @@ struct RarityEggView: View {
                     .foregroundStyle(.white.opacity(0.85))
                     .offset(x: eggWidth * 0.28, y: -eggHeight * 0.22)
             }
+
+            EggCrackOverlay(
+                crackLevel: crackLevel,
+                width: eggWidth,
+                height: eggHeight
+            )
         }
         .frame(width: eggWidth * 1.2, height: eggHeight * 1.15)
     }

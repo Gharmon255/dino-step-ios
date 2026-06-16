@@ -75,6 +75,15 @@ struct CollectionSpeciesCard: View {
             Text("Adult form collected")
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(rarityColor.opacity(0.9))
+
+            Text(CreatureFacts.forSpecies(entry.definition.speciesId))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+
+            Text("Tap to view all growth stages")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(rarityColor)
         }
 
         Text("\(entry.definition.totalStepsRequired.formatted()) steps to adult")

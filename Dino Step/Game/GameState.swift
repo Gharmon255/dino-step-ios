@@ -20,6 +20,7 @@ final class GameState: ObservableObject {
     @Published private(set) var lastHealthKitSyncMessage: String?
     @Published private(set) var lastHealthKitSyncDate: Date?
     @Published private(set) var lifetimeStepsApplied: Int = 0
+    @Published private(set) var pendingDiscovery: DiscoveryCelebration?
     @Published private(set) var isHealthKitAvailable = false
     @Published private(set) var healthKitAuthorizationStatus: HealthKitAuthorizationStatus = .unknown
     @Published private(set) var isSyncingHealthKitSteps = false
@@ -152,6 +153,7 @@ final class GameState: ObservableObject {
             refreshHealthKitStatus()
         }
 
+        let previousCreature = activeCreature
         var currentSnapshot = snapshot()
         _ = await HealthKitStepSyncEngine.sync(
             snapshot: &currentSnapshot,
@@ -159,6 +161,7 @@ final class GameState: ObservableObject {
             requestAuthorizationIfNeeded: true
         )
         apply(currentSnapshot)
+        maybeCelebrateDiscovery(previous: previousCreature, current: activeCreature)
         persistCurrentState()
 
         if healthKitAuthorizationStatus == .authorized {
@@ -213,10 +216,24 @@ final class GameState: ObservableObject {
         let previousCreature = activeCreature
         activeCreature.currentSteps += amount
         lifetimeStepsApplied += amount
+        maybeCelebrateDiscovery(previous: previousCreature, current: activeCreature)
         persistCurrentState()
 #if os(iOS)
         StageMilestoneNotifier.notifyIfNeeded(previous: previousCreature, current: activeCreature)
 #endif
+    }
+
+    func clearPendingDiscovery() {
+        pendingDiscovery = nil
+    }
+
+    private func maybeCelebrateDiscovery(previous: ActiveCreature, current: ActiveCreature) {
+        guard !GameLogic.isHatched(previous), GameLogic.isHatched(current) else { return }
+        pendingDiscovery = DiscoveryCelebration(
+            speciesId: current.definition.speciesId,
+            speciesName: current.definition.name,
+            funFact: CreatureFacts.forSpecies(current.definition.speciesId)
+        )
     }
 
     func claimReward() {

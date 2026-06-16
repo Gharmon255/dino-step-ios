@@ -10,6 +10,7 @@ struct CollectionView: View {
 
     @State private var selectedFilter: CollectionFilter = .all
     @State private var selectedSort: CollectionSort = .collectedFirst
+    @State private var selectedEntry: CollectionRosterEntry?
 
     private var stats: CollectionStats {
         CollectionCatalog.stats(from: gameState.completedCreatures)
@@ -36,6 +37,12 @@ struct CollectionView: View {
                     LazyVStack(spacing: 14) {
                         ForEach(displayedEntries) { entry in
                             CollectionSpeciesCard(entry: entry)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if entry.isCollected {
+                                        selectedEntry = entry
+                                    }
+                                }
                         }
                     }
                 }
@@ -44,6 +51,9 @@ struct CollectionView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Collection")
+        .navigationDestination(item: $selectedEntry) { entry in
+            CollectionSpeciesDetailView(entry: entry)
+        }
     }
 
     private var filterSection: some View {
