@@ -9,13 +9,13 @@ import XCTest
 final class HealthKitStepSyncEngineTests: XCTestCase {
     func testResetBaselineOnNewDayClearsSyncedTotal() {
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        var activeCreature = ActiveCreature.newEgg(
+            definition: CreatureCatalog.creatures(for: .common).first!,
+            eggRarity: .common
+        )
+        activeCreature.currentSteps = 1200
         var snapshot = GameStateSnapshot(
-            activeCreature: ActiveCreature(
-                eggRarity: .common,
-                definition: CreatureCatalog.creatures(for: .common).first!,
-                currentSteps: 1200,
-                startedAt: Date()
-            ),
+            activeCreature: activeCreature,
             completedCreatures: [],
             lastRewardedEggRarity: nil,
             lastRewardRollPercent: nil,
@@ -36,13 +36,13 @@ final class HealthKitStepSyncEngineTests: XCTestCase {
 
     func testResetBaselineSameDayPreservesSyncedTotal() {
         let todayStart = Calendar.current.startOfDay(for: Date())
+        var activeCreature = ActiveCreature.newEgg(
+            definition: CreatureCatalog.creatures(for: .common).first!,
+            eggRarity: .common
+        )
+        activeCreature.currentSteps = 1200
         var snapshot = GameStateSnapshot(
-            activeCreature: ActiveCreature(
-                eggRarity: .common,
-                definition: CreatureCatalog.creatures(for: .common).first!,
-                currentSteps: 1200,
-                startedAt: Date()
-            ),
+            activeCreature: activeCreature,
             completedCreatures: [],
             lastRewardedEggRarity: nil,
             lastRewardRollPercent: nil,

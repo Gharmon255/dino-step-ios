@@ -233,7 +233,7 @@ struct HomeView: View {
         guard stage == .egg else { return 0 }
         return EggCrackLevel.forEgg(
             currentSteps: gameState.activeCreature.currentSteps,
-            hatchStep: gameState.activeCreature.definition.hatchStep
+            hatchStep: gameState.activeCreature.progression.hatchStep
         )
     }
 
@@ -267,7 +267,7 @@ struct HomeView: View {
     private var stageProgressPercent: Double {
         GameLogic.stageProgressPercent(
             currentSteps: gameState.activeCreature.currentSteps,
-            creatureDefinition: gameState.activeCreature.definition
+            progression: gameState.activeCreature.progression
         )
     }
 
@@ -288,7 +288,7 @@ struct HomeView: View {
             0,
             GameLogic.stepsUntilNextStage(
                 currentSteps: gameState.activeCreature.currentSteps,
-                creatureDefinition: gameState.activeCreature.definition
+                progression: gameState.activeCreature.progression
             )
         )
 

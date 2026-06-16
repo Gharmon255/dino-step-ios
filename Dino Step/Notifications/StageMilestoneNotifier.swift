@@ -95,11 +95,11 @@ enum StageMilestoneNotifier {
     private static func detectMilestone(previous: ActiveCreature, current: ActiveCreature) -> Milestone? {
         let previousStage = GameLogic.calculateStage(
             currentSteps: previous.currentSteps,
-            creatureDefinition: previous.definition
+            progression: previous.progression
         )
         let currentStage = GameLogic.calculateStage(
             currentSteps: current.currentSteps,
-            creatureDefinition: current.definition
+            progression: current.progression
         )
 
         if previousStage == .egg && currentStage != .egg {

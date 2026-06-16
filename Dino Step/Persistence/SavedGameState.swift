@@ -6,7 +6,7 @@
 import Foundation
 
 struct SavedGameState: Codable {
-    static let currentSchemaVersion = 2
+    static let currentSchemaVersion = 3
 
     var schemaVersion: Int
     var activeCreature: SavedActiveCreatureState
@@ -24,6 +24,10 @@ struct SavedActiveCreatureState: Codable {
     var eggRarity: String
     var currentSteps: Int
     var startedAt: Date
+    var hatchStep: Int?
+    var juvenileStep: Int?
+    var totalStepsRequired: Int?
+    var economyVersion: Int?
 }
 
 struct SavedCompletedCreatureState: Codable {

@@ -18,7 +18,7 @@ enum WatchGameStatePayloadBuilder {
         let definition = active.definition
         let stage = GameLogic.calculateStage(
             currentSteps: active.currentSteps,
-            creatureDefinition: definition
+            progression: active.progression
         )
         let isRevealed = GameLogic.isHatched(active)
         let stageVisual = CreatureVisuals.stageVisual(
@@ -29,7 +29,7 @@ enum WatchGameStatePayloadBuilder {
         let displayName = GameLogic.displayName(for: active)
         let nextMilestone = GameLogic.nextMilestone(
             currentSteps: active.currentSteps,
-            creatureDefinition: definition
+            progression: active.progression
         )
 
         return WatchGameStatePayload(
@@ -39,19 +39,19 @@ enum WatchGameStatePayloadBuilder {
             stage: stage.rawValue,
             rarity: active.eggRarity.rawValue,
             currentSteps: active.currentSteps,
-            nextMilestone: nextMilestone ?? definition.totalStepsRequired,
-            totalStepsRequired: definition.totalStepsRequired,
+            nextMilestone: nextMilestone ?? active.progression.totalStepsRequired,
+            totalStepsRequired: active.progression.totalStepsRequired,
             progressPercent: GameLogic.progressPercent(
                 currentSteps: active.currentSteps,
-                creatureDefinition: definition
+                progression: active.progression
             ),
             stageProgressPercent: GameLogic.stageProgressPercent(
                 currentSteps: active.currentSteps,
-                creatureDefinition: definition
+                progression: active.progression
             ),
             stepsUntilNextStage: GameLogic.stepsUntilNextStage(
                 currentSteps: active.currentSteps,
-                creatureDefinition: definition
+                progression: active.progression
             ),
             nextStageLabel: GameLogic.nextStageLabel(for: stage),
             isRevealed: isRevealed,

@@ -45,7 +45,11 @@ enum SavedGameStateMapper {
                 creatureDefinitionId: gameState.activeCreature.definition.id,
                 eggRarity: gameState.activeCreature.eggRarity.rawValue,
                 currentSteps: gameState.activeCreature.currentSteps,
-                startedAt: gameState.activeCreature.startedAt
+                startedAt: gameState.activeCreature.startedAt,
+                hatchStep: gameState.activeCreature.progression.hatchStep,
+                juvenileStep: gameState.activeCreature.progression.juvenileStep,
+                totalStepsRequired: gameState.activeCreature.progression.totalStepsRequired,
+                economyVersion: gameState.activeCreature.progression.economyVersion
             ),
             completedCreatures: gameState.completedCreatures.map {
                 SavedCompletedCreatureState(
@@ -65,7 +69,9 @@ enum SavedGameStateMapper {
     }
 
     static func restore(from savedState: SavedGameState) -> GameStateSnapshot? {
-        guard savedState.schemaVersion == 1 || savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
+        guard savedState.schemaVersion == 1
+            || savedState.schemaVersion == 2
+            || savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
             return nil
         }
 
@@ -105,9 +111,25 @@ enum SavedGameStateMapper {
             return nil
         }
 
+        let progression: ProgressionThresholds
+        if let hatchStep = saved.hatchStep,
+           let juvenileStep = saved.juvenileStep,
+           let totalStepsRequired = saved.totalStepsRequired,
+           let economyVersion = saved.economyVersion {
+            progression = ProgressionThresholds(
+                hatchStep: hatchStep,
+                juvenileStep: juvenileStep,
+                totalStepsRequired: totalStepsRequired,
+                economyVersion: economyVersion
+            )
+        } else {
+            progression = CreatureEconomy.legacyV1Thresholds(for: definition.speciesId)
+        }
+
         return ActiveCreature(
             eggRarity: eggRarity,
             definition: definition,
+            progression: progression,
             currentSteps: saved.currentSteps,
             startedAt: saved.startedAt
         )

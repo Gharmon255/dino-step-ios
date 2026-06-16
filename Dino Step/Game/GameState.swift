@@ -85,7 +85,7 @@ final class GameState: ObservableObject {
     var currentStage: GrowthStage {
         GameLogic.calculateStage(
             currentSteps: activeCreature.currentSteps,
-            creatureDefinition: activeCreature.definition
+            progression: activeCreature.progression
         )
     }
 
@@ -96,21 +96,21 @@ final class GameState: ObservableObject {
     var progressPercent: Double {
         GameLogic.progressPercent(
             currentSteps: activeCreature.currentSteps,
-            creatureDefinition: activeCreature.definition
+            progression: activeCreature.progression
         )
     }
 
     var nextMilestone: Int? {
         GameLogic.nextMilestone(
             currentSteps: activeCreature.currentSteps,
-            creatureDefinition: activeCreature.definition
+            progression: activeCreature.progression
         )
     }
 
     var stepsUntilNextMilestone: Int? {
         GameLogic.stepsUntilNextMilestone(
             currentSteps: activeCreature.currentSteps,
-            creatureDefinition: activeCreature.definition
+            progression: activeCreature.progression
         )
     }
 
@@ -243,10 +243,13 @@ final class GameState: ObservableObject {
     func claimRandomReward() {
         guard currentStage == .adult else { return }
 
+        let completedSpeciesId = activeCreature.definition.speciesId
+        let collectedSpeciesIds = Set(completedCreatures.map(\.definition.speciesId))
+
         let completed = CompletedCreature(
             id: UUID(),
             definition: activeCreature.definition,
-            totalStepsCompleted: activeCreature.definition.totalStepsRequired,
+            totalStepsCompleted: activeCreature.progression.totalStepsRequired,
             completedAt: Date()
         )
         completedCreatures.append(completed)
@@ -254,7 +257,11 @@ final class GameState: ObservableObject {
         let outcome = EggRewardLogic.rollEggReward()
         lastRewardedEggRarity = outcome.rarity
         lastRewardRollPercent = outcome.rollPercent
-        activeCreature = Self.createRandomEggWithRarity(outcome.rarity)
+        activeCreature = Self.createRandomEggWithRarity(
+            outcome.rarity,
+            excludeSpeciesIds: [completedSpeciesId],
+            collectedSpeciesIds: collectedSpeciesIds
+        )
         persistCurrentState()
     }
 
@@ -270,7 +277,11 @@ final class GameState: ObservableObject {
 
         lastRewardedEggRarity = offer.rewardEggRarity
         lastRewardRollPercent = nil
-        activeCreature = Self.createRandomEggWithRarity(offer.rewardEggRarity)
+        activeCreature = Self.createRandomEggWithRarity(
+            offer.rewardEggRarity,
+            excludeSpeciesIds: [offer.speciesId],
+            collectedSpeciesIds: Set(completedCreatures.map(\.definition.speciesId))
+        )
         persistCurrentState()
     }
 
@@ -324,13 +335,38 @@ final class GameState: ObservableObject {
 
         lastRewardedEggRarity = definition.rarity
         lastRewardRollPercent = nil
-        activeCreature = ActiveCreature(
-            eggRarity: definition.rarity,
+        activeCreature = ActiveCreature.newEgg(
             definition: definition,
-            currentSteps: 0,
-            startedAt: Date()
+            eggRarity: definition.rarity
         )
         persistCurrentState()
+    }
+
+    static func getRandomSpeciesForRarity(
+        _ rarity: Rarity,
+        excludeSpeciesIds: Set<String> = [],
+        collectedSpeciesIds: Set<String> = []
+    ) -> CreatureDefinition {
+        EggSpeciesRoller.rollSpecies(
+            rarity: rarity,
+            excludeSpeciesIds: excludeSpeciesIds,
+            collectedSpeciesIds: collectedSpeciesIds
+        )
+    }
+
+    static func createRandomEggWithRarity(
+        _ rarity: Rarity,
+        excludeSpeciesIds: Set<String> = [],
+        collectedSpeciesIds: Set<String> = []
+    ) -> ActiveCreature {
+        ActiveCreature.newEgg(
+            definition: getRandomSpeciesForRarity(
+                rarity,
+                excludeSpeciesIds: excludeSpeciesIds,
+                collectedSpeciesIds: collectedSpeciesIds
+            ),
+            eggRarity: rarity
+        )
     }
 
     static func getCurrentTestSpeciesOverride() -> String? {
@@ -340,19 +376,6 @@ final class GameState: ObservableObject {
             return nil
         }
         return resolveTestSpeciesOverride(stored)
-    }
-
-    static func getRandomSpeciesForRarity(_ rarity: Rarity) -> CreatureDefinition {
-        CreatureCatalog.creatures(for: rarity).randomElement()!
-    }
-
-    static func createRandomEggWithRarity(_ rarity: Rarity) -> ActiveCreature {
-        ActiveCreature(
-            eggRarity: rarity,
-            definition: getRandomSpeciesForRarity(rarity),
-            currentSteps: 0,
-            startedAt: Date()
-        )
     }
 
     private static func resolveTestSpeciesOverride(_ stored: String) -> String? {

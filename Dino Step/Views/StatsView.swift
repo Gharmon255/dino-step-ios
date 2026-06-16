@@ -138,7 +138,7 @@ struct StatsView: View {
                             "Stage Progress (Ring)",
                             String(format: "%.1f%%", GameLogic.stageProgressPercent(
                                 currentSteps: gameState.activeCreature.currentSteps,
-                                creatureDefinition: gameState.activeCreature.definition
+                                progression: gameState.activeCreature.progression
                             ))
                         )
                         statRow(

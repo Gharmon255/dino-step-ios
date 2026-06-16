@@ -2,37 +2,54 @@ import XCTest
 @testable import Dino_Step
 
 final class GameLogicTests: XCTestCase {
-    private let trex = CreatureDefinition(
-        id: UUID(uuidString: "A1000013-0000-4000-8000-000000000013")!,
-        speciesId: "trex",
-        name: "T-Rex",
-        rarity: .rare,
-        habitat: .volcano,
-        totalStepsRequired: 50_000,
-        hatchStep: 10_000,
-        juvenileStep: 25_000
-    )
+    private let v2Rare = CreatureEconomy.catalogThresholds(for: .rare)
+    private let legacyTrex = CreatureEconomy.legacyV1Thresholds(for: "trex")
 
-    func testCalculateStage_progression() {
-        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 0, creatureDefinition: trex), .egg)
-        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 9_999, creatureDefinition: trex), .egg)
-        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 10_000, creatureDefinition: trex), .baby)
-        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 25_000, creatureDefinition: trex), .juvenile)
-        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 50_000, creatureDefinition: trex), .adult)
+    func testCalculateStage_v2Progression() {
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 0, progression: v2Rare), .egg)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: v2Rare.hatchStep - 1, progression: v2Rare), .egg)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: v2Rare.hatchStep, progression: v2Rare), .baby)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: v2Rare.juvenileStep, progression: v2Rare), .juvenile)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: v2Rare.totalStepsRequired, progression: v2Rare), .adult)
     }
 
-    func testNextMilestone_perStage() {
-        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: 0, creatureDefinition: trex), 10_000)
-        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: 10_000, creatureDefinition: trex), 25_000)
-        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: 25_000, creatureDefinition: trex), 50_000)
-        XCTAssertNil(GameLogic.nextMilestone(currentSteps: 50_000, creatureDefinition: trex))
+    func testCalculateStage_legacyV1Snapshot() {
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 0, progression: legacyTrex), .egg)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 9_999, progression: legacyTrex), .egg)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 10_000, progression: legacyTrex), .baby)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 25_000, progression: legacyTrex), .juvenile)
+        XCTAssertEqual(GameLogic.calculateStage(currentSteps: 50_000, progression: legacyTrex), .adult)
+    }
+
+    func testNextMilestone_v2Progression() {
+        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: 0, progression: v2Rare), v2Rare.hatchStep)
+        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: v2Rare.hatchStep, progression: v2Rare), v2Rare.juvenileStep)
+        XCTAssertEqual(GameLogic.nextMilestone(currentSteps: v2Rare.juvenileStep, progression: v2Rare), v2Rare.totalStepsRequired)
+        XCTAssertNil(GameLogic.nextMilestone(currentSteps: v2Rare.totalStepsRequired, progression: v2Rare))
     }
 
     func testStageProgressPercent_withinCurrentStage() {
-        XCTAssertEqual(GameLogic.stageProgressPercent(currentSteps: 5_000, creatureDefinition: trex), 50.0, accuracy: 0.01)
-        XCTAssertEqual(GameLogic.stageProgressPercent(currentSteps: 10_000, creatureDefinition: trex), 0.0, accuracy: 0.01)
-        XCTAssertEqual(GameLogic.stageProgressPercent(currentSteps: 17_500, creatureDefinition: trex), 50.0, accuracy: 0.01)
-        XCTAssertEqual(GameLogic.stageProgressPercent(currentSteps: 50_000, creatureDefinition: trex), 100.0, accuracy: 0.01)
+        XCTAssertEqual(
+            GameLogic.stageProgressPercent(currentSteps: legacyTrex.hatchStep / 2, progression: legacyTrex),
+            50.0,
+            accuracy: 0.01
+        )
+        XCTAssertEqual(
+            GameLogic.stageProgressPercent(currentSteps: legacyTrex.hatchStep, progression: legacyTrex),
+            0.0,
+            accuracy: 0.01
+        )
+        let midJuvenile = legacyTrex.hatchStep + (legacyTrex.juvenileStep - legacyTrex.hatchStep) / 2
+        XCTAssertEqual(
+            GameLogic.stageProgressPercent(currentSteps: midJuvenile, progression: legacyTrex),
+            50.0,
+            accuracy: 0.01
+        )
+        XCTAssertEqual(
+            GameLogic.stageProgressPercent(currentSteps: legacyTrex.totalStepsRequired, progression: legacyTrex),
+            100.0,
+            accuracy: 0.01
+        )
     }
 
     func testNextStageLabel() {

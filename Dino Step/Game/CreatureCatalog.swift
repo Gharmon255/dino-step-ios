@@ -41,52 +41,52 @@ enum CreatureCatalog {
     }
 
     static let commonCreatures: [CreatureDefinition] = [
-        creature(1, "Tiny Raptor", .common, .jungle, 8000, 1600, 4000, speciesId: "tiny_raptor"),
-        creature(2, "Triceratops", .common, .plains, 10000, 2000, 5000, speciesId: "triceratops"),
-        creature(3, "Ankylosaurus", .common, .rocky, 12000, 2400, 6000, speciesId: "ankylosaurus"),
-        creature(4, "Parasaurolophus", .common, .forest, 11000, 2200, 5500, speciesId: "parasaurolophus"),
-        creature(5, "Pachycephalosaurus", .common, .rocky, 12500, 2500, 6250, speciesId: "pachycephalosaurus"),
-        creature(6, "Gallimimus", .common, .plains, 9000, 1800, 4500, speciesId: "gallimimus"),
-        creature(30, "Compsognathus", .common, .jungle, 7500, 1500, 3750, speciesId: "compsognathus"),
+        creature(1, "Tiny Raptor", .common, .jungle, speciesId: "tiny_raptor"),
+        creature(2, "Triceratops", .common, .plains, speciesId: "triceratops"),
+        creature(3, "Ankylosaurus", .common, .rocky, speciesId: "ankylosaurus"),
+        creature(4, "Parasaurolophus", .common, .forest, speciesId: "parasaurolophus"),
+        creature(5, "Pachycephalosaurus", .common, .rocky, speciesId: "pachycephalosaurus"),
+        creature(6, "Gallimimus", .common, .plains, speciesId: "gallimimus"),
+        creature(30, "Compsognathus", .common, .jungle, speciesId: "compsognathus"),
     ]
 
     static let uncommonCreatures: [CreatureDefinition] = [
-        creature(7, "Stegosaurus", .uncommon, .forest, 18000, 3600, 9000, speciesId: "stegosaurus"),
-        creature(8, "Pteranodon", .uncommon, .mountain, 22000, 4400, 11000, speciesId: "pteranodon"),
-        creature(9, "Dilophosaurus", .uncommon, .jungle, 20000, 4000, 10000, speciesId: "dilophosaurus"),
-        creature(10, "Iguanodon", .uncommon, .forest, 19000, 3800, 9500, speciesId: "iguanodon"),
-        creature(11, "Carnotaurus", .uncommon, .volcano, 24000, 4800, 12000, speciesId: "carnotaurus"),
-        creature(12, "Baryonyx", .uncommon, .swamp, 25000, 5000, 12500, speciesId: "baryonyx"),
-        creature(29, "Brachiosaurus", .uncommon, .plains, 20000, 4000, 10000, speciesId: "brachiosaurus"),
-        creature(31, "Plesiosaurus", .uncommon, .ocean, 21000, 4200, 10500, speciesId: "plesiosaurus"),
+        creature(7, "Stegosaurus", .uncommon, .forest, speciesId: "stegosaurus"),
+        creature(8, "Pteranodon", .uncommon, .mountain, speciesId: "pteranodon"),
+        creature(9, "Dilophosaurus", .uncommon, .jungle, speciesId: "dilophosaurus"),
+        creature(10, "Iguanodon", .uncommon, .forest, speciesId: "iguanodon"),
+        creature(11, "Carnotaurus", .uncommon, .volcano, speciesId: "carnotaurus"),
+        creature(12, "Baryonyx", .uncommon, .swamp, speciesId: "baryonyx"),
+        creature(29, "Brachiosaurus", .uncommon, .plains, speciesId: "brachiosaurus"),
+        creature(31, "Plesiosaurus", .uncommon, .ocean, speciesId: "plesiosaurus"),
     ]
 
     static let rareCreatures: [CreatureDefinition] = [
-        creature(13, "T-Rex", .rare, .volcano, 50000, 10000, 25000, speciesId: "trex"),
-        creature(14, "Spinosaurus", .rare, .swamp, 60000, 12000, 30000, speciesId: "spinosaurus"),
-        creature(15, "Velociraptor Alpha", .rare, .jungle, 45000, 9000, 22500, speciesId: "velociraptor_alpha"),
-        creature(16, "Allosaurus", .rare, .rocky, 48000, 9600, 24000, speciesId: "allosaurus"),
-        creature(17, "Therizinosaurus", .rare, .forest, 55000, 11000, 27500, speciesId: "therizinosaurus"),
-        creature(18, "Mosasaurus", .rare, .ocean, 65000, 13000, 32500, speciesId: "mosasaurus"),
-        creature(32, "Diplodocus", .rare, .plains, 52000, 10400, 26000, speciesId: "diplodocus"),
+        creature(13, "T-Rex", .rare, .volcano, speciesId: "trex"),
+        creature(14, "Spinosaurus", .rare, .swamp, speciesId: "spinosaurus"),
+        creature(15, "Velociraptor Alpha", .rare, .jungle, speciesId: "velociraptor_alpha"),
+        creature(16, "Allosaurus", .rare, .rocky, speciesId: "allosaurus"),
+        creature(17, "Therizinosaurus", .rare, .forest, speciesId: "therizinosaurus"),
+        creature(18, "Mosasaurus", .rare, .ocean, speciesId: "mosasaurus"),
+        creature(32, "Diplodocus", .rare, .plains, speciesId: "diplodocus"),
     ]
 
     static let epicCreatures: [CreatureDefinition] = [
-        creature(19, "Giganotosaurus", .epic, .plains, 85000, 17000, 42500, speciesId: "giganotosaurus"),
-        creature(20, "Quetzalcoatlus", .epic, .mountain, 90000, 18000, 45000, speciesId: "quetzalcoatlus"),
-        creature(21, "Indominus Rex Style Hybrid", .epic, .lab, 95000, 19000, 47500, speciesId: "indominus_hybrid"),
-        creature(22, "Ancient Spinosaurus", .epic, .swamp, 100000, 20000, 50000),
-        creature(33, "Crystal Ceratosaurus", .epic, .ice, 92000, 18400, 46000, speciesId: "crystal_ceratosaurus"),
+        creature(19, "Giganotosaurus", .epic, .plains, speciesId: "giganotosaurus"),
+        creature(20, "Quetzalcoatlus", .epic, .mountain, speciesId: "quetzalcoatlus"),
+        creature(21, "Indominus Rex Style Hybrid", .epic, .lab, speciesId: "indominus_hybrid"),
+        creature(22, "Ancient Spinosaurus", .epic, .swamp),
+        creature(33, "Crystal Ceratosaurus", .epic, .ice, speciesId: "crystal_ceratosaurus"),
     ]
 
     static let legendaryCreatures: [CreatureDefinition] = [
-        creature(23, "Volcanic T-Rex", .legendary, .volcano, 125000, 25000, 62500),
-        creature(24, "Frost Raptor", .legendary, .ice, 110000, 22000, 55000),
-        creature(25, "Shadow Triceratops", .legendary, .dark, 130000, 26000, 65000),
-        creature(26, "Titanosaur", .legendary, .plains, 150000, 30000, 75000),
-        creature(27, "Cosmic Pterodactyl", .legendary, .sky, 175000, 35000, 87500),
-        creature(28, "Ancient Apex Rex", .legendary, .volcano, 200000, 40000, 100000),
-        creature(34, "Abyssal Mosasaurus", .legendary, .ocean, 190000, 38000, 95000, speciesId: "abyssal_mosasaurus"),
+        creature(23, "Volcanic T-Rex", .legendary, .volcano),
+        creature(24, "Frost Raptor", .legendary, .ice),
+        creature(25, "Shadow Triceratops", .legendary, .dark),
+        creature(26, "Titanosaur", .legendary, .plains),
+        creature(27, "Cosmic Pterodactyl", .legendary, .sky),
+        creature(28, "Ancient Apex Rex", .legendary, .volcano),
+        creature(34, "Abyssal Mosasaurus", .legendary, .ocean, speciesId: "abyssal_mosasaurus"),
     ]
 
     /// Legacy display names, slugs, and dev-picker values mapped to canonical species IDs.
@@ -101,20 +101,18 @@ enum CreatureCatalog {
         _ name: String,
         _ rarity: Rarity,
         _ habitat: Habitat,
-        _ totalSteps: Int,
-        _ hatchStep: Int,
-        _ juvenileStep: Int,
         speciesId: String? = nil
     ) -> CreatureDefinition {
-        CreatureDefinition(
+        let thresholds = CreatureEconomy.catalogThresholds(for: rarity)
+        return CreatureDefinition(
             id: UUID(uuidString: String(format: "A100%04X-0000-4000-8000-%012X", index, index))!,
             speciesId: speciesId ?? defaultSpeciesId(from: name),
             name: name,
             rarity: rarity,
             habitat: habitat,
-            totalStepsRequired: totalSteps,
-            hatchStep: hatchStep,
-            juvenileStep: juvenileStep
+            totalStepsRequired: thresholds.totalStepsRequired,
+            hatchStep: thresholds.hatchStep,
+            juvenileStep: thresholds.juvenileStep
         )
     }
 

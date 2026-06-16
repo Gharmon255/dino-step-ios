@@ -6,11 +6,13 @@ final class DuplicateTradeLogicTests: XCTestCase {
         CreatureCatalog.creature(withSpeciesId: "tiny_raptor")!
     }
 
-    private func adultTinyRaptor(steps: Int = 8_000) -> ActiveCreature {
-        ActiveCreature(
+    private func adultTinyRaptor(steps: Int? = nil) -> ActiveCreature {
+        let progression = CreatureEconomy.legacyV1Thresholds(for: "tiny_raptor")
+        return ActiveCreature(
             eggRarity: .common,
             definition: tinyRaptorDefinition,
-            currentSteps: steps,
+            progression: progression,
+            currentSteps: steps ?? progression.totalStepsRequired,
             startedAt: Date()
         )
     }
@@ -59,10 +61,12 @@ final class DuplicateTradeLogicTests: XCTestCase {
 
     func testOffer_differentSpecies_notEligible() {
         let stego = CreatureCatalog.creature(withSpeciesId: "stegosaurus")!
+        let progression = CreatureEconomy.legacyV1Thresholds(for: stego.speciesId)
         let active = ActiveCreature(
             eggRarity: .uncommon,
             definition: stego,
-            currentSteps: stego.totalStepsRequired,
+            progression: progression,
+            currentSteps: progression.totalStepsRequired,
             startedAt: Date()
         )
 
@@ -85,16 +89,18 @@ final class DuplicateTradeLogicTests: XCTestCase {
 
     func testOffer_legendarySpecies_notEligible() {
         let apex = CreatureCatalog.creature(withSpeciesId: "ancient_apex_rex")!
+        let progression = CreatureEconomy.legacyV1Thresholds(for: apex.speciesId)
         let active = ActiveCreature(
             eggRarity: .legendary,
             definition: apex,
-            currentSteps: apex.totalStepsRequired,
+            progression: progression,
+            currentSteps: progression.totalStepsRequired,
             startedAt: Date()
         )
         let completed = CompletedCreature(
             id: UUID(),
             definition: apex,
-            totalStepsCompleted: apex.totalStepsRequired,
+            totalStepsCompleted: progression.totalStepsRequired,
             completedAt: Date()
         )
 
