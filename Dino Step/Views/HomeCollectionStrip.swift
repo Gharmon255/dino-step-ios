@@ -25,7 +25,7 @@ struct HomeCollectionStrip: View {
                 .font(.headline)
 
             if collectedEntries.isEmpty {
-                Text("Hatch your first dino to start your collection!")
+                Text("Gotta grow them to full adult before your first dino joins the collection.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
