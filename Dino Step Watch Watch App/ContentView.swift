@@ -114,7 +114,7 @@ struct ContentView: View {
                 ringSize: ringSize
             )
 
-            Text("Open Dino Step on iPhone")
+            Text("Open Stepasaurus on iPhone")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
