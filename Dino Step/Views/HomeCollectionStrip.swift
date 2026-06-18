@@ -65,7 +65,7 @@ private struct HomeCollectionChip: View {
             )
             .frame(width: 64, height: 64)
 
-            Text(entry.definition.name)
+            Text(entry.collection?.latestDisplayName ?? entry.definition.name)
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)

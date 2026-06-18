@@ -6,7 +6,10 @@
 import SwiftUI
 
 struct CollectionSpeciesDetailView: View {
+    @ObservedObject var gameState: GameState
     let entry: CollectionRosterEntry
+
+    @State private var editingCreature: CompletedCreature?
 
     private var creature: CreatureDefinition { entry.definition }
     private var rarityColor: Color { RarityColors.color(for: creature.rarity) }
@@ -26,6 +29,16 @@ struct CollectionSpeciesDetailView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle(creature.name)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $editingCreature) { completed in
+            NicknameEditSheet(
+                title: "Nickname your dino",
+                speciesName: creature.name,
+                initialNickname: completed.nickname,
+                onSave: { nickname in
+                    gameState.updateCompletedCreatureNickname(id: completed.id, rawNickname: nickname)
+                }
+            )
+        }
     }
 
     private var headerSection: some View {
@@ -67,16 +80,47 @@ struct CollectionSpeciesDetailView: View {
 
     @ViewBuilder
     private var collectionMetaSection: some View {
-        if let collection = entry.collection {
-            VStack(alignment: .leading, spacing: 6) {
-                if collection.collectedCount > 1 {
-                    Text("Collected ×\(collection.collectedCount)")
+        if entry.isCollected {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Your adults")
+                    .font(.headline)
+
+                ForEach(gameState.completedCreatures(for: creature.speciesId)) { completed in
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(completed.displayName)
+                                .font(.subheadline.weight(.semibold))
+
+                            if completed.nickname != nil {
+                                Text(creature.name)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Text(completed.completedAt.formatted(date: .abbreviated, time: .omitted))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Button("Nickname") {
+                            editingCreature = completed
+                        }
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(rarityColor)
+                    }
                 }
-                Text("Latest adult: \(collection.latestCompletedAt.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+
+                if let collection = entry.collection {
+                    if collection.collectedCount > 1 {
+                        Text("Collected ×\(collection.collectedCount)")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(rarityColor)
+                    }
+                    Text("Latest adult: \(collection.latestCompletedAt.formatted(date: .abbreviated, time: .omitted))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -133,12 +177,14 @@ private struct CollectionStageDetailRow: View {
 #Preview {
     NavigationStack {
         CollectionSpeciesDetailView(
+            gameState: GameState(),
             entry: CollectionRosterEntry(
                 definition: CreatureCatalog.allCreatures[0],
                 collection: CollectedSpeciesSummary(
                     definition: CreatureCatalog.allCreatures[0],
                     collectedCount: 1,
-                    latestCompletedAt: .now
+                    latestCompletedAt: .now,
+                    latestDisplayName: CreatureCatalog.allCreatures[0].name
                 )
             )
         )

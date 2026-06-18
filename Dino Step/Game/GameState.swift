@@ -257,7 +257,8 @@ final class GameState: ObservableObject {
             id: UUID(),
             definition: activeCreature.definition,
             totalStepsCompleted: activeCreature.progression.totalStepsRequired,
-            completedAt: Date()
+            completedAt: Date(),
+            nickname: activeCreature.nickname
         )
         completedCreatures.append(completed)
 
@@ -290,6 +291,34 @@ final class GameState: ObservableObject {
             collectedSpeciesIds: Set(completedCreatures.map(\.definition.speciesId))
         )
         persistCurrentState()
+    }
+
+    func setActiveCreatureNickname(_ rawNickname: String?) {
+        guard GameLogic.isHatched(activeCreature) else { return }
+
+        let nickname = CreatureNickname.normalize(rawNickname)
+        guard nickname != activeCreature.nickname else { return }
+
+        activeCreature.nickname = nickname
+        persistCurrentState()
+#if os(iOS)
+        syncToWatch()
+#endif
+    }
+
+    func updateCompletedCreatureNickname(id: UUID, rawNickname: String?) {
+        let nickname = CreatureNickname.normalize(rawNickname)
+        guard let index = completedCreatures.firstIndex(where: { $0.id == id }) else { return }
+        guard completedCreatures[index].nickname != nickname else { return }
+
+        completedCreatures[index].nickname = nickname
+        persistCurrentState()
+    }
+
+    func completedCreatures(for speciesId: String) -> [CompletedCreature] {
+        completedCreatures
+            .filter { $0.definition.speciesId == speciesId }
+            .sorted { $0.completedAt > $1.completedAt }
     }
 
     func giveRandomEgg() {

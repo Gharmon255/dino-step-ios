@@ -9,6 +9,7 @@ struct CollectedSpeciesSummary: Equatable {
     let definition: CreatureDefinition
     let collectedCount: Int
     let latestCompletedAt: Date
+    let latestDisplayName: String
 }
 
 struct CollectionStats {
@@ -69,10 +70,12 @@ enum CollectionSort: String, CaseIterable, Identifiable {
 enum CollectionCatalog {
     static func groupedSummaries(from completed: [CompletedCreature]) -> [UUID: CollectedSpeciesSummary] {
         Dictionary(grouping: completed, by: \.definition.id).mapValues { entries in
-            CollectedSpeciesSummary(
+            let latest = entries.max(by: { $0.completedAt < $1.completedAt }) ?? entries[0]
+            return CollectedSpeciesSummary(
                 definition: entries[0].definition,
                 collectedCount: entries.count,
-                latestCompletedAt: entries.map(\.completedAt).max() ?? entries[0].completedAt
+                latestCompletedAt: latest.completedAt,
+                latestDisplayName: latest.displayName
             )
         }
     }

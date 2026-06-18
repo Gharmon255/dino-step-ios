@@ -8,6 +8,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var gameState: GameState
     @State private var showTradeConfirmation = false
+    @State private var showNicknameSheet = false
 
     private var stage: GrowthStage { gameState.currentStage }
     private var rarityColor: Color { RarityColors.color(for: ambientRarity) }
@@ -51,10 +52,27 @@ struct HomeView: View {
                             )
                         }
 
-                        Text(gameState.displayName)
-                            .font(.title2.bold())
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(stage == .egg ? rarityColor : .primary)
+                        VStack(spacing: 4) {
+                            Text(gameState.displayName)
+                                .font(.title2.bold())
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(stage == .egg ? rarityColor : .primary)
+
+                            if let subtitle = gameState.activeCreature.speciesSubtitle {
+                                Text(subtitle)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if isHatched {
+                                Button("Tap to nickname") {
+                                    showNicknameSheet = true
+                                }
+                                .font(.caption.weight(.semibold))
+                                .buttonStyle(.plain)
+                                .foregroundStyle(.blue)
+                            }
+                        }
 
                         HStack(spacing: 8) {
                             if stage != .egg {
@@ -215,6 +233,14 @@ struct HomeView: View {
             if let discovery = gameState.pendingDiscovery {
                 Text("Meet \(discovery.speciesName)!\n\n\(discovery.funFact)")
             }
+        }
+        .sheet(isPresented: $showNicknameSheet) {
+            NicknameEditSheet(
+                title: "Nickname your dino",
+                speciesName: gameState.activeCreature.definition.name,
+                initialNickname: gameState.activeCreature.nickname,
+                onSave: gameState.setActiveCreatureNickname
+            )
         }
     }
 

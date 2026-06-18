@@ -52,7 +52,7 @@ struct CollectionView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Collection")
         .navigationDestination(item: $selectedEntry) { entry in
-            CollectionSpeciesDetailView(entry: entry)
+            CollectionSpeciesDetailView(gameState: gameState, entry: entry)
         }
     }
 

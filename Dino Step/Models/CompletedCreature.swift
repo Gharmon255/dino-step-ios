@@ -10,4 +10,9 @@ struct CompletedCreature: Identifiable {
     let definition: CreatureDefinition
     let totalStepsCompleted: Int
     let completedAt: Date
+    var nickname: String? = nil
+
+    var displayName: String {
+        CreatureNickname.normalize(nickname) ?? definition.name
+    }
 }

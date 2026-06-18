@@ -49,14 +49,16 @@ enum SavedGameStateMapper {
                 hatchStep: gameState.activeCreature.progression.hatchStep,
                 juvenileStep: gameState.activeCreature.progression.juvenileStep,
                 totalStepsRequired: gameState.activeCreature.progression.totalStepsRequired,
-                economyVersion: gameState.activeCreature.progression.economyVersion
+                economyVersion: gameState.activeCreature.progression.economyVersion,
+                nickname: gameState.activeCreature.nickname
             ),
             completedCreatures: gameState.completedCreatures.map {
                 SavedCompletedCreatureState(
                     id: $0.id,
                     creatureDefinitionId: $0.definition.id,
                     totalStepsCompleted: $0.totalStepsCompleted,
-                    completedAt: $0.completedAt
+                    completedAt: $0.completedAt,
+                    nickname: $0.nickname
                 )
             },
             lastRewardedEggRarity: gameState.lastRewardedEggRarity?.rawValue,
@@ -131,7 +133,8 @@ enum SavedGameStateMapper {
             definition: definition,
             progression: progression,
             currentSteps: saved.currentSteps,
-            startedAt: saved.startedAt
+            startedAt: saved.startedAt,
+            nickname: saved.nickname
         )
     }
 
@@ -145,7 +148,8 @@ enum SavedGameStateMapper {
             id: saved.id,
             definition: definition,
             totalStepsCompleted: saved.totalStepsCompleted,
-            completedAt: saved.completedAt
+            completedAt: saved.completedAt,
+            nickname: saved.nickname
         )
     }
 }

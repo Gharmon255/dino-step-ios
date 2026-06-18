@@ -11,6 +11,7 @@ struct ActiveCreature {
     let progression: ProgressionThresholds
     var currentSteps: Int
     let startedAt: Date
+    var nickname: String?
 
     static func newEgg(
         definition: CreatureDefinition,
@@ -22,7 +23,25 @@ struct ActiveCreature {
             definition: definition,
             progression: CreatureEconomy.thresholds(for: definition, economyVersion: economyVersion),
             currentSteps: 0,
-            startedAt: Date()
+            startedAt: Date(),
+            nickname: nil
+        )
+    }
+
+    var displayName: String {
+        CreatureNickname.activeDisplayName(
+            speciesName: definition.name,
+            nickname: nickname,
+            isHatched: GameLogic.isHatched(self),
+            mysteryEggTitle: eggRarity.mysteryEggTitle
+        )
+    }
+
+    var speciesSubtitle: String? {
+        CreatureNickname.speciesSubtitle(
+            speciesName: definition.name,
+            nickname: nickname,
+            isHatched: GameLogic.isHatched(self)
         )
     }
 }

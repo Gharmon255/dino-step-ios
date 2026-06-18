@@ -85,10 +85,7 @@ enum GameLogic {
     }
 
     static func displayName(for activeCreature: ActiveCreature) -> String {
-        if calculateStage(currentSteps: activeCreature.currentSteps, progression: activeCreature.progression) == .egg {
-            return activeCreature.eggRarity.mysteryEggTitle
-        }
-        return activeCreature.definition.name
+        activeCreature.displayName
     }
 
     static func isHatched(_ activeCreature: ActiveCreature) -> Bool {
