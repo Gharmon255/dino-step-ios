@@ -8,3 +8,6 @@ xcuserdata/
 # Build artifacts
 DerivedData/
 build/
+
+# Local Supabase credentials (copy from SupabaseConfig.example.plist)
+Dino Step/Config/SupabaseConfig.plist

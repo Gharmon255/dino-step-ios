@@ -7,6 +7,13 @@ import SwiftUI
 
 struct StatsView: View {
     @ObservedObject var gameState: GameState
+    @ObservedObject private var cloudSyncEngine: CloudSaveSyncEngine
+    @State private var showCloudConflict = false
+
+    init(gameState: GameState) {
+        self.gameState = gameState
+        self._cloudSyncEngine = ObservedObject(wrappedValue: gameState.cloudSyncEngine)
+    }
 #if DEBUG && os(iOS)
     @ObservedObject private var watchManager = PhoneWatchConnectivityManager.shared
     @AppStorage(GameState.devNextEggSpeciesOverrideKey) private var devNextEggSpecies: String = "RANDOM"
@@ -16,6 +23,14 @@ struct StatsView: View {
         ScrollView {
             VStack(spacing: 16) {
                 AppleHealthPrivacyCard(gameState: gameState)
+
+                AccountBackupCard(
+                    cloudSyncEngine: cloudSyncEngine,
+                    onSignInWithApple: gameState.signInWithApple,
+                    onSignInWithGoogle: gameState.signInWithGoogle,
+                    onSignOut: gameState.signOutCloudAccount,
+                    onExportSave: gameState.exportLocalSaveJson
+                )
 
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
@@ -304,6 +319,25 @@ struct StatsView: View {
 #if DEBUG && os(iOS)
             watchManager.activate()
 #endif
+        }
+        .onChange(of: cloudSyncEngine.uiState.pendingConflict != nil) { _, hasConflict in
+            showCloudConflict = hasConflict
+        }
+        .sheet(isPresented: $showCloudConflict) {
+            CloudSaveConflictSheet(
+                onKeepLocal: {
+                    gameState.keepLocalCloudSave()
+                    showCloudConflict = false
+                },
+                onUseCloud: {
+                    gameState.useCloudSave()
+                    showCloudConflict = false
+                },
+                onDismiss: {
+                    gameState.dismissCloudSaveConflict()
+                    showCloudConflict = false
+                }
+            )
         }
     }
 

@@ -32,6 +32,10 @@ struct GamePersistenceStore {
         defaults.set(data, forKey: storageKey)
     }
 
+    func replaceSnapshot(_ snapshot: GameStateSnapshot) {
+        save(SavedGameStateMapper.makeSavedState(from: snapshot))
+    }
+
     func clear() {
         defaults.removeObject(forKey: storageKey)
     }

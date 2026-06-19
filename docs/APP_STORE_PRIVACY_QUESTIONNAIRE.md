@@ -11,14 +11,23 @@ Use when completing **App Store Connect → App Privacy** for the iPhone app. Al
 | Data type | Collected | Linked to identity | Used for tracking | Purpose |
 |-----------|-----------|-------------------|-------------------|---------|
 | **Health & Fitness → Fitness** (step count) | Yes | No | No | App functionality |
+| **Contact info → Email address** | Yes (optional) | Yes (account) | No | Account / cloud backup |
+| **User content → Other user content** (game save) | Yes (optional) | Yes (account) | No | Cloud backup |
 
 ### Fitness / steps — details
 
 - **Source:** HealthKit (Apple Health), user-initiated sync only (Sync Steps on Home)
 - **Why:** Hatch eggs and grow dinosaurs from step count
-- **Stored:** Game state on device; not uploaded to our servers
+- **Stored:** Game state on device; optional encrypted backup to Supabase if user signs in
 
-## Data NOT collected
+### Optional cloud backup
+
+- **Collected only when user signs in** with Apple or Google from Stats
+- Game save JSON (creatures, collection, stats) — not raw step history
+- Linked to account for restore across devices
+- Not used for tracking or advertising
+
+## Data NOT collected (without optional sign-in)
 
 - Contact info, location, identifiers for advertising, purchases, browsing history, diagnostics for third-party analytics, etc.
 

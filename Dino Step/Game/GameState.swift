@@ -30,6 +30,7 @@ final class GameState: ObservableObject {
 
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
+    let cloudSyncEngine: CloudSaveSyncEngine
     private var lastAutomaticHealthKitSyncAttempt: Date?
 #if os(iOS)
     private let watchConnectivityManager: PhoneWatchConnectivityManager
@@ -43,10 +44,20 @@ final class GameState: ObservableObject {
         let healthKitService = healthKitStepService ?? HealthKitStepService()
         self.persistenceStore = store
         self.healthKitStepService = healthKitService
+        self.cloudSyncEngine = CloudSaveSyncEngine(persistenceStore: store)
 #if os(iOS)
         self.watchConnectivityManager = PhoneWatchConnectivityManager.shared
 #endif
         self.activeCreature = Self.createRandomEggWithRarity(.common)
+
+        cloudSyncEngine.onApplyCloudSave = { [weak self] snapshot in
+            guard let self else { return }
+            self.apply(snapshot)
+            self.persistenceStatus = .loadedSavedGame
+#if os(iOS)
+            self.syncToWatch()
+#endif
+        }
 
         switch store.load() {
         case .noSavedState:
@@ -66,6 +77,7 @@ final class GameState: ObservableObject {
 
         refreshHealthKitStatus()
         refreshExperiencePresentation()
+        cloudSyncEngine.refreshSessionOnLaunch(localSnapshot: snapshot())
 #if os(iOS)
         watchConnectivityManager.payloadProvider = { [weak self] in
             guard let self else { return nil }
@@ -468,6 +480,7 @@ final class GameState: ObservableObject {
         )
         persistenceStore.save(SavedGameStateMapper.makeSavedState(from: snapshot))
         persistenceStatus = .savedLocally
+        cloudSyncEngine.schedulePush(localSnapshot: snapshot)
 #if os(iOS)
         syncToWatch()
 #endif
@@ -486,6 +499,36 @@ final class GameState: ObservableObject {
 
     func dismissInactivityPenaltyAlert() {
         inactivityPenaltyAlert = nil
+    }
+
+    func exportLocalSaveJson() -> String {
+        cloudSyncEngine.exportLocalJson(localSnapshot: snapshot())
+    }
+
+    func signOutCloudAccount() {
+        cloudSyncEngine.signOut()
+    }
+
+    func keepLocalCloudSave() {
+        cloudSyncEngine.resolveConflictKeepLocal(localSnapshot: snapshot())
+    }
+
+    func useCloudSave() {
+        Task {
+            _ = await cloudSyncEngine.resolveConflictUseCloud()
+        }
+    }
+
+    func dismissCloudSaveConflict() {
+        cloudSyncEngine.dismissConflict()
+    }
+
+    func signInWithApple() {
+        cloudSyncEngine.signInWithApple(localSnapshot: snapshot())
+    }
+
+    func signInWithGoogle() {
+        cloudSyncEngine.signInWithGoogle(localSnapshot: snapshot())
     }
 
 #if DEBUG

@@ -509,6 +509,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Config/SupabaseAuth.plist";
 				INFOPLIST_KEY_BGTaskSchedulerPermittedIdentifiers = "com.gharmon255.Dino-Step.healthkit-step-sync";
 				INFOPLIST_KEY_CFBundleDisplayName = Stepasaurus;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -560,6 +561,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Config/SupabaseAuth.plist";
 				INFOPLIST_KEY_BGTaskSchedulerPermittedIdentifiers = "com.gharmon255.Dino-Step.healthkit-step-sync";
 				INFOPLIST_KEY_CFBundleDisplayName = Stepasaurus;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
