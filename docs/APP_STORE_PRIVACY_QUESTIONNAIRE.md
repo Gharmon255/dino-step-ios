@@ -27,6 +27,8 @@ Use when completing **App Store Connect → App Privacy** for the iPhone app. Al
 - Linked to account for restore across devices
 - Not used for tracking or advertising
 
+**Rollout note:** Tester builds may show **Coming soon** instead of sign-in buttons (`CloudBackupFeatures.signInEnabled = false`). Questionnaire answers above still apply once sign-in is enabled in production.
+
 ## Data NOT collected (without optional sign-in)
 
 - Contact info, location, identifiers for advertising, purchases, browsing history, diagnostics for third-party analytics, etc.
@@ -36,8 +38,10 @@ Use when completing **App Store Connect → App Privacy** for the iPhone app. Al
 `Dino Step/PrivacyInfo.xcprivacy`:
 
 - `NSPrivacyTracking` = false
-- Collected type: `NSPrivacyCollectedDataTypeFitness` for `NSPrivacyCollectedDataTypePurposeAppFunctionality`
-- Not linked to user, not used for tracking
+- Collected types:
+  - `NSPrivacyCollectedDataTypeFitness` — not linked, not used for tracking (HealthKit steps)
+  - `NSPrivacyCollectedDataTypeEmailAddress` — linked when user signs in for cloud backup
+  - `NSPrivacyCollectedDataTypeOtherUserContent` — game save JSON when signed in; linked to account
 
 ## Privacy policy URL
 

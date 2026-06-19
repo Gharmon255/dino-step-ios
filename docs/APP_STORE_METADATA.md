@@ -29,7 +29,7 @@ Start with a mystery egg and sync your step count from Apple Health. As you walk
 - Collection and Dino Dex — track species you've discovered
 - Apple Watch companion — see your egg or dinosaur and stage progress on your wrist
 
-Stepasaurus reads step count data from Apple Health to provide app functionality. Location data is not used.
+Stepasaurus reads step count data from Apple Health to provide app functionality. Optional Sign in with Apple or Google can back up your game save across devices; steps are never uploaded. Location data is not used.
 
 Privacy policy: https://gharmon255.github.io/dino-step-ios/privacy-policy.html *(host `docs/privacy-policy.html` via GitHub Pages — see `docs/PRIVACY_POLICY_HOSTING.md`)*
 
@@ -89,8 +89,8 @@ Capture on supported device sizes per App Store Connect (verify current required
 
 Full answers: **`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`**
 
-- **Data collected:** Fitness (step count via HealthKit)
-- **Linked to user:** No (per `PrivacyInfo.xcprivacy`)
+- **Data collected:** Fitness (step count via HealthKit); optional Email + game save when user signs in for cloud backup
+- **Linked to user:** Fitness — No; Email / game save — Yes (only when signed in)
 - **Used for tracking:** No
 - **Purpose:** App functionality
 

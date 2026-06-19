@@ -54,6 +54,10 @@ Non-backed species use emoji fallbacks only — never another species’ `dino_*
 - [`SPECIES_ROSTER.md`](SPECIES_ROSTER.md) — ids, rarities, steps, asset status
 - [`SPECIES_ONBOARDING_CHECKLIST.md`](SPECIES_ONBOARDING_CHECKLIST.md) — add a new asset-backed species
 - [`WATCH_SYNC_CONTRACT.md`](WATCH_SYNC_CONTRACT.md) — phone → watch payload
+- [`docs/CLOUD_SAVE_CONTRACT.md`](../dino-step/docs/CLOUD_SAVE_CONTRACT.md) — cloud save JSON schema (canonical copy in Android repo)
+- [`docs/SUPABASE_SETUP.md`](../dino-step/docs/SUPABASE_SETUP.md) — Supabase auth + Apple JWT setup (canonical copy in Android repo)
+- [`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`](docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md) — App Store Connect privacy answers
+- [`LAUNCH_CHECKLIST.md`](LAUNCH_CHECKLIST.md) — TestFlight / App Store readiness
 
 ## Developer testing (DEBUG only)
 
@@ -83,6 +87,17 @@ These controls must **not** ship in Release; production users rely on real steps
 
 Physical iPhone / Apple Watch testing is recommended before release but not required for day-to-day simulator work.
 
+## Cloud backup (optional)
+
+Game progress is **local-first**. Optional **Sign in with Apple** or **Google** backs up your save to Supabase for restore on another device.
+
+- **Stats tab** → **Account & backup** — export local save anytime; sign-in when enabled
+- **Tester builds:** sign-in is gated behind **Coming soon** (`CloudBackupFeatures.signInEnabled = false` in `AccountBackupCard.swift`). Flip to `true` locally for dev testing only.
+- **Setup:** copy `Dino Step/Config/SupabaseConfig.example.plist` → `SupabaseConfig.plist` (gitignored); see [`docs/SUPABASE_SETUP.md`](../dino-step/docs/SUPABASE_SETUP.md) in the Android repo for Supabase + Apple JWT steps
+- **Privacy:** [`docs/privacy-policy.html`](docs/privacy-policy.html), [`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`](docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md)
+
+Steps and raw HealthKit data are **not** uploaded — only game save JSON when the user signs in.
+
 ## Repo notes
 
 - Do **not** commit `*.xcuserstate`, `xcuserdata/`, or `DerivedData/` (see `.gitignore`).
@@ -94,3 +109,5 @@ Physical iPhone / Apple Watch testing is recommended before release but not requ
 - Catalog art is **complete** (29/29 species, all stages). See `dino-step-assets/species_queue.md` for expansion notes.
 - UI polish and on-device HealthKit / WatchConnectivity validation on real hardware.
 - Watch is read-only; all progression happens on the phone.
+- Cloud sign-in UI gated for testers; cloud push not yet hooked to every save path.
+- Apple and Google sign-in create separate Supabase users (no account linking yet).
