@@ -5,6 +5,10 @@
 
 import SwiftUI
 
+enum CloudBackupFeatures {
+    static let signInEnabled = false
+}
+
 struct AccountBackupCard: View {
     @ObservedObject var cloudSyncEngine: CloudSaveSyncEngine
     let onSignInWithApple: () -> Void
@@ -18,54 +22,21 @@ struct AccountBackupCard: View {
                 Text("Account & backup")
                     .font(.headline)
 
-                if !cloudSyncEngine.uiState.isConfigured {
+                if !CloudBackupFeatures.signInEnabled {
+                    Text("Sign in to back up progress across devices. Gameplay works offline without an account.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text("Coming soon")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.teal)
+                } else if !cloudSyncEngine.uiState.isConfigured {
                     Text("Cloud backup is not configured in this build.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 } else if let email = cloudSyncEngine.uiState.signedInEmail {
-                    Text("Signed in as \(email)")
-                        .font(.subheadline)
-                    if let provider = cloudSyncEngine.uiState.signedInProvider {
-                        Text("Provider: \(provider)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    if let status = backupStatusText {
-                        Text(status)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    if cloudSyncEngine.uiState.syncStatus == .syncing {
-                        ProgressView()
-                    }
-                    if let error = cloudSyncEngine.uiState.lastError {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                    Button("Sign out", action: onSignOut)
-                        .buttonStyle(.bordered)
+                    signedInContent(email: email)
                 } else {
-                    Text("Sign in to back up progress across devices. Gameplay works offline without an account.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    Button("Sign in with Apple", action: onSignInWithApple)
-                        .buttonStyle(.borderedProminent)
-                        .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
-
-                    Button("Sign in with Google", action: onSignInWithGoogle)
-                        .buttonStyle(.bordered)
-                        .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
-
-                    if cloudSyncEngine.uiState.syncStatus == .syncing {
-                        ProgressView()
-                    }
-                    if let error = cloudSyncEngine.uiState.lastError {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
+                    signedOutContent
                 }
 
                 Button("Export local save") {
@@ -90,6 +61,56 @@ struct AccountBackupCard: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func signedInContent(email: String) -> some View {
+        Text("Signed in as \(email)")
+            .font(.subheadline)
+        if let provider = cloudSyncEngine.uiState.signedInProvider {
+            Text("Provider: \(provider)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        if let status = backupStatusText {
+            Text(status)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        if cloudSyncEngine.uiState.syncStatus == .syncing {
+            ProgressView()
+        }
+        if let error = cloudSyncEngine.uiState.lastError {
+            Text(error)
+                .font(.caption)
+                .foregroundStyle(.red)
+        }
+        Button("Sign out", action: onSignOut)
+            .buttonStyle(.bordered)
+    }
+
+    @ViewBuilder
+    private var signedOutContent: some View {
+        Text("Sign in to back up progress across devices. Gameplay works offline without an account.")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+
+        Button("Sign in with Apple", action: onSignInWithApple)
+            .buttonStyle(.borderedProminent)
+            .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
+
+        Button("Sign in with Google", action: onSignInWithGoogle)
+            .buttonStyle(.bordered)
+            .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
+
+        if cloudSyncEngine.uiState.syncStatus == .syncing {
+            ProgressView()
+        }
+        if let error = cloudSyncEngine.uiState.lastError {
+            Text(error)
+                .font(.caption)
+                .foregroundStyle(.red)
         }
     }
 

@@ -321,23 +321,27 @@ struct StatsView: View {
 #endif
         }
         .onChange(of: cloudSyncEngine.uiState.pendingConflict != nil) { _, hasConflict in
-            showCloudConflict = hasConflict
+            if CloudBackupFeatures.signInEnabled {
+                showCloudConflict = hasConflict
+            }
         }
         .sheet(isPresented: $showCloudConflict) {
-            CloudSaveConflictSheet(
-                onKeepLocal: {
-                    gameState.keepLocalCloudSave()
-                    showCloudConflict = false
-                },
-                onUseCloud: {
-                    gameState.useCloudSave()
-                    showCloudConflict = false
-                },
-                onDismiss: {
-                    gameState.dismissCloudSaveConflict()
-                    showCloudConflict = false
-                }
-            )
+            if CloudBackupFeatures.signInEnabled {
+                CloudSaveConflictSheet(
+                    onKeepLocal: {
+                        gameState.keepLocalCloudSave()
+                        showCloudConflict = false
+                    },
+                    onUseCloud: {
+                        gameState.useCloudSave()
+                        showCloudConflict = false
+                    },
+                    onDismiss: {
+                        gameState.dismissCloudSaveConflict()
+                        showCloudConflict = false
+                    }
+                )
+            }
         }
     }
 
