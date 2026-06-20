@@ -8,7 +8,10 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var gameState = GameState()
     @State private var selectedTab = Self.initialTabIndex()
+    @State private var showBattleIntro = false
     @Environment(\.scenePhase) private var scenePhase
+
+    private let battleTabTag = 2
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -43,6 +46,11 @@ struct ContentView: View {
             .tag(3)
         }
         .tint(.green)
+        .onChange(of: selectedTab) { _, newTab in
+            if newTab == battleTabTag && !AppExperienceStore.hasDismissedBattleIntroPermanently {
+                showBattleIntro = true
+            }
+        }
         .task {
 #if os(iOS)
             gameState.configureAutomaticBackgroundSync()
@@ -73,6 +81,17 @@ struct ContentView: View {
                     "• Egg cracks, dino facts, and your collection on Home.\n" +
                     "• Steps must flow into Apple Health."
             )
+        }
+        .alert(BattleIntroContent.title, isPresented: $showBattleIntro) {
+            Button("Got it") {
+                showBattleIntro = false
+            }
+            Button("Don't show again") {
+                AppExperienceStore.setBattleIntroDismissedPermanently()
+                showBattleIntro = false
+            }
+        } message: {
+            Text(BattleIntroContent.body)
         }
         .alert(
             "Your dino needs more steps",

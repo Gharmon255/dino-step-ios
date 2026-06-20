@@ -11,6 +11,7 @@ enum AppExperienceStore {
     private static let onboardingCompleteKey = "app_experience.onboarding_complete"
     private static let whatsNewVersionKey = "app_experience.whats_new_version"
     private static let lastActivityEvaluationDayKey = "app_experience.last_activity_eval_day"
+    private static let battleIntroDismissedKey = "app_experience.battle_intro_dismissed"
 
     static var hasCompletedOnboarding: Bool {
         UserDefaults.standard.bool(forKey: onboardingCompleteKey)
@@ -34,5 +35,13 @@ enum AppExperienceStore {
 
     static func setLastActivityEvaluationDayStart(_ date: Date) {
         UserDefaults.standard.set(date, forKey: lastActivityEvaluationDayKey)
+    }
+
+    static var hasDismissedBattleIntroPermanently: Bool {
+        UserDefaults.standard.bool(forKey: battleIntroDismissedKey)
+    }
+
+    static func setBattleIntroDismissedPermanently() {
+        UserDefaults.standard.set(true, forKey: battleIntroDismissedKey)
     }
 }

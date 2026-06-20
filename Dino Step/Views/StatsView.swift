@@ -9,6 +9,7 @@ struct StatsView: View {
     @ObservedObject var gameState: GameState
     @ObservedObject private var cloudSyncEngine: CloudSaveSyncEngine
     @State private var showCloudConflict = false
+    @State private var showHelp = false
 
     init(gameState: GameState) {
         self.gameState = gameState
@@ -23,6 +24,20 @@ struct StatsView: View {
         ScrollView {
             VStack(spacing: 16) {
                 AppleHealthPrivacyCard(gameState: gameState)
+
+                GameCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Help & tips")
+                            .font(.headline)
+                        Text("Learn how steps, eggs, collection, battles, and backup work.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Button("Open help guide") {
+                            showHelp = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
 
                 AccountBackupCard(
                     cloudSyncEngine: cloudSyncEngine,
@@ -314,6 +329,9 @@ struct StatsView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Stats")
+        .sheet(isPresented: $showHelp) {
+            HelpView(includeEggsTab: false)
+        }
         .onAppear {
             gameState.refreshHealthKitStatus()
 #if DEBUG && os(iOS)
