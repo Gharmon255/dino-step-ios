@@ -22,7 +22,8 @@ If you prefer a single policy page, host one combined HTML (e.g. from the `dino-
 
 ## Before TestFlight / App Store
 
+- [ ] Push `main` — GitHub Pages rebuilds from `/docs`
+- [ ] Run `../dino-step/scripts/verify-privacy-url.sh` (checks both Android and iOS hosted URLs)
 - [ ] Open the URL in a private browser window — loads over HTTPS
-- [ ] Update contact email in `privacy-policy.html` if needed
 - [ ] Complete App Store privacy questionnaire using `docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`
 - [ ] Add URL to `docs/APP_STORE_METADATA.md` and App Store Connect

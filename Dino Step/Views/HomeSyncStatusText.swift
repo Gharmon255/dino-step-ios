@@ -28,6 +28,6 @@ enum HomeSyncStatusText {
             formatter.dateStyle = .none
             return "Synced at \(formatter.string(from: lastSyncDate))"
         }
-        return syncMessage ?? "Steps sync automatically in the background"
+        return syncMessage ?? "Tap Sync Steps to pull the latest steps from Apple Health"
     }
 }

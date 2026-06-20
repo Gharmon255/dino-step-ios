@@ -48,7 +48,7 @@ Expected: **4+** (no restricted content; confirm via App Store Connect questionn
 
 ## Support URL
 
-https://github.com/gharmon255/dino-step-ios/issues *(or your support site — update before submission)*
+mailto:support@gharmon255.dev *(or `https://gharmon255.dev/stepasaurus-support` if you add a landing page)*
 
 ## Marketing URL (optional)
 
@@ -66,7 +66,7 @@ Host steps: `docs/PRIVACY_POLICY_HOSTING.md`
 
 ### iPhone (required)
 
-Capture on supported device sizes per App Store Connect (verify current required sizes in ASC):
+Capture on supported device sizes per App Store Connect. Preset states and IG captures live in **`marketing/screenshot-states/`** and **`marketing/screenshots/`** — resize/re-export for ASC-required dimensions.
 
 | Screen | Suggested content |
 |--------|-------------------|
@@ -89,7 +89,7 @@ Capture on supported device sizes per App Store Connect (verify current required
 
 Full answers: **`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`**
 
-- **Data collected:** Fitness (step count via HealthKit); optional Email + game save when user signs in for cloud backup
+- **Data collected:** Fitness (step count via HealthKit, manual + ~hourly background); optional Email + game save + battle history when signed in
 - **Linked to user:** Fitness — No; Email / game save — Yes (only when signed in)
 - **Used for tracking:** No
 - **Purpose:** App functionality
@@ -98,7 +98,7 @@ Full answers: **`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`**
 
 ## Version / copyright (placeholder)
 
-- **Version:** 1.0
+- **Version:** 1.0 (build **10** — bump before next TestFlight upload; current repo build **9**)
 - **Copyright:** © 2026 [Your name or company]
 
 ---

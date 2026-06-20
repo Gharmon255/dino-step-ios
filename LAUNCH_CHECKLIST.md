@@ -3,6 +3,18 @@
 Pre–TestFlight and App Store readiness for **dino-step-ios**.  
 Update checkboxes as items are completed.
 
+**Code/doc sync:** June 2026 — privacy policy, ASC privacy draft, in-app disclosures, and sign-in flags aligned for production.
+
+---
+
+## Still manual (App Store Connect — you)
+
+- [ ] Push `main` to GitHub so **GitHub Pages** serves updated `docs/privacy-policy.html`
+- [ ] App Store Connect → privacy policy URL + **App Privacy** questionnaire (`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`)
+- [ ] Bump **build number** to 10+ → Archive → TestFlight external
+- [ ] Store listing metadata + ASC-sized screenshots (source: `marketing/`)
+- [ ] Physical release smoke test (checklist below)
+
 ---
 
 ## App icons
@@ -16,27 +28,26 @@ Update checkboxes as items are completed.
 
 ## Privacy & legal
 
-- [x] **Privacy policy text** — `docs/privacy-policy.html` (hosting: `docs/PRIVACY_POLICY_HOSTING.md`)
+- [x] **Privacy policy text** — `docs/privacy-policy.html` (cloud backup, PvP, hourly sync, notifications)
 - [x] **In-app privacy link** — Stats tab `AppleHealthPrivacyCard` + `LegalURLs.privacyPolicy`
 - [x] **App Store privacy draft answers** — `docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`
-- [ ] **Privacy policy URL** published on public HTTPS (GitHub Pages) and linked in App Store Connect
-- [ ] App Store privacy questionnaire completed in App Store Connect (use draft doc above)
-- [x] **PrivacyInfo.xcprivacy** present in iPhone target (`Dino Step/PrivacyInfo.xcprivacy`) — Fitness + optional Email / game save for cloud backup
-- [ ] Confirm privacy manifest still accurate if new APIs or data collection are added
-- [x] **Cloud backup privacy** — optional account section in `docs/privacy-policy.html`; questionnaire in `docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`
-- [x] **PvP privacy note** — optional battle history when signed in (questionnaire)
-- [ ] Cloud sign-in enabled for production (`CloudBackupFeatures.signInEnabled = true`) when ready for TestFlight testers
-- [ ] Deploy PvP backend (`002_pvp.sql` + `battle` Edge Function) before external battle testing
+- [ ] **Privacy policy URL** on GitHub Pages matches repo (push `main`, verify in browser)
+- [ ] App Store privacy questionnaire completed in App Store Connect
+- [x] **PrivacyInfo.xcprivacy** present in iPhone target — Fitness + optional Email / game save
+- [x] **Cloud backup privacy** — optional account section in policy + questionnaire
+- [x] **PvP privacy note** — optional battle history when signed in
+- [x] Cloud sign-in enabled in code (`CloudBackupFeatures.signInEnabled = true`)
+- [ ] Verify PvP backend deployed on Supabase prod project
 
 ---
 
 ## HealthKit
 
-- [x] **NSHealthShareUsageDescription** reviewed in Xcode build settings (`INFOPLIST_KEY_NSHealthShareUsageDescription`)
-- [x] **NSHealthUpdateUsageDescription** added (`INFOPLIST_KEY_NSHealthUpdateUsageDescription`) — required for HealthKit entitlement on upload
-- [ ] Wording states: reads step count, used to hatch/grow dinosaurs, no location
+- [x] **NSHealthShareUsageDescription** reviewed in Xcode build settings
+- [x] **NSHealthUpdateUsageDescription** added — required for HealthKit entitlement
+- [x] Wording: reads step count, manual + ~hourly background sync, no location
 - [ ] **Physical iPhone HealthKit test** — authorize, sync steps, verify hatch/progression
-- [ ] HealthKit entitlement enabled (`Dino Step.entitlements`)
+- [x] HealthKit entitlement enabled (`Dino Step.entitlements`)
 
 ---
 
@@ -79,22 +90,21 @@ Update checkboxes as items are completed.
 
 ---
 
-## Cloud backup (optional)
+## Cloud backup & battles (optional)
 
 - [x] Local-first save + optional Supabase sync (Stats **Account & backup** card)
 - [x] Export local save; Sign in with Apple + Google wired (Supabase)
-- [x] Sign-in gated **Coming soon** for tester builds (`CloudBackupFeatures.signInEnabled = false`)
-- [ ] Enable sign-in for production when Apple/Google OAuth ready for external testers
-- [ ] `SupabaseConfig.plist` filled on build machine (gitignored; copy from example)
+- [x] Sign-in enabled in code (`CloudBackupFeatures.signInEnabled = true`); requires `SupabaseConfig.plist`
+- [ ] Verify cloud push on release build after HealthKit sync
+- [ ] Supabase prod: Apple/Google OAuth + PvP migrations + `battle` function deployed
 
 ---
 
-## Known deferred (not blocking code merge)
+## Known deferred (not blocking v1.0 store submission)
 
-- Onboarding flow
-- Automatic background HealthKit step sync
-- Android parity (separate repo)
+- ASC screenshot export at required sizes (source assets in `marketing/`)
 - Async PvP (see `dino-step/docs/PVP_DESIGN.md`)
+- CI / GitHub Actions for `scripts/run-tests.sh`
 
 ---
 
@@ -102,6 +112,6 @@ Update checkboxes as items are completed.
 
 | Date | Note |
 |------|------|
-| 2026-06-02 | Initial launch checklist; store-hardening sprint gates DEBUG Stats UI, adds PrivacyInfo.xcprivacy |
-| 2026-06-05 | App icons imported from `dino-step-assets/icons/` into iPhone + watch AppIcon.appiconset |
+| 2026-06-06 | Privacy/sync disclosure aligned; ASC privacy draft updated; sign-in prod flags documented |
 | 2026-06-05 | Privacy policy docs, in-app link, Apple Health Stats card, Archive/TestFlight guide |
+| 2026-06-02 | Initial launch checklist; store-hardening sprint gates DEBUG Stats UI, adds PrivacyInfo.xcprivacy |

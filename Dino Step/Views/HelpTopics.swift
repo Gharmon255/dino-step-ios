@@ -17,8 +17,9 @@ enum HelpTopics {
             HelpSection(
                 title: "Getting started",
                 body: """
-                Walk every day to earn steps. Tap Sync Steps on Home to pull steps from Apple Health. \
-                Steps hatch your egg and grow your active dinosaur through baby, juvenile, and adult stages.
+                Walk every day to earn steps. Tap Sync Steps on Home to pull steps from Apple Health, \
+                or let the app sync about once per hour in the background. Steps hatch your egg and grow \
+                your active dinosaur through baby, juvenile, and adult stages.
                 """
             ),
             HelpSection(

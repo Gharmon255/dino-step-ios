@@ -92,7 +92,9 @@ Physical iPhone / Apple Watch testing is recommended before release but not requ
 Game progress is **local-first**. Optional **Sign in with Apple** or **Google** backs up your save to Supabase for restore on another device.
 
 - **Stats tab** → **Account & backup** — export local save anytime; sign-in when enabled
-- **Tester builds:** sign-in is gated behind **Coming soon** (`CloudBackupFeatures.signInEnabled = false` in `AccountBackupCard.swift`). Flip to `true` locally for dev testing only.
+- **Stats tab** → **Account & backup** — export local save anytime; sign in when `SupabaseConfig.plist` is configured
+- **Production:** `CloudBackupFeatures.signInEnabled = true` in `AccountBackupCard.swift`
+- **Setup:** copy `SupabaseConfig.example.plist` → `SupabaseConfig.plist` (gitignored) — see Android repo `docs/SUPABASE_SETUP.md`
 - **Setup:** copy `Dino Step/Config/SupabaseConfig.example.plist` → `SupabaseConfig.plist` (gitignored); see [`docs/SUPABASE_SETUP.md`](../dino-step/docs/SUPABASE_SETUP.md) in the Android repo for Supabase + Apple JWT steps
 - **Privacy:** [`docs/privacy-policy.html`](docs/privacy-policy.html), [`docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`](docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md)
 
@@ -109,5 +111,5 @@ Steps and raw HealthKit data are **not** uploaded — only game save JSON when t
 - Catalog art is **complete** (29/29 species, all stages). See `dino-step-assets/species_queue.md` for expansion notes.
 - UI polish and on-device HealthKit / WatchConnectivity validation on real hardware.
 - Watch is read-only; all progression happens on the phone.
-- Cloud sign-in UI gated for testers; cloud push not yet hooked to every save path.
+- Cloud sign-in enabled when `SupabaseConfig.plist` is present; PvP requires Supabase backend deploy
 - Apple and Google sign-in create separate Supabase users (no account linking yet).
