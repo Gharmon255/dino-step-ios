@@ -29,6 +29,8 @@ Use when completing **App Store Connect → App Privacy** for the iPhone app. Al
 
 **Rollout note:** Tester builds may show **Coming soon** instead of sign-in buttons (`CloudBackupFeatures.signInEnabled = false`). Questionnaire answers above still apply once sign-in is enabled in production.
 
+**Optional PvP:** when signed in and using Battle, match outcomes and species picks are stored on Supabase for battle history. No HealthKit step data is sent for combat.
+
 ## Data NOT collected (without optional sign-in)
 
 - Contact info, location, identifiers for advertising, purchases, browsing history, diagnostics for third-party analytics, etc.

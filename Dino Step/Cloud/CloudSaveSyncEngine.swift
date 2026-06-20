@@ -171,6 +171,7 @@ final class CloudSaveSyncEngine: ObservableObject {
             revision: syncPreferences.localRevision,
             updatedAt: ISO8601DateFormatter().string(from: Date())
         )
+        uiState.signedInUserId = session.userId
         uiState.signedInEmail = session.email
         uiState.signedInProvider = session.provider
         uiState.syncStatus = .backedUp
@@ -232,6 +233,7 @@ final class CloudSaveSyncEngine: ObservableObject {
             return
         }
         uiState.syncStatus = .backedUp
+        uiState.signedInUserId = session.userId
         uiState.signedInEmail = session.email
         uiState.signedInProvider = session.provider
         uiState.lastBackedUpAtMillis = syncPreferences.lastBackedUpAtMillis

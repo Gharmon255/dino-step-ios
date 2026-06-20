@@ -24,7 +24,9 @@ Update checkboxes as items are completed.
 - [x] **PrivacyInfo.xcprivacy** present in iPhone target (`Dino Step/PrivacyInfo.xcprivacy`) — Fitness + optional Email / game save for cloud backup
 - [ ] Confirm privacy manifest still accurate if new APIs or data collection are added
 - [x] **Cloud backup privacy** — optional account section in `docs/privacy-policy.html`; questionnaire in `docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`
+- [x] **PvP privacy note** — optional battle history when signed in (questionnaire)
 - [ ] Cloud sign-in enabled for production (`CloudBackupFeatures.signInEnabled = true`) when ready for TestFlight testers
+- [ ] Deploy PvP backend (`002_pvp.sql` + `battle` Edge Function) before external battle testing
 
 ---
 

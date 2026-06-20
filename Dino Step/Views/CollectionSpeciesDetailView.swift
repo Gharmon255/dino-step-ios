@@ -100,6 +100,10 @@ struct CollectionSpeciesDetailView: View {
                             Text(completed.completedAt.formatted(date: .abbreviated, time: .omitted))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+
+                            Text("EX \(completed.exLevel) · \(completed.eggRarityAtHatch.rawValue.capitalized) egg")
+                                .font(.caption)
+                                .foregroundStyle(.green)
                         }
 
                         Spacer()
@@ -113,7 +117,8 @@ struct CollectionSpeciesDetailView: View {
 
                 if let collection = entry.collection {
                     if collection.collectedCount > 1 {
-                        Text("Collected ×\(collection.collectedCount)")
+                        let packMultiplier = BattlePowerCalculator.packMultiplier(packCount: collection.collectedCount)
+                        Text("Collected ×\(collection.collectedCount) · Pack bonus ×\(String(format: "%.2f", packMultiplier))")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(rarityColor)
                     }

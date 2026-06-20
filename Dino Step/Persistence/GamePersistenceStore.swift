@@ -62,7 +62,10 @@ enum SavedGameStateMapper {
                     creatureDefinitionId: $0.definition.id,
                     totalStepsCompleted: $0.totalStepsCompleted,
                     completedAt: $0.completedAt,
-                    nickname: $0.nickname
+                    nickname: $0.nickname,
+                    eggRarityAtHatch: $0.eggRarityAtHatch.rawValue,
+                    exSteps: $0.exSteps,
+                    exLevel: $0.exLevel
                 )
             },
             lastRewardedEggRarity: gameState.lastRewardedEggRarity?.rawValue,
@@ -77,6 +80,7 @@ enum SavedGameStateMapper {
     static func restore(from savedState: SavedGameState) -> GameStateSnapshot? {
         guard savedState.schemaVersion == 1
             || savedState.schemaVersion == 2
+            || savedState.schemaVersion == 4
             || savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
             return nil
         }
@@ -153,7 +157,10 @@ enum SavedGameStateMapper {
             definition: definition,
             totalStepsCompleted: saved.totalStepsCompleted,
             completedAt: saved.completedAt,
-            nickname: saved.nickname
+            nickname: saved.nickname,
+            eggRarityAtHatch: saved.eggRarityAtHatch.flatMap(Rarity.init(rawValue:)) ?? definition.rarity,
+            exSteps: saved.exSteps ?? 0,
+            exLevel: max(1, saved.exLevel ?? 1)
         )
     }
 }

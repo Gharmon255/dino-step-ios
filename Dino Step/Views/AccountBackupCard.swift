@@ -6,7 +6,7 @@
 import SwiftUI
 
 enum CloudBackupFeatures {
-    static let signInEnabled = false
+    static let signInEnabled = true
 }
 
 struct AccountBackupCard: View {

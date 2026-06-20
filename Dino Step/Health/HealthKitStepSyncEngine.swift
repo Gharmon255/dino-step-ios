@@ -97,6 +97,12 @@ enum HealthKitStepSyncEngine {
                 snapshot.activeCreature.currentSteps += delta
                 snapshot.lastSyncedHealthKitStepTotal = currentTotal
                 snapshot.lifetimeStepsApplied += delta
+                if !snapshot.completedCreatures.isEmpty {
+                    snapshot.completedCreatures = ExProgression.applyDrip(
+                        to: snapshot.completedCreatures,
+                        stepAmount: delta
+                    )
+                }
                 let message = "Synced \(delta.formatted()) new steps"
                 snapshot.lastHealthKitSyncMessage = message
 #if os(iOS)

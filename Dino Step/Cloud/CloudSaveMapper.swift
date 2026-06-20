@@ -34,7 +34,10 @@ enum CloudSaveMapper {
                     speciesId: completed.definition.speciesId,
                     stepsCompleted: completed.totalStepsCompleted,
                     completedAt: ISO8601DateFormatter().string(from: completed.completedAt),
-                    nickname: completed.nickname
+                    nickname: completed.nickname,
+                    eggRarityAtHatch: completed.eggRarityAtHatch.rawValue,
+                    exSteps: completed.exSteps,
+                    exLevel: completed.exLevel
                 )
             },
             playerStats: CloudPlayerStats(
@@ -85,7 +88,10 @@ enum CloudSaveMapper {
                 definition: creature,
                 totalStepsCompleted: entry.stepsCompleted,
                 completedAt: completedAt,
-                nickname: entry.nickname
+                nickname: entry.nickname,
+                eggRarityAtHatch: entry.eggRarityAtHatch.flatMap(Rarity.init(rawValue:)) ?? creature.rarity,
+                exSteps: entry.exSteps ?? 0,
+                exLevel: max(1, entry.exLevel ?? 1)
             )
         }
 

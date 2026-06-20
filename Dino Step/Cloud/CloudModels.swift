@@ -6,7 +6,7 @@
 import Foundation
 
 struct CloudGameSave: Codable, Equatable {
-    static let schemaVersion = 1
+    static let schemaVersion = 2
 
     var schemaVersion: Int
     var revision: Int64
@@ -37,6 +37,9 @@ struct CloudCompletedCreature: Codable, Equatable {
     var stepsCompleted: Int
     var completedAt: String
     var nickname: String?
+    var eggRarityAtHatch: String?
+    var exSteps: Int?
+    var exLevel: Int?
 }
 
 struct CloudPlayerStats: Codable, Equatable {
@@ -78,6 +81,7 @@ enum CloudSyncStatus: Equatable {
 struct CloudAccountUiState: Equatable {
     var isConfigured: Bool
     var syncStatus: CloudSyncStatus
+    var signedInUserId: String?
     var signedInEmail: String?
     var signedInProvider: String?
     var lastBackedUpAtMillis: Int64?

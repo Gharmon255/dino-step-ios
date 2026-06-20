@@ -108,6 +108,30 @@ final class SupabaseHTTPClient {
         try validate(response: response, data: data)
     }
 
+    func invokeBattleFunction(session: CloudSession, body: [String: Any]) async throws -> [String: Any] {
+        let base = config.url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        var request = URLRequest(url: URL(string: "\(base)/functions/v1/battle")!)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        addHeaders(&request, accessToken: session.accessToken)
+
+        let (data, response) = try await self.session.data(for: request)
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            let responseBody = String(data: data, encoding: .utf8) ?? ""
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = json["error"] as? String,
+               !error.isEmpty {
+                throw SupabaseHTTPError.serverError(http.statusCode, error)
+            }
+            throw SupabaseHTTPError.serverError(http.statusCode, responseBody)
+        }
+        try validate(response: response, data: data)
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw SupabaseHTTPError.invalidResponse
+        }
+        return json
+    }
+
     private func post(path: String, body: [String: String], accessToken: String?) async throws -> [String: Any] {
         let base = config.url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         var request = URLRequest(url: URL(string: "\(base)\(path)")!)

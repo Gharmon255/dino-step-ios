@@ -28,6 +28,16 @@ final class GameState: ObservableObject {
     @Published var showWhatsNew = false
     @Published var inactivityPenaltyAlert: String?
 
+    @Published var selectedBattleFighter: CompletedCreature?
+    @Published var latestBattle: BattleRecord?
+    @Published var battleHistory: [BattleRecord] = []
+    @Published var battleInviteCode: String?
+    @Published var activeBattleChallengeId: String?
+    @Published var isBattleLoading = false
+    @Published var battleStatusMessage: String?
+
+    private let battleRepository = BattleRepository()
+    private var battlePollTask: Task<Void, Never>?
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
     let cloudSyncEngine: CloudSaveSyncEngine
@@ -235,6 +245,9 @@ final class GameState: ObservableObject {
         let previousCreature = activeCreature
         activeCreature.currentSteps += amount
         lifetimeStepsApplied += amount
+        if !completedCreatures.isEmpty {
+            completedCreatures = ExProgression.applyDrip(to: completedCreatures, stepAmount: amount)
+        }
         maybeCelebrateDiscovery(previous: previousCreature, current: activeCreature)
         persistCurrentState()
 #if os(iOS)
@@ -270,7 +283,10 @@ final class GameState: ObservableObject {
             definition: activeCreature.definition,
             totalStepsCompleted: activeCreature.progression.totalStepsRequired,
             completedAt: Date(),
-            nickname: activeCreature.nickname
+            nickname: activeCreature.nickname,
+            eggRarityAtHatch: activeCreature.eggRarity,
+            exSteps: 0,
+            exLevel: 1
         )
         completedCreatures.append(completed)
 
@@ -503,6 +519,182 @@ final class GameState: ObservableObject {
 
     func exportLocalSaveJson() -> String {
         cloudSyncEngine.exportLocalJson(localSnapshot: snapshot())
+    }
+
+    func selectBattleFighter(_ fighter: CompletedCreature) {
+        selectedBattleFighter = fighter
+    }
+
+    func findQuickMatch() {
+        guard let fighter = selectedBattleFighter else { return }
+        Task {
+            isBattleLoading = true
+            resetActiveBattlePresentation()
+            defer { isBattleLoading = false }
+            do {
+                cloudSyncEngine.schedulePush(localSnapshot: snapshot())
+                latestBattle = try await battleRepository.findQuickMatch(completedCreatureId: fighter.id.uuidString)
+                battleStatusMessage = latestBattle.map { battleOutcomeHeadline(for: $0) }
+                await refreshBattleHistory()
+            } catch {
+                battleStatusMessage = error.localizedDescription
+            }
+        }
+    }
+
+    func createFriendChallenge() {
+        Task {
+            isBattleLoading = true
+            resetActiveBattlePresentation()
+            defer { isBattleLoading = false }
+            do {
+                if let result = try await battleRepository.createChallenge() {
+                    battleInviteCode = result.1
+                    activeBattleChallengeId = result.0.id
+                    battleStatusMessage = "Share this battle code: \(result.1)"
+                    startPollingForOpponentJoin(challengeId: result.0.id)
+                }
+            } catch {
+                battleStatusMessage = error.localizedDescription
+            }
+        }
+    }
+
+    func acceptFriendChallenge(inviteCode: String) {
+        let trimmed = inviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            battleStatusMessage = "Enter your friend's invite code first."
+            return
+        }
+        guard let fighter = selectedBattleFighter else {
+            battleStatusMessage = "Select a fighter above, then tap Accept."
+            return
+        }
+        Task {
+            isBattleLoading = true
+            resetActiveBattlePresentation()
+            defer { isBattleLoading = false }
+            do {
+                cloudSyncEngine.schedulePush(localSnapshot: snapshot())
+                guard let challenge = try await battleRepository.acceptChallenge(inviteCode: trimmed) else {
+                    battleStatusMessage = "Could not accept — sign in from Stats and try again."
+                    return
+                }
+                activeBattleChallengeId = challenge.id
+                try await submitBattlePick(challengeId: challenge.id, fighter: fighter)
+            } catch {
+                battleStatusMessage = error.localizedDescription
+            }
+        }
+    }
+
+    func submitBattlePick(challengeId: String) {
+        guard let fighter = selectedBattleFighter else { return }
+        Task {
+            do {
+                try await submitBattlePick(challengeId: challengeId, fighter: fighter)
+            } catch {
+                battleStatusMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func submitBattlePick(challengeId: String, fighter: CompletedCreature) async throws {
+        isBattleLoading = true
+        battleStatusMessage = nil
+        defer { isBattleLoading = false }
+        cloudSyncEngine.schedulePush(localSnapshot: snapshot())
+        let result = try await battleRepository.submitPick(
+            challengeId: challengeId,
+            completedCreatureId: fighter.id.uuidString
+        )
+        activeBattleChallengeId = result.0.status == "complete" ? nil : result.0.id
+        if let battle = result.1 {
+            applyCompletedBattle(battle)
+            battlePollTask?.cancel()
+        } else {
+            battleStatusMessage = "Fighter locked in — waiting for opponent..."
+            startPollingForBattleReveal(challengeId: challengeId)
+        }
+        await refreshBattleHistory()
+    }
+
+    func battleOutcomeHeadline(for battle: BattleRecord) -> String {
+        BattleOutcomeText.headline(
+            for: battle,
+            currentUserId: cloudSyncEngine.uiState.signedInUserId
+        )
+    }
+
+    func resumeBattlePollingIfNeeded() {
+        guard let challengeId = activeBattleChallengeId else { return }
+        if battleStatusMessage?.localizedCaseInsensitiveContains("waiting") == true {
+            startPollingForBattleReveal(challengeId: challengeId)
+        } else if battleInviteCode != nil {
+            startPollingForOpponentJoin(challengeId: challengeId)
+        }
+    }
+
+    private func resetActiveBattlePresentation() {
+        battlePollTask?.cancel()
+        battleStatusMessage = nil
+        latestBattle = nil
+        battleInviteCode = nil
+        activeBattleChallengeId = nil
+    }
+
+    private func applyCompletedBattle(_ battle: BattleRecord) {
+        latestBattle = battle
+        battleStatusMessage = battleOutcomeHeadline(for: battle)
+        battleInviteCode = nil
+        activeBattleChallengeId = nil
+    }
+
+    private func startPollingForBattleReveal(challengeId: String) {
+        battlePollTask?.cancel()
+        battlePollTask = Task {
+            for _ in 0..<45 {
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                if Task.isCancelled { return }
+                guard let challenge = try? await battleRepository.getChallenge(challengeId: challengeId) else {
+                    continue
+                }
+                if challenge.status == "complete" {
+                    guard let battleId = challenge.battleId else { return }
+                    for _ in 0..<5 {
+                        if let battle = try? await battleRepository.getBattle(battleId: battleId) {
+                            applyCompletedBattle(battle)
+                            await refreshBattleHistory()
+                            return
+                        }
+                        try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    }
+                    return
+                }
+            }
+        }
+    }
+
+    private func startPollingForOpponentJoin(challengeId: String) {
+        battlePollTask?.cancel()
+        battlePollTask = Task {
+            for _ in 0..<45 {
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                if Task.isCancelled { return }
+                guard let challenge = try? await battleRepository.getChallenge(challengeId: challengeId) else {
+                    continue
+                }
+                if challenge.opponentId != nil {
+                    battleStatusMessage = "Opponent joined — lock in your fighter!"
+                    return
+                }
+                if challenge.status != "pending" { return }
+            }
+        }
+    }
+
+    func refreshBattleHistory() async {
+        battleHistory = (try? await battleRepository.listBattles()) ?? []
     }
 
     func signOutCloudAccount() {

@@ -27,12 +27,20 @@ struct ContentView: View {
             .tag(1)
 
             NavigationStack {
+                BattleView(gameState: gameState)
+            }
+            .tabItem {
+                Label("Battle", systemImage: "bolt.fill")
+            }
+            .tag(2)
+
+            NavigationStack {
                 StatsView(gameState: gameState)
             }
             .tabItem {
                 Label("Stats", systemImage: "chart.bar.fill")
             }
-            .tag(2)
+            .tag(3)
         }
         .tint(.green)
         .task {
