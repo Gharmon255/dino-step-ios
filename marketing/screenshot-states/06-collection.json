@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "activeCreature": {
+    "creatureDefinitionId": "A100001C-0000-4000-8000-00000000001C",
+    "eggRarity": "LEGENDARY",
+    "currentSteps": 4200,
+    "startedAt": 802796400.0
+  },
+  "completedCreatures": [
+    {
+      "id": "B1000001-0000-4000-8000-000000000001",
+      "creatureDefinitionId": "A1000001-0000-4000-8000-000000000001",
+      "totalStepsCompleted": 8000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000002-0000-4000-8000-000000000002",
+      "creatureDefinitionId": "A1000007-0000-4000-8000-000000000007",
+      "totalStepsCompleted": 18000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000003-0000-4000-8000-000000000003",
+      "creatureDefinitionId": "A100000D-0000-4000-8000-00000000000D",
+      "totalStepsCompleted": 50000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000004-0000-4000-8000-000000000004",
+      "creatureDefinitionId": "A1000013-0000-4000-8000-000000000013",
+      "totalStepsCompleted": 85000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000005-0000-4000-8000-000000000005",
+      "creatureDefinitionId": "A1000021-0000-4000-8000-000000000021",
+      "totalStepsCompleted": 92000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000006-0000-4000-8000-000000000006",
+      "creatureDefinitionId": "A1000017-0000-4000-8000-000000000017",
+      "totalStepsCompleted": 125000,
+      "completedAt": 802796400.0
+    },
+    {
+      "id": "B1000007-0000-4000-8000-000000000007",
+      "creatureDefinitionId": "A1000022-0000-4000-8000-000000000022",
+      "totalStepsCompleted": 190000,
+      "completedAt": 802796400.0
+    }
+  ],
+  "lastRewardedEggRarity": "LEGENDARY",
+  "lastRewardRollPercent": 0.9,
+  "lastSyncedHealthKitStepTotal": 4200,
+  "lastHealthKitSyncDayStart": 802796400.0,
+  "lastHealthKitSyncMessage": "Synced 4,200 steps from Apple Health"
+}

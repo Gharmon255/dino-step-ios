@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "activeCreature": {
+    "creatureDefinitionId": "A100001C-0000-4000-8000-00000000001C",
+    "eggRarity": "LEGENDARY",
+    "currentSteps": 0,
+    "startedAt": 802796400.0
+  },
+  "completedCreatures": [],
+  "lastRewardedEggRarity": "LEGENDARY",
+  "lastRewardRollPercent": 1.5,
+  "lastSyncedHealthKitStepTotal": 8420,
+  "lastHealthKitSyncDayStart": 802796400.0,
+  "lastHealthKitSyncMessage": "Synced 8,420 steps from Apple Health"
+}
