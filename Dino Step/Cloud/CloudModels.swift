@@ -16,6 +16,7 @@ struct CloudGameSave: Codable, Equatable {
     var playerStats: CloudPlayerStats
     var lastRewardedEggRarity: String?
     var lastRewardRollPercent: Double?
+    var pendingRewardEggRarity: String?
 }
 
 struct CloudActiveCreature: Codable, Equatable {

@@ -7,6 +7,7 @@ import SwiftUI
 
 enum CloudBackupFeatures {
     static let signInEnabled = true
+    static let googleSignInEnabled = false
 }
 
 struct AccountBackupCard: View {
@@ -100,9 +101,11 @@ struct AccountBackupCard: View {
             .buttonStyle(.borderedProminent)
             .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
 
-        Button("Sign in with Google", action: onSignInWithGoogle)
-            .buttonStyle(.bordered)
-            .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
+        if CloudBackupFeatures.googleSignInEnabled {
+            Button("Sign in with Google", action: onSignInWithGoogle)
+                .buttonStyle(.bordered)
+                .disabled(cloudSyncEngine.uiState.syncStatus == .syncing)
+        }
 
         if cloudSyncEngine.uiState.syncStatus == .syncing {
             ProgressView()

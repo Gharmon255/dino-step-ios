@@ -37,7 +37,18 @@ final class GameState: ObservableObject {
     @Published var isBattleLoading = false
     @Published var battleStatusMessage: String?
 
+    @Published var promoStatusMessage: String?
+    @Published private(set) var isPromoLoading = false
+    @Published private(set) var epic20PromoRedeemed = false
+
+    var hasPendingEpicRewardEgg: Bool {
+        pendingRewardEggRarity == .epic
+    }
+
+    @Published private(set) var pendingRewardEggRarity: Rarity?
+
     private let battleRepository = BattleRepository()
+    private let promoRepository = PromoRepository()
     private var battlePollTask: Task<Void, Never>?
     private let persistenceStore: GamePersistenceStore
     private let healthKitStepService: HealthKitStepService
@@ -251,7 +262,8 @@ final class GameState: ObservableObject {
             lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
             lastHealthKitSyncMessage: lastHealthKitSyncMessage,
-            lifetimeStepsApplied: lifetimeStepsApplied
+            lifetimeStepsApplied: lifetimeStepsApplied,
+            pendingRewardEggRarity: pendingRewardEggRarity
         )
     }
 
@@ -316,7 +328,7 @@ final class GameState: ObservableObject {
         )
         completedCreatures.append(completed)
 
-        let outcome = EggRewardLogic.rollEggReward()
+        let outcome = consumePendingRewardRoll()
         lastRewardedEggRarity = outcome.rarity
         lastRewardRollPercent = outcome.rollPercent
         activeCreature = Self.createRandomEggWithRarity(
@@ -497,6 +509,7 @@ final class GameState: ObservableObject {
         lastHealthKitSyncDayStart = snapshot.lastHealthKitSyncDayStart
         lastHealthKitSyncMessage = snapshot.lastHealthKitSyncMessage
         lifetimeStepsApplied = snapshot.lifetimeStepsApplied
+        pendingRewardEggRarity = snapshot.pendingRewardEggRarity
         resetHealthKitSyncBaselineIfNeeded()
     }
 
@@ -518,7 +531,8 @@ final class GameState: ObservableObject {
             lastSyncedHealthKitStepTotal: lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: lastHealthKitSyncDayStart,
             lastHealthKitSyncMessage: lastHealthKitSyncMessage,
-            lifetimeStepsApplied: lifetimeStepsApplied
+            lifetimeStepsApplied: lifetimeStepsApplied,
+            pendingRewardEggRarity: pendingRewardEggRarity
         )
         persistenceStore.save(SavedGameStateMapper.makeSavedState(from: snapshot))
         persistenceStatus = .savedLocally
@@ -545,6 +559,48 @@ final class GameState: ObservableObject {
 
     func exportLocalSaveJson() -> String {
         cloudSyncEngine.exportLocalJson(localSnapshot: snapshot())
+    }
+
+    func refreshEpic20PromoStatus() {
+        guard cloudSyncEngine.uiState.signedInUserId != nil else {
+            epic20PromoRedeemed = false
+            return
+        }
+        Task {
+            do {
+                epic20PromoRedeemed = try await promoRepository.status(code: PromoCodes.epic20).redeemed
+            } catch {
+                // Keep prior state on transient errors.
+            }
+        }
+    }
+
+    func redeemPromoCode(_ code: String) {
+        guard !isPromoLoading else { return }
+        Task {
+            isPromoLoading = true
+            promoStatusMessage = nil
+            defer { isPromoLoading = false }
+            do {
+                let result = try await promoRepository.redeemCode(code)
+                pendingRewardEggRarity = result.pendingRewardEggRarity
+                if code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == PromoCodes.epic20 {
+                    epic20PromoRedeemed = true
+                }
+                promoStatusMessage = result.message
+                persistCurrentState()
+            } catch {
+                promoStatusMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func consumePendingRewardRoll() -> EggRewardOutcome {
+        if let pending = pendingRewardEggRarity {
+            pendingRewardEggRarity = nil
+            return EggRewardOutcome(rarity: pending, rollPercent: -1)
+        }
+        return EggRewardLogic.rollEggReward()
     }
 
     func selectBattleFighter(_ fighter: CompletedCreature) {

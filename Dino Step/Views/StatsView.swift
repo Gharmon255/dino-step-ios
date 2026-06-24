@@ -47,6 +47,13 @@ struct StatsView: View {
                     onExportSave: gameState.exportLocalSaveJson
                 )
 
+                if cloudSyncEngine.uiState.signedInEmail != nil {
+                    PromoCodeCard(
+                        gameState: gameState,
+                        isSignedIn: true
+                    )
+                }
+
                 GameCard {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Your stats")

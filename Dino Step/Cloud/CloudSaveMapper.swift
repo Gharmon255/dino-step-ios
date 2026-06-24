@@ -50,7 +50,8 @@ enum CloudSaveMapper {
                 lifetimeStepsApplied: snapshot.lifetimeStepsApplied
             ),
             lastRewardedEggRarity: snapshot.lastRewardedEggRarity?.rawValue,
-            lastRewardRollPercent: snapshot.lastRewardRollPercent
+            lastRewardRollPercent: snapshot.lastRewardRollPercent,
+            pendingRewardEggRarity: snapshot.pendingRewardEggRarity?.rawValue
         )
     }
 
@@ -103,7 +104,8 @@ enum CloudSaveMapper {
             lastSyncedHealthKitStepTotal: cloud.playerStats.lastSyncedStepTotal,
             lastHealthKitSyncDayStart: Date(timeIntervalSince1970: TimeInterval(cloud.playerStats.lastSyncDayStartMillis) / 1000),
             lastHealthKitSyncMessage: nil,
-            lifetimeStepsApplied: cloud.playerStats.lifetimeStepsApplied
+            lifetimeStepsApplied: cloud.playerStats.lifetimeStepsApplied,
+            pendingRewardEggRarity: cloud.pendingRewardEggRarity.flatMap(Rarity.init(rawValue:))
         )
     }
 

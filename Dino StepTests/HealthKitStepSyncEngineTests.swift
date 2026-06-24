@@ -22,7 +22,8 @@ final class HealthKitStepSyncEngineTests: XCTestCase {
             lastSyncedHealthKitStepTotal: 5000,
             lastHealthKitSyncDayStart: Calendar.current.startOfDay(for: yesterday),
             lastHealthKitSyncMessage: nil,
-            lifetimeStepsApplied: 0
+            lifetimeStepsApplied: 0,
+            pendingRewardEggRarity: nil
         )
 
         HealthKitStepSyncBaseline.resetIfNeeded(snapshot: &snapshot)
@@ -49,7 +50,8 @@ final class HealthKitStepSyncEngineTests: XCTestCase {
             lastSyncedHealthKitStepTotal: 5000,
             lastHealthKitSyncDayStart: todayStart,
             lastHealthKitSyncMessage: nil,
-            lifetimeStepsApplied: 0
+            lifetimeStepsApplied: 0,
+            pendingRewardEggRarity: nil
         )
 
         HealthKitStepSyncBaseline.resetIfNeeded(snapshot: &snapshot)

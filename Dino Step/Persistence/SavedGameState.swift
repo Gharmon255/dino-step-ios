@@ -6,7 +6,7 @@
 import Foundation
 
 struct SavedGameState: Codable {
-    static let currentSchemaVersion = 5
+    static let currentSchemaVersion = 6
     static let minimumSupportedSchemaVersion = 1
 
     static func isSupportedSchemaVersion(_ version: Int) -> Bool {
@@ -22,6 +22,7 @@ struct SavedGameState: Codable {
     var lastHealthKitSyncDayStart: Date?
     var lastHealthKitSyncMessage: String?
     var lifetimeStepsApplied: Int?
+    var pendingRewardEggRarity: String?
 }
 
 struct SavedActiveCreatureState: Codable {

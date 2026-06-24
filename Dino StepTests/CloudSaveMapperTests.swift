@@ -28,7 +28,8 @@ final class CloudSaveMapperTests: XCTestCase {
             lastSyncedHealthKitStepTotal: 100,
             lastHealthKitSyncDayStart: Date(timeIntervalSince1970: 1_700_000_000),
             lastHealthKitSyncMessage: nil,
-            lifetimeStepsApplied: 9000
+            lifetimeStepsApplied: 9000,
+            pendingRewardEggRarity: .epic
         )
 
         let cloud = CloudSaveMapper.toCloud(
@@ -42,6 +43,7 @@ final class CloudSaveMapperTests: XCTestCase {
         XCTAssertEqual(restored?.activeCreature.definition.speciesId, "tiny_raptor")
         XCTAssertEqual(restored?.activeCreature.currentSteps, 42)
         XCTAssertEqual(restored?.lifetimeStepsApplied, 9000)
+        XCTAssertEqual(restored?.pendingRewardEggRarity, .epic)
     }
 
     func testIsLocalEmptyForFreshInstall() {
@@ -64,7 +66,8 @@ final class CloudSaveMapperTests: XCTestCase {
             lastSyncedHealthKitStepTotal: 0,
             lastHealthKitSyncDayStart: nil,
             lastHealthKitSyncMessage: nil,
-            lifetimeStepsApplied: 0
+            lifetimeStepsApplied: 0,
+            pendingRewardEggRarity: nil
         )
         XCTAssertTrue(CloudSaveMapper.isLocalEmpty(snapshot))
     }

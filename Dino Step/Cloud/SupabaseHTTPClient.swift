@@ -109,8 +109,16 @@ final class SupabaseHTTPClient {
     }
 
     func invokeBattleFunction(session: CloudSession, body: [String: Any]) async throws -> [String: Any] {
+        try await invokeFunction(path: "battle", session: session, body: body)
+    }
+
+    func invokePromoFunction(session: CloudSession, body: [String: Any]) async throws -> [String: Any] {
+        try await invokeFunction(path: "redeem-promo", session: session, body: body)
+    }
+
+    private func invokeFunction(path: String, session: CloudSession, body: [String: Any]) async throws -> [String: Any] {
         let base = config.url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        var request = URLRequest(url: URL(string: "\(base)/functions/v1/battle")!)
+        var request = URLRequest(url: URL(string: "\(base)/functions/v1/\(path)")!)
         request.httpMethod = "POST"
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         addHeaders(&request, accessToken: session.accessToken)

@@ -83,7 +83,8 @@ enum SavedGameStateMapper {
             lastSyncedHealthKitStepTotal: gameState.lastSyncedHealthKitStepTotal,
             lastHealthKitSyncDayStart: gameState.lastHealthKitSyncDayStart,
             lastHealthKitSyncMessage: gameState.lastHealthKitSyncMessage,
-            lifetimeStepsApplied: gameState.lifetimeStepsApplied
+            lifetimeStepsApplied: gameState.lifetimeStepsApplied,
+            pendingRewardEggRarity: gameState.pendingRewardEggRarity?.rawValue
         )
     }
 
@@ -111,7 +112,8 @@ enum SavedGameStateMapper {
             lastSyncedHealthKitStepTotal: savedState.lastSyncedHealthKitStepTotal ?? 0,
             lastHealthKitSyncDayStart: savedState.lastHealthKitSyncDayStart,
             lastHealthKitSyncMessage: savedState.lastHealthKitSyncMessage,
-            lifetimeStepsApplied: savedState.lifetimeStepsApplied ?? 0
+            lifetimeStepsApplied: savedState.lifetimeStepsApplied ?? 0,
+            pendingRewardEggRarity: savedState.pendingRewardEggRarity.flatMap(Rarity.init(rawValue:))
         )
     }
 
@@ -175,4 +177,5 @@ struct GameStateSnapshot {
     var lastHealthKitSyncDayStart: Date?
     var lastHealthKitSyncMessage: String?
     var lifetimeStepsApplied: Int
+    var pendingRewardEggRarity: Rarity?
 }

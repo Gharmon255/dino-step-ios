@@ -88,7 +88,7 @@ struct BattleSignInPrompt: View {
                     .foregroundStyle(.yellow)
                 Text("Sign in to enter the arena")
                     .font(.headline)
-                Text("Open Stats and sign in with Apple or Google to battle other players. Gameplay works offline without an account.")
+                Text("Open Stats and sign in with Apple to battle other players. Gameplay works offline without an account.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
