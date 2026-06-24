@@ -75,7 +75,7 @@ Update checkboxes as items are completed.
 - [ ] App name, subtitle, description
 - [ ] Keywords, category, age rating
 - [ ] **Screenshots** — iPhone (required sizes), Apple Watch if listing watch app
-- [ ] Support URL and marketing URL (if any)
+- [ ] Support URL: **mailto:stepasaurushelp@gmail.com** (and marketing URL if any)
 - [ ] Privacy policy URL
 
 ---

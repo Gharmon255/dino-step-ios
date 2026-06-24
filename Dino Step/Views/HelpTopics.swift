@@ -69,7 +69,8 @@ enum HelpTopics {
                 title: "Stats & backup",
                 body: """
                 View today's steps, lifetime steps, and dex progress. Optionally sign in to back up your \
-                save to the cloud or export a local copy. Grant Health permissions here if sync is blocked.
+                save to the cloud or export a local copy. Grant Health permissions here if sync is blocked. \
+                Questions or lost saves? Email stepasaurushelp@gmail.com.
                 """
             ),
             HelpSection(

@@ -57,7 +57,7 @@ First upload creates the app record in App Store Connect if it does not exist ye
 
 ## 7. App Store Connect metadata
 
-Paste draft copy from `docs/APP_STORE_METADATA.md` (update privacy URL and support email).
+Paste draft copy from `docs/APP_STORE_METADATA.md` (support: `stepasaurushelp@gmail.com`).
 
 ## Troubleshooting
 

@@ -48,7 +48,7 @@ Expected: **4+** (no restricted content; confirm via App Store Connect questionn
 
 ## Support URL
 
-mailto:support@gharmon255.dev *(or `https://gharmon255.dev/stepasaurus-support` if you add a landing page)*
+mailto:stepasaurushelp@gmail.com
 
 ## Marketing URL (optional)
 

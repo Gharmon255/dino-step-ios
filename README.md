@@ -100,6 +100,10 @@ Game progress is **local-first**. Optional **Sign in with Apple** or **Google** 
 
 Steps and raw HealthKit data are **not** uploaded — only game save JSON when the user signs in.
 
+## Support
+
+Questions, lost saves, or privacy requests: **stepasaurushelp@gmail.com**
+
 ## Repo notes
 
 - Do **not** commit `*.xcuserstate`, `xcuserdata/`, or `DerivedData/` (see `.gitignore`).

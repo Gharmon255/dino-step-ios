@@ -26,4 +26,5 @@ If you prefer a single policy page, host one combined HTML (e.g. from the `dino-
 - [ ] Run `../dino-step/scripts/verify-privacy-url.sh` (checks both Android and iOS hosted URLs)
 - [ ] Open the URL in a private browser window — loads over HTTPS
 - [ ] Complete App Store privacy questionnaire using `docs/APP_STORE_PRIVACY_QUESTIONNAIRE.md`
+- [ ] Support contact: **stepasaurushelp@gmail.com**
 - [ ] Add URL to `docs/APP_STORE_METADATA.md` and App Store Connect

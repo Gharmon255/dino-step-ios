@@ -62,4 +62,4 @@ The watch app displays creature state received from the iPhone via WatchConnecti
 
 ## Support contact
 
-`support@gharmon255.dev`
+`stepasaurushelp@gmail.com`
