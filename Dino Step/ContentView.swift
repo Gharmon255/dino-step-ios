@@ -108,6 +108,18 @@ struct ContentView: View {
         } message: {
             Text(gameState.inactivityPenaltyAlert ?? "")
         }
+        .alert("Couldn't load your save", isPresented: $gameState.showSaveRecoveryAlert) {
+            Button("Open backup settings") {
+                selectedTab = 3
+            }
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(
+                "Your local save couldn't be read after the update. " +
+                    "If you previously signed in, we're trying to restore from the cloud. " +
+                    "Open Stats → Account & backup and sign in to protect your collection going forward."
+            )
+        }
     }
 
     private static func initialTabIndex() -> Int {

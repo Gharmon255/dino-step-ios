@@ -92,7 +92,7 @@ struct AccountBackupCard: View {
 
     @ViewBuilder
     private var signedOutContent: some View {
-        Text("Sign in to back up progress across devices. Gameplay works offline without an account.")
+        Text("Sign in to back up your dinosaurs. If the app updates, your collection can be restored from the cloud.")
             .font(.subheadline)
             .foregroundStyle(.secondary)
 

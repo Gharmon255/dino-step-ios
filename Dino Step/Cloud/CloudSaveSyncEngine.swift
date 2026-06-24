@@ -11,6 +11,7 @@ final class CloudSaveSyncEngine: ObservableObject {
     @Published private(set) var uiState: CloudAccountUiState
 
     var onApplyCloudSave: ((GameStateSnapshot) -> Void)?
+    var onLaunchSyncFinished: ((Bool) -> Void)?
 
     private let config: SupabaseConfig
     private let httpClient: SupabaseHTTPClient
@@ -40,20 +41,33 @@ final class CloudSaveSyncEngine: ObservableObject {
         )
     }
 
-    func refreshSessionOnLaunch(localSnapshot: GameStateSnapshot) {
-        guard config.isConfigured else { return }
+    func refreshSessionOnLaunch(localSnapshot: GameStateSnapshot, localLoadFailed: Bool = false) {
+        guard config.isConfigured else {
+            onLaunchSyncFinished?(false)
+            return
+        }
         Task {
+            var restoredFromCloud = false
+            defer { onLaunchSyncFinished?(restoredFromCloud) }
             guard let session = await restoreSession() else {
                 updateSignedInState(nil)
                 return
             }
             do {
                 let cloudRow = try await httpClient.fetchGameSave(authSession: session)
-                if let cloudRow, CloudSaveMapper.isLocalEmpty(localSnapshot) {
+                if let cloudRow,
+                   shouldRestoreFromCloud(
+                       cloud: cloudRow.save,
+                       local: localSnapshot,
+                       localLoadFailed: localLoadFailed
+                   ),
+                   let restored = CloudSaveMapper.toSnapshot(cloudRow.save),
+                   !CloudSaveMapper.isLocalEmpty(restored) {
                     applyCloudSnapshot(cloudRow.save)
-                    if let restored = CloudSaveMapper.toSnapshot(cloudRow.save) {
-                        onApplyCloudSave?(restored)
-                    }
+                    onApplyCloudSave?(restored)
+                    restoredFromCloud = true
+                } else if !CloudSaveMapper.isLocalEmpty(localSnapshot) {
+                    await pushSnapshot(session: session, localSnapshot: localSnapshot)
                 }
                 updateSignedInState(session)
             } catch {
@@ -220,10 +234,39 @@ final class CloudSaveSyncEngine: ObservableObject {
             let refreshed = try await httpClient.refreshSession(refreshToken: existing.refreshToken)
             sessionStore.saveSession(refreshed)
             return refreshed
+        } catch let error as SupabaseHTTPError {
+            if case .serverError(let code, let body) = error, isInvalidRefreshToken(statusCode: code, body: body) {
+                sessionStore.clear()
+                return nil
+            }
+            return existing
         } catch {
-            sessionStore.clear()
-            return nil
+            return existing
         }
+    }
+
+    private func shouldRestoreFromCloud(
+        cloud: CloudGameSave,
+        local: GameStateSnapshot,
+        localLoadFailed: Bool
+    ) -> Bool {
+        if localLoadFailed {
+            return true
+        }
+        if CloudSaveMapper.isLocalEmpty(local) {
+            return true
+        }
+        return cloud.completedCreatures.count > local.completedCreatures.count
+            || cloud.playerStats.lifetimeStepsApplied > local.lifetimeStepsApplied
+            || cloud.activeCreature.steps > local.activeCreature.currentSteps
+    }
+
+    private func isInvalidRefreshToken(statusCode: Int, body: String) -> Bool {
+        statusCode >= 400 && statusCode <= 401 && (
+            body.localizedCaseInsensitiveContains("invalid_grant")
+                || body.localizedCaseInsensitiveContains("refresh_token_not_found")
+                || body.localizedCaseInsensitiveContains("Invalid Refresh Token")
+        )
     }
 
     private func updateSignedInState(_ session: CloudSession?) {

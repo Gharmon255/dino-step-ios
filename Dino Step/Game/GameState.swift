@@ -27,6 +27,7 @@ final class GameState: ObservableObject {
     @Published var showOnboarding = false
     @Published var showWhatsNew = false
     @Published var inactivityPenaltyAlert: String?
+    @Published var showSaveRecoveryAlert = false
 
     @Published var selectedBattleFighter: CompletedCreature?
     @Published var latestBattle: BattleRecord?
@@ -42,6 +43,7 @@ final class GameState: ObservableObject {
     private let healthKitStepService: HealthKitStepService
     let cloudSyncEngine: CloudSaveSyncEngine
     private var lastAutomaticHealthKitSyncAttempt: Date?
+    private var pendingLocalLoadRecovery = false
 #if os(iOS)
     private let watchConnectivityManager: PhoneWatchConnectivityManager
 #endif
@@ -63,10 +65,26 @@ final class GameState: ObservableObject {
         cloudSyncEngine.onApplyCloudSave = { [weak self] snapshot in
             guard let self else { return }
             self.apply(snapshot)
-            self.persistenceStatus = .loadedSavedGame
+            self.persistenceStatus = self.pendingLocalLoadRecovery
+                ? .restoredFromCloudBackup
+                : .loadedSavedGame
+            self.pendingLocalLoadRecovery = false
 #if os(iOS)
             self.syncToWatch()
 #endif
+        }
+
+        cloudSyncEngine.onLaunchSyncFinished = { [weak self] restoredFromCloud in
+            guard let self else { return }
+            if restoredFromCloud {
+                self.pendingLocalLoadRecovery = false
+                self.showSaveRecoveryAlert = false
+                return
+            }
+            guard self.pendingLocalLoadRecovery else { return }
+            self.pendingLocalLoadRecovery = false
+            self.showSaveRecoveryAlert = true
+            self.persistCurrentState()
         }
 
         switch store.load() {
@@ -76,18 +94,26 @@ final class GameState: ObservableObject {
             if let snapshot = SavedGameStateMapper.restore(from: savedState) {
                 apply(snapshot)
                 persistenceStatus = .loadedSavedGame
+                if savedState.schemaVersion < SavedGameState.currentSchemaVersion {
+                    persistCurrentState()
+                }
             } else {
+                store.backupRawSaveIfPresent()
+                pendingLocalLoadRecovery = true
                 persistenceStatus = .resetAfterInvalidData
-                persistCurrentState()
             }
         case .invalidData:
+            store.backupRawSaveIfPresent()
+            pendingLocalLoadRecovery = true
             persistenceStatus = .resetAfterInvalidData
-            persistCurrentState()
         }
 
         refreshHealthKitStatus()
         refreshExperiencePresentation()
-        cloudSyncEngine.refreshSessionOnLaunch(localSnapshot: snapshot())
+        cloudSyncEngine.refreshSessionOnLaunch(
+            localSnapshot: snapshot(),
+            localLoadFailed: pendingLocalLoadRecovery
+        )
 #if os(iOS)
         watchConnectivityManager.payloadProvider = { [weak self] in
             guard let self else { return nil }

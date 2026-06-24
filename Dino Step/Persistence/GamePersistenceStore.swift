@@ -8,10 +8,20 @@ import Foundation
 struct GamePersistenceStore {
     private let defaults: UserDefaults
     private let storageKey: String
+    private static let backupStorageKey = "dino_step_saved_game_state_backup"
 
     init(defaults: UserDefaults = .standard, storageKey: String = "dino_step_saved_game_state") {
         self.defaults = defaults
         self.storageKey = storageKey
+    }
+
+    func backupRawSaveIfPresent() {
+        guard let data = defaults.data(forKey: storageKey) else { return }
+        defaults.set(data, forKey: Self.backupStorageKey)
+    }
+
+    func loadBackedUpRawSave() -> Data? {
+        defaults.data(forKey: Self.backupStorageKey)
     }
 
     func load() -> PersistenceLoadResult {
@@ -78,10 +88,7 @@ enum SavedGameStateMapper {
     }
 
     static func restore(from savedState: SavedGameState) -> GameStateSnapshot? {
-        guard savedState.schemaVersion == 1
-            || savedState.schemaVersion == 2
-            || savedState.schemaVersion == 4
-            || savedState.schemaVersion == SavedGameState.currentSchemaVersion else {
+        guard SavedGameState.isSupportedSchemaVersion(savedState.schemaVersion) else {
             return nil
         }
 
@@ -89,13 +96,7 @@ enum SavedGameStateMapper {
             return nil
         }
 
-        var completedCreatures: [CompletedCreature] = []
-        for savedCreature in savedState.completedCreatures {
-            guard let completed = restoreCompletedCreature(from: savedCreature) else {
-                return nil
-            }
-            completedCreatures.append(completed)
-        }
+        let completedCreatures = savedState.completedCreatures.compactMap(restoreCompletedCreature(from:))
 
         let lastRewardedEggRarity = savedState.lastRewardedEggRarity.flatMap(Rarity.init(rawValue:))
         if savedState.lastRewardedEggRarity != nil && lastRewardedEggRarity == nil {
